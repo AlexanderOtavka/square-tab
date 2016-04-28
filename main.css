@@ -1,0 +1,118 @@
+body {
+  margin: 0;
+  background: url("https://source.unsplash.com/category/nature") no-repeat center center fixed;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+}
+
+span.title {
+  display: inline-flex;
+  flex-grow: 1;
+  font-size: 1.3rem;
+  padding: 0 8px;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+.radial-shadow {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 0, 0, .1),
+    rgba(0, 0, 0, 0) 60%
+  );
+  padding: 16px;
+  margin: -16px;
+}
+
+.large-icon {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+}
+
+.icon-button {
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.icon-button:active {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+#main-toolbar {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+#time-wrapper {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 0 0 10px rgba(0, 0, 0, .4);
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+#time {
+  font-size: 4rem;
+  font-weight: 400;
+  color: #fff;
+  padding: 32px;
+}
+
+#greeting {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #fff;
+}
+
+#bookmarks-drawer {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: -310px;
+  bottom: 0;
+  width: 300px;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, .7);
+  transition: right 400ms;
+}
+
+.bookmarks-drawer-open #bookmarks-drawer {
+  right: 0;
+}
+
+#drawer-backdrop {
+  display: none;
+  position: absolute;
+  z-index: 19;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #000;
+  opacity: 0;
+}
+
+.bookmarks-drawer-open #drawer-backdrop {
+  display: block;
+  opacity: .5;
+}

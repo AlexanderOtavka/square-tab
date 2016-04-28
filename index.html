@@ -1,0 +1,56 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>New Tab</title>
+
+  <link rel="stylesheet" href="main.css">
+
+  <link rel="import" href="elements/x-bookmark/x-bookmark.html">
+</head>
+
+<body>
+
+  <div id="main-toolbar" class="toolbar">
+    <span class="title"></span>
+    <div class="radial-shadow">
+      <svg
+        id="bookmarks-open-button"
+        class="large-icon icon-button"
+        viewBox="0 0 24 24">
+
+        <path
+          fill="#ffffff"
+          d="M17,18L12,15.82L7,18V5H17M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" />
+      </svg>
+    </div>
+  </div>
+
+  <div id="time-wrapper">
+    <div id="time"></div>
+    <div id="greeting"></div>
+  </div>
+
+  <div id="bookmarks-drawer">
+    <div class="toolbar">
+      <span class="title">Bookmarks</span>
+      <svg
+        id="bookmarks-close-button"
+        class="large-icon icon-button"
+        viewBox="0 0 24 24">
+
+        <path
+          fill="#333333"
+          d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+      </svg>
+    </div>
+    <div id="bookmarks-drawer-items"></div>
+  </div>
+
+  <div id="drawer-backdrop"></div>
+
+  <script src="main.js"></script>
+
+</body>
+</html>
