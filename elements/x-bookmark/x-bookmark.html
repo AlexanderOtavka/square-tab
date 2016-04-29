@@ -1,6 +1,46 @@
 <template>
-  <img id="image" />
-  <div id="name"></div>
+  <style>
+    #link {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      color: #000;
+      text-decoration: none;
+      padding: 0 8px;
+      cursor: pointer;
+    }
+
+    #link.disabled {
+      cursor: default;
+    }
+
+    #link:active:not(.disabled) {
+      background-color: rgba(0, 0, 0, .2);
+    }
+
+    #image {
+      width: 24px;
+      height: 24px;
+      padding: 8px 16px;
+    }
+
+    .disabled #image {
+      opacity: .3;
+    }
+
+    #name {
+      flex-grow: 1;
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+
+  <a id="link">
+    <img id="image" />
+    <div id="name"></div>
+  </div>
 </template>
 
 <script src="x-bookmark.js"></script>

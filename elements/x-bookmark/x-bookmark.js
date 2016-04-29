@@ -2,26 +2,41 @@
 
 class XBookmarkImpl extends HTMLElement {
   createdCallback() {
-    this.createShadowRoot()
-      .appendChild(document.importNode(XBookmark.tmpl.content, true));
+    let tmplRoot = document.importNode(XBookmarkImpl.tmpl.content, true);
+    this.createShadowRoot().appendChild(tmplRoot);
 
+    this.$link = this.shadowRoot.querySelector('#link');
     this.$image = this.shadowRoot.querySelector('#image');
     this.$name = this.shadowRoot.querySelector('#name');
 
-    this.updateName();
+    this._node = null;
+
+    this.dataset.image = this.dataset.image || '';
     this.updateImage();
+
+    this.addEventListener('click', () => requestAnimationFrame(() => {
+      this.dispatchEvent(new CustomEvent('bookmark-clicked', {
+        detail: { node: this._node },
+      }));
+    }));
+  }
+
+  getNode() {
+    return this._node;
+  }
+
+  setNode(node) {
+    this._node = node;
+    this.$link.href = node.url || '#';
+    this.$name.textContent = node.title || 'All Bookmarks';
   }
 
   attributeChangedCallback(attrName, oldValue, newValue) {
-    if (attrName === 'data-name') {
-      this.updateName();
-    } else if (attrName === 'data-image') {
-      this.updateImage();
+    switch (attrName) {
+      case 'data-image':
+        this.updateImage();
+        break;
     }
-  }
-
-  updateName() {
-    this.$name.textContent = this.dataset.name;
   }
 
   updateImage() {
@@ -32,4 +47,4 @@ class XBookmarkImpl extends HTMLElement {
 XBookmarkImpl.tmpl = document.currentScript.ownerDocument
   .querySelector('template');
 
-window.XBookmark = document.registerElement('x-bookmark', XBookmarkImpl);
+document.registerElement('x-bookmark', XBookmarkImpl);
