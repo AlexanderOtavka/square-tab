@@ -35,8 +35,6 @@ class XBookmarkImpl extends HTMLElement {
   attributeChangedCallback(attrName, oldValue, newValue) {
     switch (attrName) {
       case 'data-top':
-        this.updateImage();
-        break;
       case 'data-image':
         this.updateImage();
         break;
@@ -50,8 +48,10 @@ class XBookmarkImpl extends HTMLElement {
       this.$image.src = this.dataset.image;
     } else if (this._node && !this._node.url) {
       this.$image.src = 'images/folder-outline.svg';
+    } else if (this._node) {
+      this.$image.src = `chrome://favicon/${this._node.url}`;
     } else {
-      this.$image.src = '';
+      this.$image.src = 'chrome://favicon';
     }
   }
 }
