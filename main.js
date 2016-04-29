@@ -10,12 +10,13 @@ const $bookmarksParentFolder =
 const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 const $drawerBackdrop = document.querySelector('#drawer-backdrop');
 
-let bookmarkManager = {
+let bookmarksManager = {
   stack: [],
 
   init(root) {
     this.stack[0] = root;
-    this.openNode();
+    let bookmarksBar = root.children.find(child => child.id === '1');
+    this.openNode(bookmarksBar || root);
   },
 
   getCurrentNode() {
@@ -26,12 +27,16 @@ let bookmarkManager = {
     if (this.stack.length > 1) {
       this.stack.pop();
       this.openNode();
+      if (this.stack.length === 1) {
+        $bookmarksParentFolder.dataset.top = true;
+      }
     }
   },
 
   openNode(node = null) {
     if (node) {
       this.stack.push(node);
+      $bookmarksParentFolder.dataset.top = false;
     } else {
       node = this.getCurrentNode();
     }
@@ -39,6 +44,8 @@ let bookmarkManager = {
     if (node.url) {
       return;
     }
+
+    $bookmarksParentFolder.setNode(this.getCurrentNode());
 
     let children = node.children || [];
     let elements = $bookmarksDrawerItems.childNodes;
@@ -61,15 +68,15 @@ let bookmarkManager = {
 
 chrome.bookmarks.getTree(tree => {
   let root = tree[0];
-  bookmarkManager.init(root);
+  bookmarksManager.init(root);
 });
 
 $bookmarksParentFolder.addEventListener('bookmark-clicked', () => {
-  bookmarkManager.ascend();
+  bookmarksManager.ascend();
 });
 
 $bookmarksDrawerItems.addEventListener('bookmark-clicked', event => {
-  bookmarkManager.openNode(event.detail.node);
+  bookmarksManager.openNode(event.detail.node);
 }, true);
 
 updateTime();
@@ -90,7 +97,7 @@ function updateTime() {
     minutesStr = `0${minutesStr}`;
   }
 
-  $time.textContent = `${hours % 12}:${minutesStr}`;
+  $time.textContent = `${hours % 12 || 12}:${minutesStr}`;
 
   let greeting;
   if (hours >= 0 && hours < 12) {

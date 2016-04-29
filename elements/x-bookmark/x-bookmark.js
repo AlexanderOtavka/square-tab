@@ -29,10 +29,14 @@ class XBookmarkImpl extends HTMLElement {
     this._node = node;
     this.$link.href = node.url || '#';
     this.$name.textContent = node.title || 'All Bookmarks';
+    this.updateImage();
   }
 
   attributeChangedCallback(attrName, oldValue, newValue) {
     switch (attrName) {
+      case 'data-top':
+        this.updateImage();
+        break;
       case 'data-image':
         this.updateImage();
         break;
@@ -40,7 +44,15 @@ class XBookmarkImpl extends HTMLElement {
   }
 
   updateImage() {
-    this.$image.src = this.dataset.image;
+    if (this.dataset.top === 'true') {
+      this.$image.src = 'images/folder.svg';
+    } else if (this.dataset.image) {
+      this.$image.src = this.dataset.image;
+    } else if (this._node && !this._node.url) {
+      this.$image.src = 'images/folder-outline.svg';
+    } else {
+      this.$image.src = '';
+    }
   }
 }
 

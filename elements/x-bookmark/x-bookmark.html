@@ -6,15 +6,15 @@
       align-items: center;
       color: #000;
       text-decoration: none;
-      padding: 0 8px;
+      padding: 4px 8px;
       cursor: pointer;
     }
 
-    #link.disabled {
+    :host([data-top=true]) #link {
       cursor: default;
     }
 
-    #link:active:not(.disabled) {
+    :host(:not([data-top=true])) #link:active {
       background-color: rgba(0, 0, 0, .2);
     }
 
@@ -24,16 +24,13 @@
       padding: 8px 16px;
     }
 
-    .disabled #image {
-      opacity: .3;
-    }
-
     #name {
       flex-grow: 1;
       font-size: 1rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: var(--x-bookmark-font-weight);
     }
   </style>
 

@@ -33,23 +33,26 @@
   </div>
 
   <div id="bookmarks-drawer">
-    <div class="toolbar">
-      <span class="title">Bookmarks</span>
-      <svg
-        id="bookmarks-close-button"
-        class="large-icon icon-button"
-        viewBox="0 0 24 24">
+    <div class="drawer-header">
+      <div class="toolbar">
+        <span class="title">Bookmarks</span>
+        <svg
+          id="bookmarks-close-button"
+          class="large-icon icon-button"
+          viewBox="0 0 24 24">
 
-        <path
-          fill="#333333"
-          d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-      </svg>
+          <path
+            fill="#333333"
+            d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+        </svg>
+      </div>
+
+      <x-bookmark
+        id="bookmarks-parent-folder"
+        data-top="true"
+        data-image="images/arrow-left.svg">
+      </x-bookmark>
     </div>
-
-    <x-bookmark
-      id="bookmarks-parent-folder"
-      data-image="images/arrow-left.svg">
-    </x-bookmark>
 
     <div id="bookmarks-drawer-items"></div>
   </div>
