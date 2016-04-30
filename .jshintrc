@@ -1,0 +1,17 @@
+{
+  "node": true,
+  "esversion": 6,
+  "browser": true,
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": "nofunc",
+  "noarg": true,
+  "undef": true,
+  "unused": true,
+  "newcap": false,
+  "globals": {
+    "chrome": true
+  }
+}
