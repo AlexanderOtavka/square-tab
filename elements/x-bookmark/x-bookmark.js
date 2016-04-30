@@ -14,11 +14,13 @@ class XBookmarkImpl extends HTMLElement {
     this.dataset.image = this.dataset.image || '';
     this.updateImage();
 
-    this.addEventListener('click', () => requestAnimationFrame(() => {
-      this.dispatchEvent(new CustomEvent('bookmark-clicked', {
-        detail: { node: this._node },
-      }));
-    }));
+    this.addEventListener('click', () => {
+      requestAnimationFrame(() => {
+        this.dispatchEvent(new CustomEvent('bookmark-clicked', {
+          detail: { node: this._node },
+        }));
+      });
+    });
   }
 
   getNode() {
@@ -32,24 +34,13 @@ class XBookmarkImpl extends HTMLElement {
     this.updateImage();
   }
 
-  attributeChangedCallback(attrName, oldValue, newValue) {
-    switch (attrName) {
-      case 'data-top':
-      case 'data-image':
-        this.updateImage();
-        break;
-    }
-  }
-
   updateImage() {
-    if (this.dataset.top === 'true') {
-      this.$image.src = 'images/folder.svg';
-    } else if (this.dataset.image) {
-      this.$image.src = this.dataset.image;
-    } else if (this._node && !this._node.url) {
-      this.$image.src = 'images/folder-outline.svg';
-    } else if (this._node) {
-      this.$image.src = `chrome://favicon/${this._node.url}`;
+    if (this._node) {
+      if (this._node.url) {
+        this.$image.src = `chrome://favicon/${this._node.url}`;
+      } else {
+        this.$image.src = 'images/folder-outline.svg';
+      }
     } else {
       this.$image.src = 'chrome://favicon';
     }

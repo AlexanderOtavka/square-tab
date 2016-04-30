@@ -5,6 +5,10 @@ body {
   overflow: hidden;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .toolbar {
   display: flex;
   flex-direction: row;
@@ -13,13 +17,17 @@ body {
 }
 
 span.title {
-  display: inline-flex;
   flex-grow: 1;
   font-size: 1.3rem;
-  padding: 0 8px;
+  margin: 0 8px;
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
+  white-space: nowrap;
+  overflow: hidden;
+
+  /* FIXME: it is clipping not ellipsising */
+  text-overflow: ellipsis;
 }
 
 .radial-shadow {
@@ -109,13 +117,9 @@ span.title {
   right: 0;
 }
 
-#bookmarks-parent-folder {
-  --x-bookmark-font-weight: 600;
-}
-
 #bookmarks-drawer-items {
   position: absolute;
-  top: 117px;
+  top: 69px;
   right: 0;
   bottom: 0;
   left: 0;

@@ -1,12 +1,13 @@
 'use strict';
 
+window.location.href = 'chrome://bookmarks';
+
 const $time = document.querySelector('#time');
 const $greeting = document.querySelector('#greeting');
-const $bookmarksDrawer = document.querySelector('#bookmarks-drawer');
 const $bookmarksOpenButton = document.querySelector('#bookmarks-open-button');
 const $bookmarksCloseButton = document.querySelector('#bookmarks-close-button');
-const $bookmarksParentFolder =
-  document.querySelector('#bookmarks-parent-folder');
+const $bookmarksUpButton = document.querySelector('#bookmarks-up-button');
+const $bookmarksTitle = document.querySelector('#bookmarks-drawer .title');
 const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 const $drawerBackdrop = document.querySelector('#drawer-backdrop');
 
@@ -23,12 +24,17 @@ let bookmarksManager = {
     return this.stack[this.stack.length - 1];
   },
 
+  isTop() {
+    return this.stack.length === 1;
+  },
+
   ascend() {
-    if (this.stack.length > 1) {
+    if (!this.isTop()) {
       this.stack.pop();
       this.openNode();
-      if (this.stack.length === 1) {
-        $bookmarksParentFolder.dataset.top = true;
+
+      if (this.isTop()) {
+        $bookmarksUpButton.setAttribute('hidden', '');
       }
     }
   },
@@ -36,7 +42,7 @@ let bookmarksManager = {
   openNode(node = null) {
     if (node) {
       this.stack.push(node);
-      $bookmarksParentFolder.dataset.top = false;
+      $bookmarksUpButton.removeAttribute('hidden');
     } else {
       node = this.getCurrentNode();
     }
@@ -45,7 +51,7 @@ let bookmarksManager = {
       return;
     }
 
-    $bookmarksParentFolder.setNode(this.getCurrentNode());
+    $bookmarksTitle.textContent = this.getCurrentNode().title || 'Bookmarks';
 
     let children = node.children || [];
     let elements = $bookmarksDrawerItems.childNodes;
@@ -71,7 +77,7 @@ chrome.bookmarks.getTree(tree => {
   bookmarksManager.init(root);
 });
 
-$bookmarksParentFolder.addEventListener('bookmark-clicked', () => {
+$bookmarksUpButton.addEventListener('click', () => {
   bookmarksManager.ascend();
 });
 
@@ -90,7 +96,6 @@ function updateTime() {
   let date = new Date();
   let hours = date.getHours();
   let minutes = date.getMinutes();
-  let seconds = date.getSeconds();
 
   let minutesStr = String(minutes);
   if (minutesStr.length < 2) {
