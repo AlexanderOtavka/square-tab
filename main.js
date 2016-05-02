@@ -1,7 +1,5 @@
 'use strict';
 
-window.location.href = 'chrome://bookmarks';
-
 const $time = document.querySelector('#time');
 const $greeting = document.querySelector('#greeting');
 const $bookmarksOpenButton = document.querySelector('#bookmarks-open-button');
