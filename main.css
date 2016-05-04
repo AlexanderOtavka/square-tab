@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background: url("https://source.unsplash.com/category/nature") no-repeat center center fixed;
+  background: no-repeat center center fixed;
   background-size: cover;
   overflow: hidden;
 }
@@ -25,8 +25,6 @@ span.title {
   cursor: default;
   white-space: nowrap;
   overflow: hidden;
-
-  /* FIXME: it is clipping not ellipsising */
   text-overflow: ellipsis;
 }
 

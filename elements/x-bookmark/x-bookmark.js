@@ -1,8 +1,11 @@
+(function (app) {
 'use strict';
+
+const $tmpl = document.currentScript.ownerDocument.querySelector('template');
 
 class XBookmarkImpl extends HTMLElement {
   createdCallback() {
-    let tmplRoot = document.importNode(XBookmarkImpl.tmpl.content, true);
+    let tmplRoot = document.importNode($tmpl.content, true);
     this.createShadowRoot().appendChild(tmplRoot);
 
     this.$link = this.shadowRoot.querySelector('#link');
@@ -47,7 +50,6 @@ class XBookmarkImpl extends HTMLElement {
   }
 }
 
-XBookmarkImpl.tmpl = document.currentScript.ownerDocument
-  .querySelector('template');
+app.XBookmark = document.registerElement('x-bookmark', XBookmarkImpl);
 
-document.registerElement('x-bookmark', XBookmarkImpl);
+})(window.app = window.app || {});
