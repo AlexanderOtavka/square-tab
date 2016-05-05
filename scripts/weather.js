@@ -15,6 +15,8 @@ function getLocation(position) {
   var url = "http://api.openweathermap.org/data/2.5/weather?";
   var finalURL = url + "&lat=" + lat + "&lon=" + long + "&APPID=" + api_key + "&units=metric";
 
+  console.log(finalURL);
+
   //Request data using finalURL
   request.open('GET', finalURL, false);
   request.send(null);
@@ -37,17 +39,22 @@ function getLocation(position) {
   windSpeed = Math.round(windSpeed * 0.621371);
 
   //Get description of weather
-  var description = data.weather[0].main;
+  var main = data.weather[0].main.toUpperCase();
+  var description = data.weather[0].description.toUpperCase();
 
   //Weather Icon Assignments based on description
-  if(description == "Clear"){
-    document.getElementById("weather-icon").src="images/clear.png"
-  }else if(description == "Clouds"){
+  if(description == "SCATTERED CLOUDS"){
+    document.getElementById("weather-icon").src="images/mostly-cloudy.png"
+  }else if(main == "CLOUDS"){
     document.getElementById("weather-icon").src="images/cloudy.png"
-  }else if (description == "Mist") {
+  }else if (main == "MIST") {
     document.getElementById("weather-icon").src="images/cloudy.png"
-  }else if(description == "Rain"){
+  }else if(main == "RAIN"){
     document.getElementById("weather-icon").src="images/rain.png"
+  }else if(main == "CLEAR"){
+    document.getElementById("weather-icon").src="images/clear.png"
+  }else{
+    document.getElementById("weather-icon").src="#"
   }
 
   //Temp assignments
