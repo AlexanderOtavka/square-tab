@@ -32,8 +32,9 @@ function getLocation(position) {
   var country = data.sys.country;
   var city = data.name;
   var main = data.weather.description;
-  document.getElementById("temperature").innerHTML = temp + " °F and " + main;
-  document.getElementById("humidity").innerHTML = "Humidity " + humidity;
+  document.getElementById("temperature").innerHTML = temp + " °F in " + city;
+  document.getElementById("humidity").innerHTML = "Humidity: " + humidity;
+  document.getElementById("wind-speed").innerHTML = "Wind: " + windSpeed + " MPH";
   document.getElementById("pressure").innerHTML = pressure + " mBar";
-  document.getElementById("wind-speed").innerHTML = windSpeed + " MPH";
+
 }
