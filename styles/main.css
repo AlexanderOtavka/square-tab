@@ -86,15 +86,16 @@ span.title {
   cursor: default;
 }
 
-#weather-wrapper {
-  margin-left: 10px;
-  margin-bottom: 0;
-  text-shadow: 0 0 10px rgba(0, 0, 0, .4);
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: default;
-  color: #fff;
+#weather {
   font-size: 2rem;
+  font-weight: 400;
+  color: #fff;
+  padding: 32px;
+}
+
+#weather-icon {
+  width: 60px;
+  height: 60px;
 }
 
 #time {
