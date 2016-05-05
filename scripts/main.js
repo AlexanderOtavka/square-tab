@@ -124,7 +124,6 @@ function readBlob(reader, blobs = []) {
       return readBlob(reader, blobs);
     } else {
       let size = blobs.reduce((sum, blob) => sum + blob.length, 0);
-
       let fullBlob = new Uint8Array(size);
       let lastIndex = 0;
       blobs.forEach(blob => {
