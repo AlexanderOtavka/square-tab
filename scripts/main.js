@@ -16,6 +16,7 @@ const STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS = 'alwaysShowBookmarks';
 
 const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature';
 
+// Load settings
 chrome.storage.sync.get(
   STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS,
   ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
@@ -25,6 +26,7 @@ chrome.storage.sync.get(
     document.body.removeAttribute('unresolved');
   });
 
+// Handle settings updates
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'sync' && STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS in changes) {
     let newValue = changes[STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS].newValue;
@@ -32,6 +34,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
+// Load cached image
 chrome.storage.local.get(
   STORAGE_KEY_IMAGE_DATA,
   ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => {
@@ -47,6 +50,7 @@ chrome.storage.local.get(
   }
 );
 
+// Fetch and cache a new image
 fetch(IMAGE_RESOURCE_URI)
   .then(resp => readBlob(resp.body.getReader()))
   .then(blob => {
@@ -55,17 +59,21 @@ fetch(IMAGE_RESOURCE_URI)
     });
   });
 
+// Handle bookmarks up navigation
 $bookmarksUpButton.addEventListener('click', () => {
   bookmarksManager.ascend();
 });
 
+// Handle bookmarks down navigation
 $bookmarksDrawerItems.addEventListener('bookmark-clicked', event => {
   bookmarksManager.openNode(event.detail.node);
 }, true);
 
+// Update the clock immediately, then once every second forever
 updateTime();
 setInterval(updateTime, 1000);
 
+// Handle opening and closing the bookmarks drawer
 $bookmarksOpenButton.addEventListener('click', openBookmarks);
 $bookmarksCloseButton.addEventListener('click', closeBookmarks);
 $drawerBackdrop.addEventListener('click', closeBookmarks);
