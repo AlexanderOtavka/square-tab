@@ -24,7 +24,7 @@ function getLocation(position) {
   var temp = data.main.temp;
   temp = temp * 9;
   temp = temp / 5;
-  temp = temp + 32;
+  temp = Math.round(temp + 32);
   var humidity = data.main.humidity;
   var pressure = data.main.pressure;
   var windSpeed = data.wind.speed;
