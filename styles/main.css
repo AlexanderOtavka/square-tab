@@ -94,6 +94,22 @@ span.title {
   cursor: default;
 }
 
+#weather-wrapper {
+  display: inline-flex;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin-bottom: 16%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 0 0 10px rgba(0, 0, 0, .4);
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
 #weather {
   font-size: 2rem;
   font-weight: 400;
