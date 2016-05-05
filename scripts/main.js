@@ -1,7 +1,7 @@
 (function (app) {
 'use strict';
 
-const { bookmarksManager } = app;
+const { bookmarksManager, encodeUint8Array, readBlob } = app;
 
 const $time = document.querySelector('#time');
 const $greeting = document.querySelector('#greeting');
@@ -11,37 +11,69 @@ const $bookmarksUpButton = document.querySelector('#bookmarks-up-button');
 const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 const $drawerBackdrop = document.querySelector('#drawer-backdrop');
 
-{
-  const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature';
-  const IMG_DATA_STORAGE_ID = 'imgData';
+const STORAGE_KEY_IMAGE_DATA = 'imgData';
+const STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS = 'alwaysShowBookmarks';
 
-  let imageData = localStorage.getItem(IMG_DATA_STORAGE_ID);
-  let imageURL;
-  if (imageData) {
-    imageURL = `data:image/jpg;base64,${imageData}`;
-  } else {
-    imageURL = IMAGE_RESOURCE_URI;
+const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature';
+
+// Load settings
+chrome.storage.sync.get(
+  STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS,
+  ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
+    updateBookmarkDrawerLock(alwaysShowBookmarks);
+
+    // Don't show anything until the settings have loaded
+    document.body.removeAttribute('unresolved');
+  });
+
+// Handle settings updates
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'sync' && STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS in changes) {
+    let newValue = changes[STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS].newValue;
+    updateBookmarkDrawerLock(newValue);
   }
+});
 
-  document.body.style.backgroundImage = `url("${imageURL}")`;
+// Load cached image
+chrome.storage.local.get(
+  STORAGE_KEY_IMAGE_DATA,
+  ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => {
+    let imageURL;
+    if (imageData) {
+      imageURL = `data:image/jpg;base64,${imageData}`;
+    } else {
+      imageURL = IMAGE_RESOURCE_URI;
+    }
 
-  fetch(IMAGE_RESOURCE_URI)
-    .then(resp => readBlob(resp.body.getReader()))
-    .then(blob => encodeUint8Array(blob))
-    .then(dataString => localStorage.setItem(IMG_DATA_STORAGE_ID, dataString));
-}
+    document.documentElement.style.setProperty('--background-image',
+                                               `url("${imageURL}")`);
+  }
+);
 
+// Fetch and cache a new image
+fetch(IMAGE_RESOURCE_URI)
+  .then(resp => readBlob(resp.body.getReader()))
+  .then(blob => {
+    chrome.storage.local.set({
+      [STORAGE_KEY_IMAGE_DATA]: encodeUint8Array(blob),
+    });
+  });
+
+// Handle bookmarks up navigation
 $bookmarksUpButton.addEventListener('click', () => {
   bookmarksManager.ascend();
 });
 
+// Handle bookmarks down navigation
 $bookmarksDrawerItems.addEventListener('bookmark-clicked', event => {
   bookmarksManager.openNode(event.detail.node);
 }, true);
 
+// Update the clock immediately, then once every second forever
 updateTime();
 setInterval(updateTime, 1000);
 
+// Handle opening and closing the bookmarks drawer
 $bookmarksOpenButton.addEventListener('click', openBookmarks);
 $bookmarksCloseButton.addEventListener('click', closeBookmarks);
 $drawerBackdrop.addEventListener('click', closeBookmarks);
@@ -78,63 +110,9 @@ function closeBookmarks() {
   document.body.classList.remove('bookmarks-drawer-open');
 }
 
-/**
- * Encode Uint8Array to base64 string.
- */
-function encodeUint8Array(input) {
-  // I don't know how this works; taken from:
-  // https://stackoverflow.com/questions/11089732/display-image-from-blob-using-
-  // javascript-and-websockets/11092371#11092371
-
-  const KEY_STR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' +
-                  '0123456789+/=';
-  let output = '';
-  let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-  let i = 0;
-
-  while (i < input.length) {
-    chr1 = input[i++];
-    chr2 = i < input.length ? input[i++] : Number.NaN;
-    chr3 = i < input.length ? input[i++] : Number.NaN;
-
-    /* jshint -W016 */
-    enc1 = chr1 >> 2;
-    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-    enc4 = chr3 & 63;
-    /* jshint +W016 */
-
-    if (isNaN(chr2)) {
-      enc3 = enc4 = 64;
-    } else if (isNaN(chr3)) {
-      enc4 = 64;
-    }
-
-    output += KEY_STR.charAt(enc1) + KEY_STR.charAt(enc2) +
-              KEY_STR.charAt(enc3) + KEY_STR.charAt(enc4);
-  }
-
-  return output;
-}
-
-function readBlob(reader, blobs = []) {
-  return reader.read().then(({ done, value }) => {
-    if (!done) {
-      blobs.push(value);
-      return readBlob(reader, blobs);
-    } else {
-      let size = blobs.reduce((sum, blob) => sum + blob.length, 0);
-
-      let fullBlob = new Uint8Array(size);
-      let lastIndex = 0;
-      blobs.forEach(blob => {
-        fullBlob.set(blob, lastIndex);
-        lastIndex += blob.length;
-      });
-
-      return fullBlob;
-    }
-  });
+function updateBookmarkDrawerLock(alwaysShowBookmarks) {
+  document.body.classList.toggle('bookmarks-drawer-locked-open',
+                                 alwaysShowBookmarks);
 }
 
 })(window.app = window.app || {});

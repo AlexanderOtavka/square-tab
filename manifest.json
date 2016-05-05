@@ -11,7 +11,13 @@
 
   "permissions": [
     "bookmarks",
+    "storage",
     "https://source.unsplash.com/",
     "chrome://favicon/"
-  ]
+  ],
+
+  "browser_action": {
+    "default_title": "Clean Tab",
+    "default_popup": "popup.html"
+  }
 }
