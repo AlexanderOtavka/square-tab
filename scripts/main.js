@@ -16,6 +16,22 @@ const STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS = 'alwaysShowBookmarks';
 
 const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature';
 
+chrome.storage.sync.get(
+  STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS,
+  ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
+    updateBookmarkDrawerLock(alwaysShowBookmarks);
+
+    // Don't show anything until the settings have loaded
+    document.body.removeAttribute('unresolved');
+  });
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'sync' && STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS in changes) {
+    let newValue = changes[STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS].newValue;
+    updateBookmarkDrawerLock(newValue);
+  }
+});
+
 chrome.storage.local.get(
   STORAGE_KEY_IMAGE_DATA,
   ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => {
@@ -37,19 +53,6 @@ fetch(IMAGE_RESOURCE_URI)
     chrome.storage.local.set({
       [STORAGE_KEY_IMAGE_DATA]: encodeUint8Array(blob),
     });
-  });
-
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === 'sync' && STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS in changes) {
-    let newValue = changes[STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS].newValue;
-    updateBookmarkDrawerLock(newValue);
-  }
-});
-
-chrome.storage.sync.get(
-  STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS,
-  ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
-    updateBookmarkDrawerLock(alwaysShowBookmarks);
   });
 
 $bookmarksUpButton.addEventListener('click', () => {
