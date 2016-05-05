@@ -24,7 +24,7 @@ body[unresolved], [hidden] {
 span.title {
   flex-grow: 1;
   font-size: 1.3rem;
-  margin: 0 8px;
+  margin: 4px 8px;
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
@@ -46,7 +46,7 @@ span.title {
 .large-icon {
   width: 28px;
   height: 28px;
-  padding: 4px;
+  padding: 2px;
 }
 
 .icon-button {
