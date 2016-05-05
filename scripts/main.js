@@ -11,25 +11,46 @@ const $bookmarksUpButton = document.querySelector('#bookmarks-up-button');
 const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 const $drawerBackdrop = document.querySelector('#drawer-backdrop');
 
-{
-  const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature';
-  const IMG_DATA_STORAGE_ID = 'imgData';
+const STORAGE_KEY_IMAGE_DATA = 'imgData';
+const STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS = 'alwaysShowBookmarks';
 
-  let imageData = localStorage.getItem(IMG_DATA_STORAGE_ID);
-  let imageURL;
-  if (imageData) {
-    imageURL = `data:image/jpg;base64,${imageData}`;
-  } else {
-    imageURL = IMAGE_RESOURCE_URI;
+const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature';
+
+chrome.storage.local.get(
+  STORAGE_KEY_IMAGE_DATA,
+  ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => {
+    let imageURL;
+    if (imageData) {
+      imageURL = `data:image/jpg;base64,${imageData}`;
+    } else {
+      imageURL = IMAGE_RESOURCE_URI;
+    }
+
+    document.documentElement.style.setProperty('--background-image',
+                                               `url("${imageURL}")`);
   }
+);
 
-  document.body.style.backgroundImage = `url("${imageURL}")`;
+fetch(IMAGE_RESOURCE_URI)
+  .then(resp => readBlob(resp.body.getReader()))
+  .then(blob => {
+    chrome.storage.local.set({
+      [STORAGE_KEY_IMAGE_DATA]: encodeUint8Array(blob),
+    });
+  });
 
-  fetch(IMAGE_RESOURCE_URI)
-    .then(resp => readBlob(resp.body.getReader()))
-    .then(blob => encodeUint8Array(blob))
-    .then(dataString => localStorage.setItem(IMG_DATA_STORAGE_ID, dataString));
-}
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'sync' && STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS in changes) {
+    let newValue = changes[STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS].newValue;
+    updateBookmarkDrawerLock(newValue);
+  }
+});
+
+chrome.storage.sync.get(
+  STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS,
+  ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
+    updateBookmarkDrawerLock(alwaysShowBookmarks);
+  });
 
 $bookmarksUpButton.addEventListener('click', () => {
   bookmarksManager.ascend();
@@ -76,6 +97,11 @@ function openBookmarks() {
 
 function closeBookmarks() {
   document.body.classList.remove('bookmarks-drawer-open');
+}
+
+function updateBookmarkDrawerLock(alwaysShowBookmarks) {
+  document.body.classList.toggle('bookmarks-drawer-locked-open',
+                                 alwaysShowBookmarks);
 }
 
 })(window.app = window.app || {});

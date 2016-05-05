@@ -1,7 +1,11 @@
+:root {
+  --drawer-width: 300px;
+}
+
 body {
   font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
   margin: 0;
-  background: no-repeat center center fixed;
+  background: var(--background-image) no-repeat center center fixed;
   background-size: cover;
   overflow: hidden;
 }
@@ -59,8 +63,7 @@ span.title {
   top: 0;
   right: 0;
   left: 0;
-  border-bottom: 1px solid #ddd;
-  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, .2);;
 }
 
 #main-toolbar {
@@ -69,6 +72,10 @@ span.title {
   top: 0;
   right: 0;
   left: 0;
+}
+
+.bookmarks-drawer-locked-open #bookmarks-open-button {
+  display: none;
 }
 
 #time-wrapper {
@@ -85,6 +92,10 @@ span.title {
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
+}
+
+.bookmarks-drawer-locked-open #time-wrapper {
+  right: var(--drawer-width);
 }
 
 #time {
@@ -104,16 +115,26 @@ span.title {
   position: absolute;
   z-index: 20;
   top: 0;
-  right: -310px;
+  right: calc(-10px - var(--drawer-width));
   bottom: 0;
-  width: 300px;
+  width: var(--drawer-width);
   background: #fff;
   box-shadow: 0 0 8px rgba(0, 0, 0, .7);
   transition: right 400ms;
 }
 
-.bookmarks-drawer-open #bookmarks-drawer {
+.bookmarks-drawer-open #bookmarks-drawer,
+.bookmarks-drawer-locked-open #bookmarks-drawer {
   right: 0;
+}
+
+.bookmarks-drawer-locked-open #bookmarks-drawer {
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.bookmarks-drawer-locked-open #bookmarks-close-button {
+  display: none;
 }
 
 #bookmarks-drawer-items {
