@@ -1,11 +1,5 @@
 'use strict';
 
-if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(getWeather);
-}else{
-  alert("Geolocation is not supported by this browser!");
-}
-
 function getWeather(position) {
   const api_key = "55c2586d12873c5d39e99b0dea411dc2";
   const lat = position.coords.latitude;
@@ -16,6 +10,12 @@ function getWeather(position) {
     mode: 'cors',
     cache: 'default',
   };
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(getWeather);
+}else{
+  alert("Geolocation is not supported by this browser!");
+}
 
   var url = "http://api.openweathermap.org/data/2.5/weather?";
   const finalURL = url + "&lat=" + lat + "&lon=" + long + "&APPID=" + api_key + "&units=metric";
@@ -36,29 +36,25 @@ function getWeather(position) {
 
         let date = new Date();
         let hours = date.getHours();
-        
+
         if (hours >= 18 && (description === "SCATTERED CLOUDS" || description === "BROKEN CLOUDS" || main === "CLEAR")) {
           if(description === "SCATTERED CLOUDS" || "BROKEN CLOUDS"){
-            document.getElementById("weather-icon").src="images/partly-cloudy-night.png";
+            document.getElementById("weather-icon").src="../images/partly-cloudy-night.png";
           }
-          if(main === "CLEAR"){
-            document.getElementById("weather-icon").src="images/clear-night.png";
+          if(main == "CLEAR"){
+            document.getElementById("weather-icon").src="../images/clear-night.png";
           }
         }else{
-          if(description === "SCATTERED CLOUDS"){
-            document.getElementById("weather-icon").src="images/partly-cloudy.png";
-          }
-          if(main === "CLOUDS"){
-            document.getElementById("weather-icon").src="images/cloudy.png";
-          }
-          if (main === "MIST") {
-            document.getElementById("weather-icon").src="images/cloudy.png";
-          }
-          if(main === "RAIN"){
-            document.getElementById("weather-icon").src="images/rain.png";
-          }
-          if(main === "CLEAR"){
-            document.getElementById("weather-icon").src="images/clear.png";
+          if(description == "SCATTERED CLOUDS"){
+            document.getElementById("weather-icon").src="../images/partly-cloudy.png";
+          }else if(main == "CLOUDS"){
+            document.getElementById("weather-icon").src="../images/cloudy.png";
+          }else if (main == "MIST") {
+            document.getElementById("weather-icon").src="../images/cloudy.png";
+          }else if(main == "RAIN"){
+            document.getElementById("weather-icon").src="../images/rain.png";
+          }else if(main == "CLEAR"){
+            document.getElementById("weather-icon").src="../images/clear.png";
           }else{
             document.getElementById("weather-icon").src="#";
           }
