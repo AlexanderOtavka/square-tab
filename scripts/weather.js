@@ -7,20 +7,20 @@ if (navigator.geolocation) {
 }
 
 function getWeather(position) {
-  const api_key = "55c2586d12873c5d39e99b0dea411dc2";
-  const lat = position.coords.latitude;
-  const long = position.coords.longitude;
+  const API_KEY = "55c2586d12873c5d39e99b0dea411dc2";
+  const LAT = position.coords.latitude;
+  const LONG = position.coords.longitude;
 
-  const init = {
+  const INIT = {
     method: 'GET',
     mode: 'cors',
     cache: 'default',
   };
 
   var url = "http://api.openweathermap.org/data/2.5/weather?";
-  const finalURL = url + "&lat=" + lat + "&lon=" + long + "&APPID=" + api_key + "&units=metric";
+  const FINAL_URL = url + "&lat=" + LAT + "&lon=" + LONG + "&APPID=" + API_KEY + "&units=metric";
 
-  fetch(finalURL, init)
+  fetch(FINAL_URL, INIT)
     .then(
       function(response) {
       if (response.status !== 200) {

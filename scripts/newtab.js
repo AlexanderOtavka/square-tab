@@ -13,8 +13,9 @@ const $drawerBackdrop = document.querySelector('#drawer-backdrop');
 
 const STORAGE_KEY_IMAGE_DATA = 'imgData';
 const STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS = 'alwaysShowBookmarks';
-
-const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature';
+const WINDOW_HEIGHT = window.screen.availHeight;
+const WINDOW_WIDTH = window.screen.availWidth;
+const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature/' + WINDOW_WIDTH + 'x' + WINDOW_HEIGHT;
 
 // Load settings
 chrome.storage.sync.get(
