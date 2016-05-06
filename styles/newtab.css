@@ -37,11 +37,11 @@ span.title {
 .radial-shadow {
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(0, 0, 0, .2),
+    rgba(0, 0, 0, .15),
     rgba(0, 0, 0, 0) 60%
   );
-  padding: 16px;
-  margin: -16px;
+  padding: 32px;
+  margin: -32px;
 }
 
 .large-icon {
