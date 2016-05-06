@@ -1,3 +1,5 @@
+'use strict'
+
 var api_key = "55c2586d12873c5d39e99b0dea411dc2";
 
 //Get location using geolocation
@@ -14,8 +16,6 @@ function getLocation(position) {
   var request = new XMLHttpRequest();
   var url = "http://api.openweathermap.org/data/2.5/weather?";
   var finalURL = url + "&lat=" + lat + "&lon=" + long + "&APPID=" + api_key + "&units=metric";
-
-  console.log(finalURL);
 
   //Request data using finalURL
   request.open('GET', finalURL, false);
@@ -44,7 +44,7 @@ function getLocation(position) {
 
   //Weather Icon Assignments based on description
   if(description == "SCATTERED CLOUDS"){
-    document.getElementById("weather-icon").src="images/mostly-cloudy.png"
+    document.getElementById("weather-icon").src="images/partly-cloudy.png"
   }else if(main == "CLOUDS"){
     document.getElementById("weather-icon").src="images/cloudy.png"
   }else if (main == "MIST") {

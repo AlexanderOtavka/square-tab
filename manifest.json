@@ -13,7 +13,8 @@
     "bookmarks",
     "storage",
     "https://source.unsplash.com/",
-    "chrome://favicon/"
+    "chrome://favicon/",
+    "geolocation"
   ],
 
   "browser_action": {
