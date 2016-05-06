@@ -111,6 +111,7 @@ function closeBookmarks() {
 }
 
 function updateBookmarkDrawerLock(alwaysShowBookmarks) {
+  document.body.classList.remove('bookmarks-drawer-open');
   document.body.classList.toggle('bookmarks-drawer-locked-open',
                                  alwaysShowBookmarks);
 }

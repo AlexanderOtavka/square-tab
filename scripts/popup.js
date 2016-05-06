@@ -4,6 +4,7 @@
 const $alwaysShowBookmarks = document.querySelector('#always-show-bookmarks');
 const $alwaysShowBookmarksCB =
   document.querySelector('#always-show-bookmarks input[type=checkbox]');
+const $about = document.querySelector('#about');
 
 const STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS = 'alwaysShowBookmarks';
 
@@ -25,6 +26,10 @@ chrome.storage.sync.get(
   ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
     updateCheckbox(alwaysShowBookmarks);
   });
+
+$about.addEventListener('click', () => {
+  chrome.tabs.create({ url: $about.href });
+});
 
 function updateCheckbox(alwaysShowBookmarks) {
   $alwaysShowBookmarksCB.checked = alwaysShowBookmarks;

@@ -42,7 +42,7 @@ class XBookmarkImpl extends HTMLElement {
       if (this._node.url) {
         this.$image.src = `chrome://favicon/${this._node.url}`;
       } else {
-        this.$image.src = 'images/folder-outline.svg';
+        this.$image.src = '/images/folder-outline.svg';
       }
     } else {
       this.$image.src = 'chrome://favicon';
