@@ -1,63 +1,58 @@
 'use strict'
 
-var api_key = "55c2586d12873c5d39e99b0dea411dc2";
+const api_key = "55c2586d12873c5d39e99b0dea411dc2";
 
-//Get location using geolocation
 if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(getLocation);
+  navigator.geolocation.getCurrentPosition(getWeather);
 }else{
   alert("Geolocation is not supported by this browser!");
 }
 
-function getLocation(position) {
-  var lat = position.coords.latitude;
-  var long = position.coords.longitude;
+function getWeather(position) {
+  const lat = position.coords.latitude;
+  const long = position.coords.longitude;
+  const headers = new Headers();
 
-  var request = new XMLHttpRequest();
+  const init = {
+    method: 'GET',
+    headers: headers,
+    mode: 'cors',
+    cache: 'default',
+  };
+
   var url = "http://api.openweathermap.org/data/2.5/weather?";
-  var finalURL = url + "&lat=" + lat + "&lon=" + long + "&APPID=" + api_key + "&units=metric";
+  const finalURL = url + "&lat=" + lat + "&lon=" + long + "&APPID=" + api_key + "&units=metric";
 
-  //Request data using finalURL
-  request.open('GET', finalURL, false);
-  request.send(null);
+  fetch(finalURL, init)
+    .then(
+      function(response) {
+      if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status Code: ' +
+          response.status);
+        return;
+      }
 
-  //Get data object from API
-  var data = JSON.parse(request.response);
+      response.json().then(function(data) {
+        const finalData = (data);
+        const temperature = Math.round(((finalData.main.temp * 9) / 5) + 31);
+        const main = finalData.weather[0].main.toUpperCase();
+        const description = finalData.weather[0].description.toUpperCase();
 
-  //Calculating temp
-  var temp = data.main.temp;
-  temp = temp * 9;
-  temp = temp / 5;
-  temp = Math.round(temp + 32);
-
-  //Retrive humidity and pressure
-  var humidity = data.main.humidity;
-  var pressure = data.main.pressure;
-
-  //Calculate wind speed
-  var windSpeed = data.wind.speed;
-  windSpeed = Math.round(windSpeed * 0.621371);
-
-  //Get description of weather
-  var main = data.weather[0].main.toUpperCase();
-  var description = data.weather[0].description.toUpperCase();
-
-  //Weather Icon Assignments based on description
-  if(description == "SCATTERED CLOUDS"){
-    document.getElementById("weather-icon").src="images/partly-cloudy.png"
-  }else if(main == "CLOUDS"){
-    document.getElementById("weather-icon").src="images/cloudy.png"
-  }else if (main == "MIST") {
-    document.getElementById("weather-icon").src="images/cloudy.png"
-  }else if(main == "RAIN"){
-    document.getElementById("weather-icon").src="images/rain.png"
-  }else if(main == "CLEAR"){
-    document.getElementById("weather-icon").src="images/clear.png"
-  }else{
-    document.getElementById("weather-icon").src="#"
-  }
-
-  //Temp assignments
-  document.getElementById("weather").innerHTML = temp + " °F";
-
+        if(description == "SCATTERED CLOUDS"){
+          document.getElementById("weather-icon").src="images/partly-cloudy.png"
+        }else if(main == "CLOUDS"){
+          document.getElementById("weather-icon").src="images/cloudy.png"
+        }else if (main == "MIST") {
+          document.getElementById("weather-icon").src="images/cloudy.png"
+        }else if(main == "RAIN"){
+          document.getElementById("weather-icon").src="images/rain.png"
+        }else if(main == "CLEAR"){
+          document.getElementById("weather-icon").src="images/clear.png"
+        }else{
+          document.getElementById("weather-icon").src="#"
+        }
+        document.getElementById("temperature").innerHTML = temperature + " °F";
+      });
+    }
+  )
 }
