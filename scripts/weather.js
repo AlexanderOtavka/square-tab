@@ -10,11 +10,9 @@ function getWeather(position) {
   const api_key = "55c2586d12873c5d39e99b0dea411dc2";
   const lat = position.coords.latitude;
   const long = position.coords.longitude;
-  const headers = new Headers();
 
   const init = {
     method: 'GET',
-    headers: headers,
     mode: 'cors',
     cache: 'default',
   };
@@ -33,24 +31,40 @@ function getWeather(position) {
       response.json().then(function(data) {
         const finalData = (data);
         const temperature = Math.round(((finalData.main.temp * 9) / 5) + 31);
-        const main = finalData.weather[0].main.toUpperCase();
-        const description = finalData.weather[0].description.toUpperCase();
+        var main = finalData.weather[0].main.toUpperCase();
+        var description = finalData.weather[0].description.toUpperCase();
 
-        if(description == "SCATTERED CLOUDS"){
-          document.getElementById("weather-icon").src="images/partly-cloudy.png"
-        }else if(main == "CLOUDS"){
-          document.getElementById("weather-icon").src="images/cloudy.png"
-        }else if (main == "MIST") {
-          document.getElementById("weather-icon").src="images/cloudy.png"
-        }else if(main == "RAIN"){
-          document.getElementById("weather-icon").src="images/rain.png"
-        }else if(main == "CLEAR"){
-          document.getElementById("weather-icon").src="images/clear.png"
+        let date = new Date();
+        let hours = date.getHours();
+        
+        if (hours >= 18 && (description === "SCATTERED CLOUDS" || description === "BROKEN CLOUDS" || main === "CLEAR")) {
+          if(description === "SCATTERED CLOUDS" || "BROKEN CLOUDS"){
+            document.getElementById("weather-icon").src="images/partly-cloudy-night.png";
+          }
+          if(main === "CLEAR"){
+            document.getElementById("weather-icon").src="images/clear-night.png";
+          }
         }else{
-          document.getElementById("weather-icon").src="#"
+          if(description === "SCATTERED CLOUDS"){
+            document.getElementById("weather-icon").src="images/partly-cloudy.png";
+          }
+          if(main === "CLOUDS"){
+            document.getElementById("weather-icon").src="images/cloudy.png";
+          }
+          if (main === "MIST") {
+            document.getElementById("weather-icon").src="images/cloudy.png";
+          }
+          if(main === "RAIN"){
+            document.getElementById("weather-icon").src="images/rain.png";
+          }
+          if(main === "CLEAR"){
+            document.getElementById("weather-icon").src="images/clear.png";
+          }else{
+            document.getElementById("weather-icon").src="#";
+          }
         }
         document.getElementById("temperature").innerHTML = temperature + " °F";
       });
     }
-  )
+  );
 }
