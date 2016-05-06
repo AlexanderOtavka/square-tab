@@ -17,7 +17,8 @@ const STORAGE_KEY_IMAGE_DATA = 'imgData';
 const STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS = 'alwaysShowBookmarks';
 const WINDOW_HEIGHT = window.screen.availHeight;
 const WINDOW_WIDTH = window.screen.availWidth;
-const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature/' + WINDOW_WIDTH + 'x' + WINDOW_HEIGHT;
+const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature/' +
+                           `${WINDOW_WIDTH}x${WINDOW_HEIGHT}`;
 
 // Load settings
 chrome.storage.sync.get(
@@ -25,6 +26,7 @@ chrome.storage.sync.get(
   ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
     updateBookmarkDrawerLock(alwaysShowBookmarks);
     displayWeather();
+
     // Don't show anything until the settings have loaded
     $body.removeAttribute('unresolved');
   });
