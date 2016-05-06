@@ -96,23 +96,14 @@ span.title {
 
 #weather-wrapper {
   display: inline-flex;
-  right: 0;
-  bottom: 0;
-  left: 0;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
-  text-shadow: 0 0 10px rgba(0, 0, 0, .4);
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: default;
 }
 
 #temperature {
   font-size: 2rem;
   font-weight: 300;
   color: #fff;
-  padding: 32px;
 }
 
 #weather-icon {
@@ -128,7 +119,7 @@ span.title {
   font-size: 4rem;
   font-weight: 400;
   color: #fff;
-  padding: 32px;
+  padding: 8px;
 }
 
 #greeting {
