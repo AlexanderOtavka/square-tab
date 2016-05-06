@@ -33,7 +33,7 @@ class XBookmarkImpl extends HTMLElement {
   setNode(node) {
     this._node = node;
     this.$link.href = node.url || '#';
-    this.$name.textContent = node.title || node.url || '';
+    this.$name.textContent = node.title || '';
     this.updateImage();
   }
 
