@@ -36,7 +36,7 @@ span.title {
 .radial-shadow {
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(0, 0, 0, .1),
+    rgba(0, 0, 0, .2),
     rgba(0, 0, 0, 0) 60%
   );
   padding: 16px;
@@ -88,7 +88,7 @@ span.title {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-shadow: 0 0 10px rgba(0, 0, 0, .4);
+  text-shadow: 0 0 10px rgba(0, 0, 0, .5);
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
