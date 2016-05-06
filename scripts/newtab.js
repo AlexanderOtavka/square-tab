@@ -1,7 +1,7 @@
 (function (app) {
 'use strict';
 
-const { bookmarksManager, encodeUint8Array, readBlob } = app;
+const { bookmarksManager, encodeUint8Array, readBlob, displayWeather } = app;
 
 const $time = document.querySelector('#time');
 const $greeting = document.querySelector('#greeting');
@@ -22,7 +22,7 @@ chrome.storage.sync.get(
   STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS,
   ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
     updateBookmarkDrawerLock(alwaysShowBookmarks);
-
+    displayWeather();
     // Don't show anything until the settings have loaded
     document.body.removeAttribute('unresolved');
   });
