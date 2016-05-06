@@ -3,6 +3,8 @@
 
 const { bookmarksManager, encodeUint8Array, readBlob, displayWeather } = app;
 
+const $root = document.documentElement;
+const $body = document.body;
 const $time = document.querySelector('#time');
 const $greeting = document.querySelector('#greeting');
 const $bookmarksOpenButton = document.querySelector('#bookmarks-open-button');
@@ -24,7 +26,7 @@ chrome.storage.sync.get(
     updateBookmarkDrawerLock(alwaysShowBookmarks);
     displayWeather();
     // Don't show anything until the settings have loaded
-    document.body.removeAttribute('unresolved');
+    $body.removeAttribute('unresolved');
   });
 
 // Handle settings updates
@@ -46,8 +48,7 @@ chrome.storage.local.get(
       imageURL = IMAGE_RESOURCE_URI;
     }
 
-    document.documentElement.style.setProperty('--background-image',
-                                               `url("${imageURL}")`);
+    $root.style.setProperty('--background-image', `url("${imageURL}")`);
   }
 );
 
@@ -104,17 +105,16 @@ function updateTime() {
 }
 
 function openBookmarks() {
-  document.body.classList.add('bookmarks-drawer-open');
+  $body.classList.add('bookmarks-drawer-open');
 }
 
 function closeBookmarks() {
-  document.body.classList.remove('bookmarks-drawer-open');
+  $body.classList.remove('bookmarks-drawer-open');
 }
 
 function updateBookmarkDrawerLock(alwaysShowBookmarks) {
-  document.body.classList.remove('bookmarks-drawer-open');
-  document.body.classList.toggle('bookmarks-drawer-locked-open',
-                                 alwaysShowBookmarks);
+  $body.classList.remove('bookmarks-drawer-open');
+  $body.classList.toggle('bookmarks-drawer-locked-open', alwaysShowBookmarks);
 }
 
 })(window.app = window.app || {});
