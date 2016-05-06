@@ -1,5 +1,11 @@
 'use strict';
 
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(getWeather);
+}else{
+  alert("Geolocation is not supported by this browser!");
+}
+
 function getWeather(position) {
   const api_key = "55c2586d12873c5d39e99b0dea411dc2";
   const lat = position.coords.latitude;
@@ -10,12 +16,6 @@ function getWeather(position) {
     mode: 'cors',
     cache: 'default',
   };
-
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(getWeather);
-}else{
-  alert("Geolocation is not supported by this browser!");
-}
 
   var url = "http://api.openweathermap.org/data/2.5/weather?";
   const finalURL = url + "&lat=" + lat + "&lon=" + long + "&APPID=" + api_key + "&units=metric";
