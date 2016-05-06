@@ -1,6 +1,4 @@
-'use strict'
-
-const api_key = "55c2586d12873c5d39e99b0dea411dc2";
+'use strict';
 
 if(navigator.geolocation){
   navigator.geolocation.getCurrentPosition(getWeather);
@@ -9,6 +7,7 @@ if(navigator.geolocation){
 }
 
 function getWeather(position) {
+  const api_key = "55c2586d12873c5d39e99b0dea411dc2";
   const lat = position.coords.latitude;
   const long = position.coords.longitude;
   const headers = new Headers();
@@ -31,7 +30,6 @@ function getWeather(position) {
           response.status);
         return;
       }
-
       response.json().then(function(data) {
         const finalData = (data);
         const temperature = Math.round(((finalData.main.temp * 9) / 5) + 31);
