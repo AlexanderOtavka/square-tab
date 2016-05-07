@@ -34,9 +34,8 @@ settings.loaded.then(() => {
 });
 
 // Handle changes to settings
-settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS, value => {
-  updateBookmarkDrawerLock(value);
-});
+settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
+                           updateBookmarkDrawerLock);
 
 // Load cached image
 chrome.storage.local.get(

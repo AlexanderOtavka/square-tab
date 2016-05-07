@@ -15,9 +15,7 @@ $alwaysShowBookmarks.addEventListener('click', () => {
   settings.set(settings.keys.ALWAYS_SHOW_BOOKMARKS, alwaysShowBookmarks);
 });
 
-settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS, value => {
-  updateCheckbox(value);
-});
+settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS, updateCheckbox);
 
 $about.addEventListener('click', () => {
   chrome.tabs.create({ url: $about.href });
