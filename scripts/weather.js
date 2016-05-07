@@ -6,15 +6,14 @@ const $temperature = document.querySelector('#temperature');
 
 const STORAGE_KEY_WEATHER_DATA = 'weatherData';
 
-function displayWeather() {
+function displayWeather(useCelsius) {
   if (navigator.geolocation) {
-    //$weatherWrapper.hidden = false;
 
     chrome.storage.local.get(
       STORAGE_KEY_WEATHER_DATA,
       ({ [STORAGE_KEY_WEATHER_DATA]: weatherData }) => {
         let jsonWeatherData = JSON.parse(weatherData);
-        useWeatherData(jsonWeatherData);
+        useWeatherData(jsonWeatherData, useCelsius);
       }
     );
 
@@ -25,7 +24,7 @@ function displayWeather() {
 
 }
 
-function useWeatherData(weatherData) {
+function useWeatherData(weatherData, useCelsius) {
   const S_CLOUDS = 'SCATTERED CLOUDS';
   const B_CLOUDS = 'BROKEN CLOUDS';
   const L_RAIN = 'LIGHT RAIN';
@@ -38,10 +37,7 @@ function useWeatherData(weatherData) {
   const SNOW = 'SNOW';
 
   let temperature = Math.round(((weatherData.main.temp * 9) / 5) + 31);
-
-  // if (useCelsius) {
-  //   temperature = Math.round(weatherData.main.temp);
-  // }
+  let temperatureCelsius = Math.round(weatherData.main.temp);
 
   let main = weatherData.weather[0].main.toUpperCase();
   let description = weatherData.weather[0].description.toUpperCase();
@@ -91,7 +87,14 @@ function useWeatherData(weatherData) {
     $weatherIcon.src = '';
   }
 
-  $temperature.textContent = `${temperature} °F`;
+  console.log('update weather ' + useCelsius);
+
+  if (useCelsius) {
+    $temperature.textContent = `${temperatureCelsius} °C`;
+  } else {
+    $temperature.textContent = `${temperature} °F`;
+  }
+
 }
 
 function getWeather(position) {
@@ -117,7 +120,7 @@ function getWeather(position) {
       }
 
       response.json().then(data => {
-        useWeatherData(data);
+        useWeatherData(data, useCelsius);
         chrome.storage.local.set({
           [STORAGE_KEY_WEATHER_DATA]: JSON.stringify(data),
         });

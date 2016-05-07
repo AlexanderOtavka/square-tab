@@ -32,6 +32,19 @@ settings.addChangeListener(settings.keys.SHOW_WEATHER, value => {
   $showWeatherCB.checked = value;
 });
 
+const $useCelsius = document.querySelector('#use-celsius');
+const $useCelsiusCB =
+  document.querySelector('#use-celsius input[type=checkbox]');
+
+$useCelsius.addEventListener('click', () => {
+  let useCelsius = $useCelsiusCB.checked;
+  settings.set(settings.keys.USE_CELSIUS, useCelsius);
+});
+
+settings.addChangeListener(settings.keys.USE_CELSIUS, value => {
+  $useCelsiusCB.checked = value;
+});
+
 $about.addEventListener('click', () => {
   chrome.tabs.create({ url: $about.href });
 });

@@ -10,6 +10,7 @@ let keys = {
 let _defaults = {
   [keys.ALWAYS_SHOW_BOOKMARKS]: false,
   [keys.SHOW_WEATHER]: true,
+  [keys.USE_CELSIUS]: false,
 };
 
 let _storageKeysArray = Object.keys(keys).map(keyName => keys[keyName]);

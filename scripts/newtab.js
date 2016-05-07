@@ -41,6 +41,9 @@ settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
 settings.addChangeListener(settings.keys.SHOW_WEATHER,
                           toggleWeather);
 
+settings.addChangeListener(settings.keys.USE_CELSIUS,
+                          toggleCelsius);
+
 // Load cached image
 chrome.storage.local.get(
   STORAGE_KEY_IMAGE_DATA,
@@ -121,8 +124,14 @@ function updateBookmarkDrawerLock(alwaysShowBookmarks) {
   $body.classList.toggle('bookmarks-drawer-locked-open', alwaysShowBookmarks);
 }
 
-function toggleWeather() {
-  $weatherWrapper.hidden = !$weatherWrapper.hidden;
+function toggleWeather(showWeather) {
+  $weatherWrapper.hidden = showWeather;
+}
+
+function toggleCelsius(useCelsius) {
+  useCelsius = useCelsius;
+  console.log(useCelsius + ' toggle celsius');
+  displayWeather(useCelsius);
 }
 
 })(window.app = window.app || {});
