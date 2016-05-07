@@ -1,7 +1,6 @@
 (function (app) {
 'use strict';
 
-const $weatherWrapper = document.querySelector('#weather-wrapper');
 const $weatherIcon = document.querySelector('#weather-icon');
 const $temperature = document.querySelector('#temperature');
 
@@ -9,7 +8,7 @@ const STORAGE_KEY_WEATHER_DATA = 'weatherData';
 
 function displayWeather() {
   if (navigator.geolocation) {
-    $weatherWrapper.hidden = false;
+    //$weatherWrapper.hidden = false;
 
     chrome.storage.local.get(
       STORAGE_KEY_WEATHER_DATA,
@@ -23,6 +22,7 @@ function displayWeather() {
   } else {
     console.error('Geolocation is not supported by this browser!');
   }
+
 }
 
 function useWeatherData(weatherData) {
@@ -37,14 +37,19 @@ function useWeatherData(weatherData) {
   const CLOUDS = 'CLOUDS';
   const SNOW = 'SNOW';
 
-  const temperature = Math.round(((weatherData.main.temp * 9) / 5) + 31);
+  let temperature = Math.round(((weatherData.main.temp * 9) / 5) + 31);
+
+  // if (useCelsius) {
+  //   temperature = Math.round(weatherData.main.temp);
+  // }
+
   let main = weatherData.weather[0].main.toUpperCase();
   let description = weatherData.weather[0].description.toUpperCase();
 
   let date = new Date();
   let hours = date.getHours();
   let isNight = false;
-  if (hours < 4 || hours > 20) {
+  if (hours < 4 || hours >= 20) {
     isNight = true;
   }
 

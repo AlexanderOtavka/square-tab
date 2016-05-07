@@ -18,6 +18,7 @@ const $bookmarksCloseButton = document.querySelector('#bookmarks-close-button');
 const $bookmarksUpButton = document.querySelector('#bookmarks-up-button');
 const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 const $drawerBackdrop = document.querySelector('#drawer-backdrop');
+const $weatherWrapper = document.querySelector('#weather-wrapper');
 
 const STORAGE_KEY_IMAGE_DATA = 'imgData';
 const WINDOW_HEIGHT = window.screen.availHeight;
@@ -36,6 +37,9 @@ settings.loaded.then(() => {
 // Handle changes to settings
 settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
                            updateBookmarkDrawerLock);
+
+settings.addChangeListener(settings.keys.SHOW_WEATHER,
+                          toggleWeather);
 
 // Load cached image
 chrome.storage.local.get(
@@ -115,6 +119,10 @@ function closeBookmarks() {
 function updateBookmarkDrawerLock(alwaysShowBookmarks) {
   $body.classList.remove('bookmarks-drawer-open');
   $body.classList.toggle('bookmarks-drawer-locked-open', alwaysShowBookmarks);
+}
+
+function toggleWeather() {
+  $weatherWrapper.hidden = !$weatherWrapper.hidden;
 }
 
 })(window.app = window.app || {});

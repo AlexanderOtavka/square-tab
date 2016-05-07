@@ -3,10 +3,13 @@
 
 let keys = {
   ALWAYS_SHOW_BOOKMARKS: 'alwaysShowBookmarks',
+  SHOW_WEATHER: 'showWeather',
+  USE_CELSIUS: 'useCelsius',
 };
 
 let _defaults = {
   [keys.ALWAYS_SHOW_BOOKMARKS]: false,
+  [keys.SHOW_WEATHER]: true,
 };
 
 let _storageKeysArray = Object.keys(keys).map(keyName => keys[keyName]);
