@@ -26,32 +26,64 @@ function displayWeather() {
 }
 
 function useWeatherData(weatherData) {
+  const S_CLOUDS = 'SCATTERED CLOUDS';
+  const B_CLOUDS = 'BROKEN CLOUDS';
+  const L_RAIN = 'LIGHT RAIN';
+  const RAIN = 'RAIN';
+  const CLEAR = 'CLEAR';
+  const MIST = 'MIST';
+  const STORM = 'STORM';
+  const EXTREME = 'EXTREME';
+  const CLOUDS = 'CLOUDS';
+  const SNOW = 'SNOW';
+
   const temperature = Math.round(((weatherData.main.temp * 9) / 5) + 31);
   let main = weatherData.weather[0].main.toUpperCase();
   let description = weatherData.weather[0].description.toUpperCase();
 
   let date = new Date();
   let hours = date.getHours();
+  let isNight = false;
+  if (hours < 4 || hours > 20) {
+    isNight = true;
+  }
 
-  if (hours >= 18 && (description === 'SCATTERED CLOUDS' ||
-      description === 'BROKEN CLOUDS' || main === 'CLEAR')) {
-    if (description === 'SCATTERED CLOUDS' || 'BROKEN CLOUDS') {
-      $weatherIcon.src = '../images/weather/partly-cloudy-night.png';
-    } else if (main === 'CLEAR') {
-      $weatherIcon.src = '../images/weather/clear-night.png';
-    }
-  } else {
-    if (description === 'SCATTERED CLOUDS') {
-      $weatherIcon.src = '../images/partly-cloudy.png';
-    } else if (main === 'CLOUDS' || main === 'MIST') {
-      $weatherIcon.src = '../images/weather/cloudy.png';
-    } else if (main === 'RAIN') {
-      $weatherIcon.src = '../images/weather/rain.png';
-    } else if (main === 'CLEAR') {
-      $weatherIcon.src = '../images/weather/clear.png';
+  if (main === CLOUDS) {
+    if (description === S_CLOUDS || description === B_CLOUDS) {
+      if (isNight) {
+        $weatherIcon.src = '../images/weather/partly-cloudy-night.png';
+      } else {
+        $weatherIcon.src = '../images/weather/partly-cloudy.png';
+      }
     } else {
-      $weatherIcon.src = '#';
+      $weatherIcon.src = '../images/weather/cloudy.png';
     }
+  } else if (main === RAIN) {
+    if (description === L_RAIN) {
+      $weatherIcon.src = '../images/weather/little-rain.png';
+    } else {
+      $weatherIcon.src = '../images/weather/rain.png';
+    }
+  } else if (main === CLEAR) {
+    if (isNight) {
+      $weatherIcon.src = '../images/weather/clear-night.png';
+    } else {
+      $weatherIcon.src = '../images/weather/clear.png';
+    }
+  } else if (main === MIST) {
+    if (isNight) {
+      $weatherIcon.src = '../images/weather/fog-night.png';
+    } else {
+      $weatherIcon.src = '../images/weather/fog-day.png';
+    }
+  } else if (main === STORM) {
+    $weatherIcon.src = '../images/weather/storm.png';
+  } else if (main === EXTREME) {
+    $weatherIcon.src = '../images/weather/warning.png';
+  }else if (main === SNOW) {
+    $weatherIcon.src = '../images/weather/snow.png';
+  } else {
+    $weatherIcon.src = '';
   }
 
   $temperature.textContent = `${temperature} °F`;
