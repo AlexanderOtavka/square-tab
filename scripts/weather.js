@@ -17,12 +17,12 @@ function display() {
       STORAGE_KEY_WEATHER_DATA,
       ({ [STORAGE_KEY_WEATHER_DATA]: weatherData }) => {
         let jsonWeatherData = JSON.parse(weatherData);
-        tempF = Math.round(((jsonWeatherData.main.temp * 9) / 5) + 31);
-        tempC = Math.round(jsonWeatherData.main.temp);
         useWeatherData(jsonWeatherData);
       }
     );
+
     navigator.geolocation.getCurrentPosition(getWeather);
+
   } else {
     console.error('Geolocation is not supported by this browser!');
   }
@@ -43,6 +43,9 @@ function useWeatherData(weatherData) {
 
   let main = weatherData.weather[0].main.toUpperCase();
   let description = weatherData.weather[0].description.toUpperCase();
+
+  tempF = Math.round(((weatherData.main.temp * 9) / 5) + 32);
+  tempC = Math.round(weatherData.main.temp);
 
   let date = new Date();
   let hours = date.getHours();
@@ -89,13 +92,12 @@ function useWeatherData(weatherData) {
     $weatherIcon.src = '';
   }
 
-  let useC = settings.get(settings.keys.USE_CELCIUS);
+  let useC = settings.get(settings.keys.USE_CELSIUS);
 
-  console.log('first?');
   if (useC) {
-    $temperature.textContent = `${tempC} C`;
+    $temperature.textContent = `${tempC} °C`;
   } else {
-    $temperature.textContent = `${tempF} F`;
+    $temperature.textContent = `${tempF} °F`;
   }
 
 }
@@ -123,10 +125,6 @@ function getWeather(position) {
       }
 
       response.json().then(data => {
-        console.log('assigned');
-        tempF = Math.round(((data.main.temp * 9) / 5) + 31);
-        tempC = Math.round(data.main.temp);
-        console.log(tempF);
         useWeatherData(data);
         chrome.storage.local.set({
           [STORAGE_KEY_WEATHER_DATA]: JSON.stringify(data),
@@ -136,8 +134,8 @@ function getWeather(position) {
 }
 
 function updateTemperatureUnit(useCelsius) {
+  console.log(useCelsius);
   if (useCelsius) {
-    console.log('second?');
     $temperature.textContent = `${tempC} °C`;
   } else {
     $temperature.textContent = `${tempF} °F`;

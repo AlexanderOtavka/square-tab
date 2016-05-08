@@ -29,7 +29,7 @@ const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature/' +
 // Handle initial settings load
 settings.loaded.then(() => {
   weather.display();
-  weather.updateTemperatureUnit(settings.keys.USE_CELSIUS);
+  //weather.updateTemperatureUnit(settings.keys.USE_CELSIUS);
 
   // Don't show anything until the settings have loaded
   $body.removeAttribute('unresolved');
