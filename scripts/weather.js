@@ -134,7 +134,6 @@ function getWeather(position) {
 }
 
 function updateTemperatureUnit(useCelsius) {
-  console.log(useCelsius);
   if (useCelsius) {
     $temperature.textContent = `${tempC} °C`;
   } else {
