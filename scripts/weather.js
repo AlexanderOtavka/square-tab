@@ -4,9 +4,14 @@
 const $weatherIcon = document.querySelector('#weather-icon');
 const $temperature = document.querySelector('#temperature');
 
+let celsius = false;
+console.log('reassign');
+
 const STORAGE_KEY_WEATHER_DATA = 'weatherData';
 
 function displayWeather(useCelsius) {
+  celsius = useCelsius;
+  console.log('display weather ' + useCelsius);
   if (navigator.geolocation) {
 
     chrome.storage.local.get(
@@ -16,7 +21,6 @@ function displayWeather(useCelsius) {
         useWeatherData(jsonWeatherData, useCelsius);
       }
     );
-
     navigator.geolocation.getCurrentPosition(getWeather);
   } else {
     console.error('Geolocation is not supported by this browser!');
@@ -120,7 +124,8 @@ function getWeather(position) {
       }
 
       response.json().then(data => {
-        useWeatherData(data, useCelsius);
+        console.log('getWeather ' + celsius);
+        useWeatherData(data, celsius);
         chrome.storage.local.set({
           [STORAGE_KEY_WEATHER_DATA]: JSON.stringify(data),
         });
