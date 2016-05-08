@@ -5,7 +5,7 @@ const {
   bookmarksManager,
   encodeUint8Array,
   readBlob,
-  displayWeather,
+  weather,
   settings,
 } = app;
 
@@ -28,7 +28,9 @@ const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature/' +
 
 // Handle initial settings load
 settings.loaded.then(() => {
-  displayWeather(false);
+  weather.display();
+  weather.updateTemperatureUnit(settings.keys.USE_CELSIUS);
+
   // Don't show anything until the settings have loaded
   $body.removeAttribute('unresolved');
 });
@@ -41,7 +43,7 @@ settings.addChangeListener(settings.keys.SHOW_WEATHER,
                           toggleWeather);
 
 settings.addChangeListener(settings.keys.USE_CELSIUS,
-                          toggleCelsius);
+                         weather.updateTemperatureUnit);
 
 // Load cached image
 chrome.storage.local.get(
@@ -124,12 +126,7 @@ function updateBookmarkDrawerLock(alwaysShowBookmarks) {
 }
 
 function toggleWeather(showWeather) {
-  $weatherWrapper.hidden = showWeather;
-}
-
-function toggleCelsius(useCelsius) {
-  console.log(useCelsius + ' toggle celsius');
-  displayWeather(useCelsius);
+  $weatherWrapper.hidden = !showWeather;
 }
 
 })(window.app = window.app || {});

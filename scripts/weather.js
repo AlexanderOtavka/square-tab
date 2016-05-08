@@ -3,22 +3,23 @@
 
 const $weatherIcon = document.querySelector('#weather-icon');
 const $temperature = document.querySelector('#temperature');
+const { settings } = app;
 
-let celsius = false;
-console.log('reassign');
+let tempF;
+let tempC;
 
 const STORAGE_KEY_WEATHER_DATA = 'weatherData';
 
-function displayWeather(useCelsius) {
-  celsius = useCelsius;
-  console.log('display weather ' + useCelsius);
+function display() {
   if (navigator.geolocation) {
 
     chrome.storage.local.get(
       STORAGE_KEY_WEATHER_DATA,
       ({ [STORAGE_KEY_WEATHER_DATA]: weatherData }) => {
         let jsonWeatherData = JSON.parse(weatherData);
-        useWeatherData(jsonWeatherData, useCelsius);
+        tempF = Math.round(((jsonWeatherData.main.temp * 9) / 5) + 31);
+        tempC = Math.round(jsonWeatherData.main.temp);
+        useWeatherData(jsonWeatherData);
       }
     );
     navigator.geolocation.getCurrentPosition(getWeather);
@@ -28,7 +29,7 @@ function displayWeather(useCelsius) {
 
 }
 
-function useWeatherData(weatherData, useCelsius) {
+function useWeatherData(weatherData) {
   const S_CLOUDS = 'SCATTERED CLOUDS';
   const B_CLOUDS = 'BROKEN CLOUDS';
   const L_RAIN = 'LIGHT RAIN';
@@ -39,9 +40,6 @@ function useWeatherData(weatherData, useCelsius) {
   const EXTREME = 'EXTREME';
   const CLOUDS = 'CLOUDS';
   const SNOW = 'SNOW';
-
-  let temperature = Math.round(((weatherData.main.temp * 9) / 5) + 31);
-  let temperatureCelsius = Math.round(weatherData.main.temp);
 
   let main = weatherData.weather[0].main.toUpperCase();
   let description = weatherData.weather[0].description.toUpperCase();
@@ -91,12 +89,13 @@ function useWeatherData(weatherData, useCelsius) {
     $weatherIcon.src = '';
   }
 
-  console.log('update weather ' + useCelsius);
+  let useC = settings.get(settings.keys.USE_CELCIUS);
 
-  if (useCelsius) {
-    $temperature.textContent = `${temperatureCelsius} °C`;
+  console.log('first?');
+  if (useC) {
+    $temperature.textContent = `${tempC} C`;
   } else {
-    $temperature.textContent = `${temperature} °F`;
+    $temperature.textContent = `${tempF} F`;
   }
 
 }
@@ -124,8 +123,11 @@ function getWeather(position) {
       }
 
       response.json().then(data => {
-        console.log('getWeather ' + celsius);
-        useWeatherData(data, celsius);
+        console.log('assigned');
+        tempF = Math.round(((data.main.temp * 9) / 5) + 31);
+        tempC = Math.round(data.main.temp);
+        console.log(tempF);
+        useWeatherData(data);
         chrome.storage.local.set({
           [STORAGE_KEY_WEATHER_DATA]: JSON.stringify(data),
         });
@@ -133,6 +135,15 @@ function getWeather(position) {
     });
 }
 
-app.displayWeather = displayWeather;
+function updateTemperatureUnit(useCelsius) {
+  if (useCelsius) {
+    console.log('second?');
+    $temperature.textContent = `${tempC} °C`;
+  } else {
+    $temperature.textContent = `${tempF} °F`;
+  }
+}
+
+app.weather = { display, updateTemperatureUnit };
 
 })(window.app = window.app || {});
