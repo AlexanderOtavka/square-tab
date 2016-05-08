@@ -1,6 +1,11 @@
 :root {
   --drawer-width: 300px;
   --drawer-transition-duration: 400ms;
+  --drawer-header-height: 68px;
+}
+
+:root.bookmarks-drawer-locked-open.bookmarks-drawer-small {
+  --drawer-width: 64px;
 }
 
 body {
@@ -25,7 +30,7 @@ body[unresolved], [hidden] {
 span.title {
   flex-grow: 1;
   font-size: 1.3rem;
-  margin: 4px 8px;
+  margin: 0 8px;
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
@@ -53,6 +58,8 @@ span.title {
 .icon-button {
   border-radius: 50%;
   cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 200ms;
 }
 
 .icon-button:active {
@@ -64,6 +71,7 @@ span.title {
   top: 0;
   right: 0;
   left: 0;
+  height: calc(var(--drawer-header-height) - 1px);
   border-bottom: 1px solid rgba(0, 0, 0, .2);;
 }
 
@@ -96,25 +104,6 @@ span.title {
   transition: right var(--drawer-transition-duration);
 }
 
-#weather-wrapper {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: flex-start;
-  margin: 16px;
-}
-
-#temperature {
-  font-size: 2rem;
-  font-weight: 300;
-  color: #fff;
-  padding-left: 16px;
-}
-
-#weather-icon {
-  width: 60px;
-  height: 60px;
-}
-
 .bookmarks-drawer-locked-open #time-wrapper {
   right: var(--drawer-width);
 }
@@ -132,6 +121,25 @@ span.title {
   color: #fff;
 }
 
+#weather-wrapper {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin: 16px;
+}
+
+#weather-icon {
+  width: 60px;
+  height: 60px;
+}
+
+#temperature {
+  font-size: 2rem;
+  font-weight: 300;
+  color: #fff;
+  padding-left: 16px;
+}
+
 #bookmarks-drawer {
   position: absolute;
   z-index: 20;
@@ -141,7 +149,9 @@ span.title {
   width: var(--drawer-width);
   background: #fff;
   box-shadow: 0 0 8px rgba(0, 0, 0, .7);
-  transition: right var(--drawer-transition-duration);
+  transition: right var(--drawer-transition-duration),
+              width var(--drawer-transition-duration),
+              background-color var(--drawer-transition-duration);
 }
 
 .bookmarks-drawer-open #bookmarks-drawer,
@@ -154,13 +164,17 @@ span.title {
   background: rgba(255, 255, 255, 0.9);
 }
 
+.bookmarks-drawer-locked-open.bookmarks-drawer-small #bookmarks-drawer-title {
+  display: none;
+}
+
 .bookmarks-drawer-locked-open #bookmarks-close-button {
   display: none;
 }
 
 #bookmarks-drawer-items {
   position: absolute;
-  top: 69px;
+  top: var(--drawer-header-height);
   right: 0;
   bottom: 0;
   left: 0;

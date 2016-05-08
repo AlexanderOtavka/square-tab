@@ -12,9 +12,9 @@ class XBookmarkImpl extends HTMLElement {
     this.$image = this.shadowRoot.querySelector('#image');
     this.$name = this.shadowRoot.querySelector('#name');
 
-    this._node = null;
+    this.setNode(null);
+    this.dataset.small = 'false';
 
-    this.dataset.image = this.dataset.image || '';
     this.updateImage();
 
     this.addEventListener('click', () => {
@@ -32,9 +32,15 @@ class XBookmarkImpl extends HTMLElement {
 
   setNode(node) {
     this._node = node;
-    this.$link.href = node.url || '#';
-    this.$name.textContent = node.title || '';
     this.updateImage();
+
+    if (node) {
+      this.$link.href = node.url || '#';
+      this.$name.textContent = node.title || '';
+    } else {
+      this.$link.href = '#';
+      this.$name.textContent = '';
+    }
   }
 
   updateImage() {
@@ -50,6 +56,8 @@ class XBookmarkImpl extends HTMLElement {
   }
 }
 
-app.XBookmark = document.registerElement('x-bookmark', XBookmarkImpl);
+let XBookmark = document.registerElement('x-bookmark', XBookmarkImpl);
+
+app.XBookmark = XBookmark;
 
 })(window.app = window.app || {});

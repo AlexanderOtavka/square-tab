@@ -36,6 +36,8 @@ settings.loaded.then(() => {
 // Handle changes to settings
 settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
                            updateBookmarkDrawerLock);
+settings.addChangeListener(settings.keys.BOOKMARKS_DRAWER_SMALL,
+                           updateBookmarkDrawerSmall);
 
 // Load cached image
 chrome.storage.local.get(
@@ -105,16 +107,21 @@ function updateTime() {
 }
 
 function openBookmarks() {
-  $body.classList.add('bookmarks-drawer-open');
+  $root.classList.add('bookmarks-drawer-open');
 }
 
 function closeBookmarks() {
-  $body.classList.remove('bookmarks-drawer-open');
+  $root.classList.remove('bookmarks-drawer-open');
 }
 
 function updateBookmarkDrawerLock(alwaysShowBookmarks) {
-  $body.classList.remove('bookmarks-drawer-open');
-  $body.classList.toggle('bookmarks-drawer-locked-open', alwaysShowBookmarks);
+  $root.classList.remove('bookmarks-drawer-open');
+  $root.classList.toggle('bookmarks-drawer-locked-open', alwaysShowBookmarks);
+}
+
+function updateBookmarkDrawerSmall(drawerSmall) {
+  $root.classList.toggle('bookmarks-drawer-small', drawerSmall);
+  bookmarksManager.updateSize(drawerSmall);
 }
 
 })(window.app = window.app || {});

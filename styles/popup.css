@@ -1,6 +1,6 @@
 body {
   font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
-  width: 200px;
+  width: 220px;
   margin: 0;
   -webkit-user-select: none;
   user-select: none;
@@ -11,18 +11,33 @@ h1 {
   cursor: default;
 }
 
-#settings {
-  margin: 8px;
+input[type=checkbox] {
+  width: 12px;
+  height: 12px;
+  margin: 4px;
 }
 
-#always-show-bookmarks {
+label.checkbox-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
 }
 
-#always-show-bookmarks span {
-  margin-left: 8px;
+label.checkbox-container span {
+  margin: 3px 0 3px 8px;
+  line-height: 14px;
+}
+
+label.disabled {
+  opacity: .5;
+}
+
+.child-1 {
+  margin-left: 24px;
+}
+
+#settings {
+  margin: 8px;
 }
 
 #about {
