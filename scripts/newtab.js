@@ -11,6 +11,7 @@ const {
 
 const $root = document.documentElement;
 const $body = document.body;
+const $backgroundImage = document.querySelector('#background-image');
 const $time = document.querySelector('#time');
 const $greeting = document.querySelector('#greeting');
 const $bookmarksOpenButton = document.querySelector('#bookmarks-open-button');
@@ -50,7 +51,7 @@ chrome.storage.local.get(
       imageURL = IMAGE_RESOURCE_URI;
     }
 
-    $root.style.setProperty('--background-image', `url("${imageURL}")`);
+    $backgroundImage.src = imageURL;
   }
 );
 
