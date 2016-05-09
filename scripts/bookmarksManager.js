@@ -7,6 +7,7 @@ const {
 
 const $bookmarksTitle = document.querySelector('#bookmarks-drawer .title');
 const $bookmarksUpButton = document.querySelector('#bookmarks-up-button');
+const $bookmarksTopIcon = document.querySelector('#bookmarks-top-icon');
 const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 
 let bookmarksManager = {
@@ -33,6 +34,7 @@ let bookmarksManager = {
 
       if (this.isTop()) {
         $bookmarksUpButton.setAttribute('hidden', '');
+        $bookmarksTopIcon.removeAttribute('hidden');
       }
     }
   },
@@ -41,6 +43,7 @@ let bookmarksManager = {
     if (node && node !== this.getCurrentNode()) {
       this.stack.push(node);
       $bookmarksUpButton.removeAttribute('hidden');
+      $bookmarksTopIcon.setAttribute('hidden', '');
     } else {
       node = this.getCurrentNode();
     }

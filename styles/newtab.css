@@ -25,14 +25,14 @@ body[unresolved], [hidden] {
   flex-direction: row;
   align-items: center;
   padding: 16px;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 span.title {
   flex-grow: 1;
   font-size: 1.3rem;
   margin: 0 8px;
-  -webkit-user-select: none;
-  user-select: none;
   cursor: default;
   white-space: nowrap;
   overflow: hidden;
