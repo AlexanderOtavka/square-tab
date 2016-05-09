@@ -1,8 +1,13 @@
 (function (app) {
 'use strict';
 
+const {
+  settings,
+} = app;
+
 const $bookmarksTitle = document.querySelector('#bookmarks-drawer .title');
 const $bookmarksUpButton = document.querySelector('#bookmarks-up-button');
+const $bookmarksTopIcon = document.querySelector('#bookmarks-top-icon');
 const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 
 let bookmarksManager = {
@@ -29,6 +34,7 @@ let bookmarksManager = {
 
       if (this.isTop()) {
         $bookmarksUpButton.setAttribute('hidden', '');
+        $bookmarksTopIcon.removeAttribute('hidden');
       }
     }
   },
@@ -37,6 +43,7 @@ let bookmarksManager = {
     if (node && node !== this.getCurrentNode()) {
       this.stack.push(node);
       $bookmarksUpButton.removeAttribute('hidden');
+      $bookmarksTopIcon.setAttribute('hidden', '');
     } else {
       node = this.getCurrentNode();
     }
@@ -58,11 +65,18 @@ let bookmarksManager = {
       let bookmark = elements[i];
       if (!bookmark) {
         bookmark = document.createElement('x-bookmark');
+        bookmark.dataset.small =
+          settings.get(settings.keys.BOOKMARKS_DRAWER_SMALL);
         $bookmarksDrawerItems.appendChild(bookmark);
       }
 
-      bookmark.setNode(child);
+      bookmark.node = child;
     });
+  },
+
+  updateSize(small) {
+    let elements = Array.prototype.slice.call($bookmarksDrawerItems.childNodes);
+    elements.forEach(element => element.dataset.small = small);
   },
 };
 

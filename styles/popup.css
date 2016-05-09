@@ -1,6 +1,12 @@
+:root {
+  --input-size: 12px;
+  --input-margin: 4px;
+  --indent-size: calc(var(--input-size) + var(--input-margin) * 2)
+}
+
 body {
   font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
-  width: 200px;
+  width: 220px;
   margin: 0;
   -webkit-user-select: none;
   user-select: none;
@@ -11,18 +17,37 @@ h1 {
   cursor: default;
 }
 
-#settings {
-  margin: 8px;
+input[type=checkbox] {
+  width: var(--input-size);
+  height: var(--input-size);
+  margin: var(--input-margin);
 }
 
-#always-show-bookmarks {
+input[disabled] ~ .label {
+  color: #545454;
+}
+
+label.checkbox-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
 }
 
-#always-show-bookmarks span {
-  margin-left: 8px;
+label.checkbox-container .label {
+  margin: 3px 0 3px 4px;
+  line-height: 14px;
+}
+
+.child-1 {
+  margin-left: var(--indent-size);
+}
+
+.child-2 {
+  margin-left: calc(var(--indent-size) * 2);
+}
+
+#settings {
+  margin: 8px;
 }
 
 #about {

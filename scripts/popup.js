@@ -6,47 +6,29 @@ const {
 } = app;
 
 const $alwaysShowBookmarks = document.querySelector('#always-show-bookmarks');
-const $alwaysShowBookmarksCB =
-  document.querySelector('#always-show-bookmarks input[type=checkbox]');
-const $about = document.querySelector('#about');
-
-$alwaysShowBookmarks.addEventListener('click', () => {
-  let alwaysShowBookmarks = $alwaysShowBookmarksCB.checked;
-  settings.set(settings.keys.ALWAYS_SHOW_BOOKMARKS, alwaysShowBookmarks);
-});
-
-settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS, value => {
-  $alwaysShowBookmarksCB.checked = value;
-});
-
+const $bookmarksDrawerSmall = document.querySelector('#bookmarks-drawer-small');
+const $boxedInfo = document.querySelector('#boxed-info');
 const $showWeather = document.querySelector('#show-weather');
-const $showWeatherCB =
-  document.querySelector('#show-weather input[type=checkbox]');
-
-$showWeather.addEventListener('click', () => {
-  let showWeather = $showWeatherCB.checked;
-  settings.set(settings.keys.SHOW_WEATHER, showWeather);
-});
-
-settings.addChangeListener(settings.keys.SHOW_WEATHER, value => {
-  $showWeatherCB.checked = value;
-});
-
 const $useCelsius = document.querySelector('#use-celsius');
-const $useCelsiusCB =
-  document.querySelector('#use-celsius input[type=checkbox]');
 
-$useCelsius.addEventListener('click', () => {
-  let useCelsius = $useCelsiusCB.checked;
-  settings.set(settings.keys.USE_CELSIUS, useCelsius);
-});
+bindCheckbox($alwaysShowBookmarks, settings.keys.ALWAYS_SHOW_BOOKMARKS);
+bindCheckbox($bookmarksDrawerSmall, settings.keys.BOOKMARKS_DRAWER_SMALL);
+bindCheckbox($boxedInfo, settings.keys.BOXED_INFO);
+bindCheckbox($showWeather, settings.keys.SHOW_WEATHER);
+bindCheckbox($useCelsius, settings.keys.USE_CELSIUS);
 
-settings.addChangeListener(settings.keys.USE_CELSIUS, value => {
-  $useCelsiusCB.checked = value;
-});
+function bindCheckbox($wrapper, settingKey) {
+  const $checkbox = $wrapper.querySelector('input[type=checkbox]');
 
-$about.addEventListener('click', () => {
-  chrome.tabs.create({ url: $about.href });
-});
+  $wrapper.addEventListener('click', () => {
+    let value = $checkbox.checked;
+    settings.set(settingKey, value);
+  });
+
+  settings.addDataChangeListener(settingKey, data => {
+    $checkbox.checked = data.value;
+    $checkbox.disabled = data.override !== undefined;
+  });
+}
 
 })(window.app = window.app || {});
