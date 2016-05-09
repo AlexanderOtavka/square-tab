@@ -3,7 +3,7 @@
 
 const $tmpl = document.currentScript.ownerDocument.querySelector('template');
 
-class XBookmarkImpl extends HTMLElement {
+class XBookmark extends HTMLElement {
   createdCallback() {
     let tmplRoot = document.importNode($tmpl.content, true);
     this.createShadowRoot().appendChild(tmplRoot);
@@ -12,31 +12,43 @@ class XBookmarkImpl extends HTMLElement {
     this.$image = this.shadowRoot.querySelector('#image');
     this.$name = this.shadowRoot.querySelector('#name');
 
-    this.setNode(null);
+    this.node = null;
     this.dataset.small = 'false';
 
     this.updateImage();
+    this.updateTooltip();
 
     this.addEventListener('click', () => {
       requestAnimationFrame(() => {
-        this.dispatchEvent(new CustomEvent('bookmark-clicked', {
+        let customEvent = new CustomEvent('bookmark-clicked', {
           detail: { node: this._node },
-        }));
+        });
+
+        this.dispatchEvent(customEvent);
       });
     });
   }
 
-  getNode() {
+  attributeChangedCallback(attrName) {
+    switch (attrName) {
+      case 'data-small':
+        this.updateTooltip();
+        break;
+    }
+  }
+
+  get node() {
     return this._node;
   }
 
-  setNode(node) {
+  set node(node) {
     this._node = node;
     this.updateImage();
 
     if (node) {
       this.$link.href = node.url || '#';
       this.$name.textContent = node.title || '';
+      this.updateTooltip();
     } else {
       this.$link.href = '#';
       this.$name.textContent = '';
@@ -54,10 +66,16 @@ class XBookmarkImpl extends HTMLElement {
       this.$image.src = 'chrome://favicon';
     }
   }
+
+  updateTooltip() {
+    if (this.dataset.small === 'true') {
+      this.title = this.$name.textContent;
+    } else {
+      this.title = '';
+    }
+  }
 }
 
-let XBookmark = document.registerElement('x-bookmark', XBookmarkImpl);
-
-app.XBookmark = XBookmark;
+app.XBookmark = document.registerElement('x-bookmark', XBookmark);
 
 })(window.app = window.app || {});

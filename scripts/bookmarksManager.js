@@ -67,7 +67,7 @@ let bookmarksManager = {
         $bookmarksDrawerItems.appendChild(bookmark);
       }
 
-      bookmark.setNode(child);
+      bookmark.node = child;
     });
   },
 
