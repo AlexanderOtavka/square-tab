@@ -1,3 +1,9 @@
+:root {
+  --input-size: 12px;
+  --input-margin: 4px;
+  --indent-size: calc(var(--input-size) + var(--input-margin) * 2)
+}
+
 body {
   font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
   width: 220px;
@@ -12,9 +18,13 @@ h1 {
 }
 
 input[type=checkbox] {
-  width: 12px;
-  height: 12px;
-  margin: 4px;
+  width: var(--input-size);
+  height: var(--input-size);
+  margin: var(--input-margin);
+}
+
+input[disabled] ~ .label {
+  color: #545454;
 }
 
 label.checkbox-container {
@@ -23,17 +33,17 @@ label.checkbox-container {
   align-items: flex-start;
 }
 
-label.checkbox-container span {
-  margin: 3px 0 3px 8px;
+label.checkbox-container .label {
+  margin: 3px 0 3px 4px;
   line-height: 14px;
 }
 
-label.disabled {
-  opacity: .5;
+.child-1 {
+  margin-left: var(--indent-size);
 }
 
-.child-1 {
-  margin-left: 24px;
+.child-2 {
+  margin-left: calc(var(--indent-size) * 2);
 }
 
 #settings {

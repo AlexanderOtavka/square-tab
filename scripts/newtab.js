@@ -46,6 +46,7 @@ settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
                            updateBookmarkDrawerLock);
 settings.addChangeListener(settings.keys.BOOKMARKS_DRAWER_SMALL,
                            updateBookmarkDrawerSmall);
+settings.addChangeListener(settings.keys.BOXED_INFO, updateBoxedInfo);
 
 // Load cached image
 chrome.storage.local.get(
@@ -130,6 +131,10 @@ function updateBookmarkDrawerLock(alwaysShowBookmarks) {
 function updateBookmarkDrawerSmall(drawerSmall) {
   $root.classList.toggle('bookmarks-drawer-small', drawerSmall);
   bookmarksManager.updateSize(drawerSmall);
+}
+
+function updateBoxedInfo(boxedInfo) {
+  $root.classList.toggle('boxed-info', boxedInfo);
 }
 
 })(window.app = window.app || {});
