@@ -32,6 +32,13 @@ settings.loaded.then(() => {
 
   // Don't show anything until the settings have loaded
   $body.removeAttribute('unresolved');
+  $body.animate([
+      { opacity: 0 },
+      { opacity: 1 },
+    ], {
+      duration: 200,
+      easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    });
 });
 
 // Handle changes to settings

@@ -11,15 +11,9 @@
 body {
   font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
   overflow: hidden;
-  transition: opacity 200ms;
 }
 
-body[unresolved] {
-  pointer-events: none;
-  opacity: 0;
-}
-
-[hidden] {
+body[unresolved], [hidden] {
   display: none !important;
 }
 
@@ -48,8 +42,8 @@ span.title {
     rgba(0, 0, 0, .15),
     rgba(0, 0, 0, 0) 60%
   );
-  padding: 32px;
-  margin: -32px;
+  padding: 24px;
+  margin: -24px;
 }
 
 .large-icon {
