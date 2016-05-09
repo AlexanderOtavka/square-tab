@@ -19,13 +19,11 @@ class XBookmark extends HTMLElement {
     this.updateTooltip();
 
     this.addEventListener('click', () => {
-      requestAnimationFrame(() => {
-        let customEvent = new CustomEvent('bookmark-clicked', {
-          detail: { node: this._node },
-        });
-
-        this.dispatchEvent(customEvent);
+      let customEvent = new CustomEvent('bookmark-clicked', {
+        detail: { node: this._node },
       });
+
+      requestAnimationFrame(() => this.dispatchEvent(customEvent));
     });
   }
 
@@ -44,32 +42,31 @@ class XBookmark extends HTMLElement {
   set node(node) {
     this._node = node;
     this.updateImage();
+    this.updateTooltip();
 
-    if (node) {
-      this.$link.href = node.url || '#';
-      this.$name.textContent = node.title || '';
-      this.updateTooltip();
-    } else {
-      this.$link.href = '#';
-      this.$name.textContent = '';
-    }
+    this.$link.href = this.url;
+    this.$name.textContent = this.name;
+  }
+
+  get name() {
+    return this.node ? (this.node.title || this.node.url || '') : '';
+  }
+
+  get url() {
+    return this.node ? (this.node.url || '#') : '#';
   }
 
   updateImage() {
-    if (this._node) {
-      if (this._node.url) {
-        this.$image.src = `chrome://favicon/${this._node.url}`;
-      } else {
-        this.$image.src = '/images/folder-outline.svg';
-      }
+    if (this.node && !this.node.url) {
+      this.$image.src = '/images/folder-outline.svg';
     } else {
-      this.$image.src = 'chrome://favicon';
+      this.$image.src = `chrome://favicon/${this.url}`;
     }
   }
 
   updateTooltip() {
     if (this.dataset.small === 'true') {
-      this.title = this.$name.textContent;
+      this.title = this.name;
     } else {
       this.title = '';
     }
