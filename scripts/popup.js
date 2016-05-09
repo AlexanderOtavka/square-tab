@@ -6,49 +6,31 @@ const {
 } = app;
 
 const $alwaysShowBookmarks = document.querySelector('#always-show-bookmarks');
-const $alwaysShowBookmarksCB = $alwaysShowBookmarks.querySelector('input');
 const $bookmarksDrawerSmall = document.querySelector('#bookmarks-drawer-small');
-const $bookmarksDrawerSmallCB = $bookmarksDrawerSmall.querySelector('input');
 const $boxedInfo = document.querySelector('#boxed-info');
-const $boxedInfoCB = $boxedInfo.querySelector('input');
 const $about = document.querySelector('#about');
 
-// Always show bookmarks
-$alwaysShowBookmarks.addEventListener('click', () => {
-  let value = $alwaysShowBookmarksCB.checked;
-  settings.set(settings.keys.ALWAYS_SHOW_BOOKMARKS, value);
-});
-
-settings.addDataChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS, data => {
-  $alwaysShowBookmarksCB.checked = data.value;
-  $alwaysShowBookmarksCB.disabled = data.override !== undefined;
-});
-
-// Bookmarks drawer small
-$bookmarksDrawerSmall.addEventListener('click', () => {
-  let value = $bookmarksDrawerSmallCB.checked;
-  settings.set(settings.keys.BOOKMARKS_DRAWER_SMALL, value);
-});
-
-settings.addDataChangeListener(settings.keys.BOOKMARKS_DRAWER_SMALL, data => {
-  $bookmarksDrawerSmallCB.checked = data.value;
-  $bookmarksDrawerSmallCB.disabled = data.override !== undefined;
-});
-
-// Boxed info
-$boxedInfo.addEventListener('click', () => {
-  let value = $boxedInfoCB.checked;
-  settings.set(settings.keys.BOXED_INFO, value);
-});
-
-settings.addDataChangeListener(settings.keys.BOXED_INFO, data => {
-  $boxedInfoCB.checked = data.value;
-  $boxedInfoCB.disabled = data.override !== undefined;
-});
+bindCheckbox($alwaysShowBookmarks, settings.keys.ALWAYS_SHOW_BOOKMARKS);
+bindCheckbox($bookmarksDrawerSmall, settings.keys.BOOKMARKS_DRAWER_SMALL);
+bindCheckbox($boxedInfo, settings.keys.BOXED_INFO);
 
 // About link
 $about.addEventListener('click', () => {
   chrome.tabs.create({ url: $about.href });
 });
+
+function bindCheckbox($wrapper, settingKey) {
+  const $checkbox = $wrapper.querySelector('input[type=checkbox]');
+
+  $wrapper.addEventListener('click', () => {
+    let value = $checkbox.checked;
+    settings.set(settingKey, value);
+  });
+
+  settings.addDataChangeListener(settingKey, data => {
+    $checkbox.checked = data.value;
+    $checkbox.disabled = data.override !== undefined;
+  });
+}
 
 })(window.app = window.app || {});
