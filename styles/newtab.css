@@ -4,7 +4,7 @@
   --drawer-header-height: 68px;
 }
 
-:root.bookmarks-drawer-locked-open.bookmarks-drawer-small {
+:root.bookmarks-drawer-small {
   --drawer-width: 64px;
 }
 
@@ -89,23 +89,22 @@ span.title {
   left: 0;
 }
 
-.bookmarks-drawer-locked-open #bookmarks-open-button {
+.bookmarks-drawer-locked-open #bookmarks-open-button-wrapper {
   display: none;
 }
 
 #info-wrapper {
-  --shadow: 0 0 10px rgba(0, 0, 0, .5);
+  --shadow: 0 0 20px rgba(0, 0, 0, .5);
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   text-shadow: var(--shadow);
-  text-align: center;
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
@@ -117,25 +116,33 @@ span.title {
   right: var(--drawer-width);
 }
 
-.boxed-info #info-box {
+#info-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
-  border: 8px solid white;
-  box-shadow: var(--shadow);
   padding: 8px;
+  min-width: 210px;
 }
 
-.boxed-info #info-box::before {
+.boxed-info #info-box {
+  border: 8px solid #fff;
+  box-shadow: var(--shadow);
+}
+
+.boxed-info #info-box::after {
   content: "";
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+  z-index: -1;
   box-shadow: var(--shadow) inset;
 }
 
 #info-box > * {
-  padding: 8px;
+  margin: 8px;
 }
 
 #time {
@@ -163,7 +170,6 @@ span.title {
 #temperature {
   font-size: 2rem;
   font-weight: 300;
-  color: #fff;
   padding-left: 16px;
 }
 
@@ -189,7 +195,7 @@ span.title {
   background: rgba(255, 255, 255, 0.9);
 }
 
-.bookmarks-drawer-locked-open.bookmarks-drawer-small #bookmarks-drawer-title {
+.bookmarks-drawer-small #bookmarks-drawer-title {
   display: none;
 }
 
