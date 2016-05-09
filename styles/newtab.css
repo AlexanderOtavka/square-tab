@@ -9,7 +9,7 @@
 }
 
 body {
-  font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
   overflow: hidden;
 }
 
@@ -104,6 +104,7 @@ span.title {
   right: 0;
   bottom: 0;
   left: 0;
+  font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
   text-shadow: var(--shadow);
   -webkit-user-select: none;
   user-select: none;
