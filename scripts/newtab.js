@@ -11,6 +11,7 @@ const {
 
 const $root = document.documentElement;
 const $body = document.body;
+const $backgroundImage = document.querySelector('#background-image');
 const $time = document.querySelector('#time');
 const $greeting = document.querySelector('#greeting');
 const $bookmarksOpenButton = document.querySelector('#bookmarks-open-button');
@@ -33,11 +34,21 @@ settings.loaded.then(() => {
 
   // Don't show anything until the settings have loaded
   $body.removeAttribute('unresolved');
+  $body.animate([
+      { opacity: 0 },
+      { opacity: 1 },
+    ], {
+      duration: 200,
+      easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    });
 });
 
 // Handle changes to settings
 settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
                            updateBookmarkDrawerLock);
+settings.addChangeListener(settings.keys.BOOKMARKS_DRAWER_SMALL,
+                           updateBookmarkDrawerSmall);
+settings.addChangeListener(settings.keys.BOXED_INFO, updateBoxedInfo);
 
 settings.addChangeListener(settings.keys.SHOW_WEATHER,
                           toggleWeather);
@@ -56,7 +67,7 @@ chrome.storage.local.get(
       imageURL = IMAGE_RESOURCE_URI;
     }
 
-    $root.style.setProperty('--background-image', `url("${imageURL}")`);
+    $backgroundImage.src = imageURL;
   }
 );
 
@@ -113,16 +124,25 @@ function updateTime() {
 }
 
 function openBookmarks() {
-  $body.classList.add('bookmarks-drawer-open');
+  $root.classList.add('bookmarks-drawer-open');
 }
 
 function closeBookmarks() {
-  $body.classList.remove('bookmarks-drawer-open');
+  $root.classList.remove('bookmarks-drawer-open');
 }
 
 function updateBookmarkDrawerLock(alwaysShowBookmarks) {
-  $body.classList.remove('bookmarks-drawer-open');
-  $body.classList.toggle('bookmarks-drawer-locked-open', alwaysShowBookmarks);
+  $root.classList.remove('bookmarks-drawer-open');
+  $root.classList.toggle('bookmarks-drawer-locked-open', alwaysShowBookmarks);
+}
+
+function updateBookmarkDrawerSmall(drawerSmall) {
+  $root.classList.toggle('bookmarks-drawer-small', drawerSmall);
+  bookmarksManager.updateSize(drawerSmall);
+}
+
+function updateBoxedInfo(boxedInfo) {
+  $root.classList.toggle('boxed-info', boxedInfo);
 }
 
 function toggleWeather(showWeather) {
