@@ -34,10 +34,17 @@
       <span class="label">Show Weather</span>
     </label>
 
-    <label id="use-celsius" class="child-1 checkbox-container">
-      <input type="checkbox" />
-      <span class="label">Temperature in Celsius</span>
-    </label>
+    <div id="temperature-unit" class="child-1">
+      <label>
+        <input type="radio" name="TEMPERATURE_UNIT" value="FAHRENHEIT" />
+        <span class="label">&deg;F</span>
+      </label>
+
+      <label>
+        <input type="radio" name="TEMPERATURE_UNIT" value="CELCIUS" />
+        <span class="label">&deg;C</span>
+      </label>
+    </div>
   </div>
 
   <a

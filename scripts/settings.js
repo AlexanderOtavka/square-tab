@@ -1,12 +1,17 @@
 (function (app) {
 'use strict';
 
+let TemperatureUnits = {
+  CELCIUS: 'c',
+  FAHRENHEIT: 'f',
+};
+
 let keys = {
   ALWAYS_SHOW_BOOKMARKS: 'alwaysShowBookmarks',
   BOOKMARKS_DRAWER_SMALL: 'bookmarksDrawerSmall',
   BOXED_INFO: 'boxedInfo',
   SHOW_WEATHER: 'showWeather',
-  USE_CELSIUS: 'useCelsius',
+  TEMPERATURE_UNIT: 'temperatureUnit',
 };
 
 // The default values of each setting if they are not saved in storage.
@@ -15,7 +20,7 @@ let _defaults = {
   [keys.BOOKMARKS_DRAWER_SMALL]: true,
   [keys.BOXED_INFO]: true,
   [keys.SHOW_WEATHER]: true,
-  [keys.USE_CELSIUS]: false,
+  [keys.TEMPERATURE_UNIT]: TemperatureUnits.FAHRENHEIT,
 };
 
 // Listeners attached to particular settings that set or unset overrides on
@@ -31,9 +36,9 @@ let _overrides = {
 
   [keys.SHOW_WEATHER]: value => {
     if (!value) {
-      _setOverride(keys.USE_CELSIUS, null);
+      _setOverride(keys.TEMPERATURE_UNIT, null);
     } else {
-      _unsetOverride(keys.USE_CELSIUS);
+      _unsetOverride(keys.TEMPERATURE_UNIT);
     }
   },
 };
@@ -117,6 +122,7 @@ function _setDataProperty(storageKey, property, value, forceNotify) {
 }
 
 function get(storageKey) {
+  console.assert(_storageKeysArray.indexOf(storageKey) !== -1);
   if (_data[storageKey].override !== undefined) {
     return _data[storageKey].override;
   } else if (_data[storageKey].value !== undefined) {
@@ -127,6 +133,7 @@ function get(storageKey) {
 }
 
 function getData(storageKey) {
+  console.assert(_storageKeysArray.indexOf(storageKey) !== -1);
   let d = _data[storageKey];
   let value = d.value;
   if (value === undefined) {
@@ -137,18 +144,22 @@ function getData(storageKey) {
 }
 
 function set(storageKey, value) {
+  console.assert(_storageKeysArray.indexOf(storageKey) !== -1);
   chrome.storage.sync.set({ [storageKey]: value });
 }
 
 function addChangeListener(storageKey, callback) {
+  console.assert(_storageKeysArray.indexOf(storageKey) !== -1);
   _data[storageKey].valueListeners.push(callback);
 }
 
 function addDataChangeListener(storageKey, callback) {
+  console.assert(_storageKeysArray.indexOf(storageKey) !== -1);
   _data[storageKey].dataListeners.push(callback);
 }
 
 app.settings = {
+  TemperatureUnits,
   keys,
   loaded,
   get,

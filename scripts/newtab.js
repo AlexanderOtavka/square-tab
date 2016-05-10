@@ -29,8 +29,7 @@ const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature/' +
 
 // Handle initial settings load
 settings.loaded.then(() => {
-  weather.display();
-  //weather.updateTemperatureUnit(settings.keys.USE_CELSIUS);
+  weather.load();
 
   // Don't show anything until the settings have loaded
   $body.removeAttribute('unresolved');
@@ -49,12 +48,9 @@ settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
 settings.addChangeListener(settings.keys.BOOKMARKS_DRAWER_SMALL,
                            updateBookmarkDrawerSmall);
 settings.addChangeListener(settings.keys.BOXED_INFO, updateBoxedInfo);
-
-settings.addChangeListener(settings.keys.SHOW_WEATHER,
-                          toggleWeather);
-
-settings.addChangeListener(settings.keys.USE_CELSIUS,
-                         weather.updateTemperatureUnit);
+settings.addChangeListener(settings.keys.SHOW_WEATHER, toggleWeather);
+settings.addChangeListener(settings.keys.TEMPERATURE_UNIT,
+                           weather.updateTemperatureUnit);
 
 // Load cached image
 chrome.storage.local.get(
