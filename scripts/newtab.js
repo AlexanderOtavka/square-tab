@@ -24,8 +24,10 @@ const $weatherWrapper = document.querySelector('#weather-wrapper');
 const STORAGE_KEY_IMAGE_DATA = 'imgData';
 const WINDOW_HEIGHT = window.screen.availHeight;
 const WINDOW_WIDTH = window.screen.availWidth;
+const PIXEL_RATIO = window.devicePixelRatio;
 const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature/' +
-                           `${WINDOW_WIDTH}x${WINDOW_HEIGHT}`;
+                           `${WINDOW_WIDTH * PIXEL_RATIO}x${WINDOW_HEIGHT * PIXEL_RATIO}`;
+console.log(IMAGE_RESOURCE_URI);
 
 // Handle initial settings load
 settings.loaded.then(() => {
