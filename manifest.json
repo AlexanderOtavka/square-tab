@@ -24,5 +24,10 @@
     },
     "default_title": "Clean Tab",
     "default_popup": "views/popup.html"
+  },
+
+  "background": {
+    "scripts": ["scripts/eventPage.js"],
+    "persistent": false
   }
 }

@@ -15,14 +15,6 @@ function load() {
     isLoaded = true;
 
     if (navigator.geolocation) {
-      chrome.storage.local.get(
-        STORAGE_KEY_WEATHER_DATA,
-        ({ [STORAGE_KEY_WEATHER_DATA]: jsonWeatherData }) => {
-          let data = JSON.parse(jsonWeatherData);
-          _updateWeather(data);
-        }
-      );
-
       navigator.geolocation.getCurrentPosition(position => {
         const WEATHER_RESOURCE =
           'http://api.openweathermap.org/data/2.5/weather';
@@ -52,9 +44,22 @@ function load() {
             });
           });
       });
+
+      return new Promise(resolve => {
+        chrome.storage.local.get(
+          STORAGE_KEY_WEATHER_DATA,
+          ({ [STORAGE_KEY_WEATHER_DATA]: data }) => resolve(data)
+        );
+      })
+        .then(jsonWeatherData => {
+          let data = JSON.parse(jsonWeatherData);
+          _updateWeather(data);
+        });
     } else {
-      console.error('Geolocation is not supported!');
+      return Promise.reject(new Error('Geolocation is not supported!'));
     }
+  } else {
+    return Promise.resolve();
   }
 }
 
