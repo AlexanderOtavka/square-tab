@@ -3,8 +3,6 @@
 
 const {
   bookmarksManager,
-  encodeUint8Array,
-  readBlob,
   weather,
   settings,
 } = app;
@@ -22,27 +20,42 @@ const $drawerBackdrop = document.querySelector('#drawer-backdrop');
 const $weatherWrapper = document.querySelector('#weather-wrapper');
 
 const STORAGE_KEY_IMAGE_DATA = 'imgData';
-const WINDOW_HEIGHT = window.screen.availHeight;
-const WINDOW_WIDTH = window.screen.availWidth;
-const PIXEL_RATIO = window.devicePixelRatio;
-const IMAGE_RESOURCE_URI = 'https://source.unsplash.com/category/nature/' +
-                           `${WINDOW_WIDTH * PIXEL_RATIO}x${WINDOW_HEIGHT * PIXEL_RATIO}`;
-console.log(IMAGE_RESOURCE_URI);
 
-// Handle initial settings load
-settings.loaded.then(() => {
-  weather.load();
+let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
+let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
+let imageResourceURI = 'https://source.unsplash.com/category/nature/' +
+                       `${screenPxWidth}x${screenPxHeight}`;
 
-  // Don't show anything until the settings have loaded
-  $body.removeAttribute('unresolved');
-  $body.animate([
-      { opacity: 0 },
-      { opacity: 1 },
-    ], {
-      duration: 200,
-      easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-    });
-});
+// Load cached image
+let backgroundImageReady = new Promise(resolve => {
+  chrome.storage.local.get(
+    STORAGE_KEY_IMAGE_DATA,
+    ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => resolve(imageData)
+  );
+})
+  .then(imageData => {
+    let imageURL;
+    if (imageData) {
+      imageURL = `data:image/jpg;base64,${imageData}`;
+    } else {
+      imageURL = imageResourceURI;
+    }
+
+    $backgroundImage.src = imageURL;
+  });
+
+// Don't show anything until the settings and background image are ready
+Promise.all([settings.loaded, backgroundImageReady])
+  .then(() => {
+    $body.removeAttribute('unresolved');
+    $body.animate([
+        { opacity: 0 },
+        { opacity: 1 },
+      ], {
+        duration: 200,
+        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+      });
+  });
 
 // Handle changes to settings
 settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
@@ -50,33 +63,14 @@ settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
 settings.addChangeListener(settings.keys.BOOKMARKS_DRAWER_SMALL,
                            updateBookmarkDrawerSmall);
 settings.addChangeListener(settings.keys.BOXED_INFO, updateBoxedInfo);
-settings.addChangeListener(settings.keys.SHOW_WEATHER, toggleWeather);
+settings.addChangeListener(settings.keys.SHOW_WEATHER, updateShowWeather);
 settings.addChangeListener(settings.keys.TEMPERATURE_UNIT,
                            weather.updateTemperatureUnit);
 
-// Load cached image
-chrome.storage.local.get(
-  STORAGE_KEY_IMAGE_DATA,
-  ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => {
-    let imageURL;
-    if (imageData) {
-      imageURL = `data:image/jpg;base64,${imageData}`;
-    } else {
-      imageURL = IMAGE_RESOURCE_URI;
-    }
-
-    $backgroundImage.src = imageURL;
-  }
-);
-
-// Fetch and cache a new image
-fetch(IMAGE_RESOURCE_URI)
-  .then(resp => readBlob(resp.body.getReader()))
-  .then(blob => {
-    chrome.storage.local.set({
-      [STORAGE_KEY_IMAGE_DATA]: encodeUint8Array(blob),
-    });
-  });
+// Fetch and cache a new image in the background
+chrome.runtime.getBackgroundPage(eventPage => {
+  eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA);
+});
 
 // Handle bookmarks up navigation
 $bookmarksUpButton.addEventListener('click', () => {
@@ -143,8 +137,13 @@ function updateBoxedInfo(boxedInfo) {
   $root.classList.toggle('boxed-info', boxedInfo);
 }
 
-function toggleWeather(showWeather) {
-  $weatherWrapper.hidden = !showWeather;
+function updateShowWeather(showWeather) {
+  if (showWeather) {
+    return weather.load().then(() => $weatherWrapper.hidden = false);
+  } else {
+    $weatherWrapper.hidden = true;
+    return Promise.resolve();
+  }
 }
 
 })(window.app = window.app || {});

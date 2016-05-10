@@ -1,10 +1,38 @@
-(function (app) {
 'use strict';
+
+function fetchAndCacheImage(resourceURI, storageKey) {
+  fetch(resourceURI)
+    .then(resp => _readBlob(resp.body.getReader()))
+    .then(blob => {
+      chrome.storage.local.set({
+        [storageKey]: _encodeUint8Array(blob),
+      });
+    });
+}
+
+function _readBlob(reader, blobs = []) {
+  return reader.read().then(({ done, value }) => {
+    if (!done) {
+      blobs.push(value);
+      return _readBlob(reader, blobs);
+    } else {
+      let size = blobs.reduce((sum, blob) => sum + blob.length, 0);
+      let fullBlob = new Uint8Array(size);
+      let lastIndex = 0;
+      blobs.forEach(blob => {
+        fullBlob.set(blob, lastIndex);
+        lastIndex += blob.length;
+      });
+
+      return fullBlob;
+    }
+  });
+}
 
 /**
  * Encode Uint8Array to base64 string.
  */
-function encodeUint8Array(input) {
+function _encodeUint8Array(input) {
   // I don't know how this works; taken from:
   // https://stackoverflow.com/questions/11089732/display-image-from-blob-using-
   // javascript-and-websockets/11092371#11092371
@@ -40,6 +68,4 @@ function encodeUint8Array(input) {
   return output;
 }
 
-app.encodeUint8Array = encodeUint8Array;
-
-})(window.app = window.app || {});
+window.fetchAndCacheImage = fetchAndCacheImage;
