@@ -5,31 +5,60 @@ const $weatherIcon = document.querySelector('#weather-icon');
 const $temperature = document.querySelector('#temperature');
 const { settings } = app;
 
-let tempF;
-let tempC;
-
 const STORAGE_KEY_WEATHER_DATA = 'weatherData';
 
-function display() {
-  if (navigator.geolocation) {
+let isLoaded = false;
+let temperatureC;
 
-    chrome.storage.local.get(
-      STORAGE_KEY_WEATHER_DATA,
-      ({ [STORAGE_KEY_WEATHER_DATA]: weatherData }) => {
-        let jsonWeatherData = JSON.parse(weatherData);
-        useWeatherData(jsonWeatherData);
-      }
-    );
+function load() {
+  if (!isLoaded) {
+    isLoaded = true;
 
-    navigator.geolocation.getCurrentPosition(getWeather);
+    if (navigator.geolocation) {
+      chrome.storage.local.get(
+        STORAGE_KEY_WEATHER_DATA,
+        ({ [STORAGE_KEY_WEATHER_DATA]: jsonWeatherData }) => {
+          let data = JSON.parse(jsonWeatherData);
+          _updateWeather(data);
+        }
+      );
 
-  } else {
-    console.error('Geolocation is not supported by this browser!');
+      navigator.geolocation.getCurrentPosition(position => {
+        const WEATHER_RESOURCE =
+          'http://api.openweathermap.org/data/2.5/weather';
+        const API_KEY = '55c2586d12873c5d39e99b0dea411dc2';
+        let lat = position.coords.latitude;
+        let long = position.coords.longitude;
+        let qry = `lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
+
+        fetch(`${WEATHER_RESOURCE}?${qry}`, {
+          method: 'GET',
+          mode: 'cors',
+          cache: 'default',
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new TypeError(
+                `Weather request failed with status: ${response.status}`
+              );
+            }
+          })
+          .then(data => {
+            _updateWeather(data);
+            chrome.storage.local.set({
+              [STORAGE_KEY_WEATHER_DATA]: JSON.stringify(data),
+            });
+          });
+      });
+    } else {
+      console.error('Geolocation is not supported!');
+    }
   }
-
 }
 
-function useWeatherData(weatherData) {
+function _updateWeather(weatherData) {
   const S_CLOUDS = 'SCATTERED CLOUDS';
   const B_CLOUDS = 'BROKEN CLOUDS';
   const L_RAIN = 'LIGHT RAIN';
@@ -44,8 +73,7 @@ function useWeatherData(weatherData) {
   let main = weatherData.weather[0].main.toUpperCase();
   let description = weatherData.weather[0].description.toUpperCase();
 
-  tempF = Math.round(((weatherData.main.temp * 9) / 5) + 32);
-  tempC = Math.round(weatherData.main.temp);
+  temperatureC = Math.round(weatherData.main.temp);
 
   let date = new Date();
   let hours = date.getHours();
@@ -86,61 +114,30 @@ function useWeatherData(weatherData) {
     $weatherIcon.src = '../images/weather/storm.png';
   } else if (main === EXTREME) {
     $weatherIcon.src = '../images/weather/warning.png';
-  }else if (main === SNOW) {
+  } else if (main === SNOW) {
     $weatherIcon.src = '../images/weather/snow.png';
   } else {
     $weatherIcon.src = '';
   }
 
-  let useC = settings.get(settings.keys.USE_CELSIUS);
-
-  if (useC) {
-    $temperature.textContent = `${tempC} °C`;
-  } else {
-    $temperature.textContent = `${tempF} °F`;
-  }
-
+  let unit = settings.get(settings.keys.TEMPERATURE_UNIT);
+  updateTemperatureUnit(unit);
 }
 
-function getWeather(position) {
-  const API_KEY = '55c2586d12873c5d39e99b0dea411dc2';
-  const LAT = position.coords.latitude;
-  const LONG = position.coords.longitude;
-
-  const INIT = {
-    method: 'GET',
-    mode: 'cors',
-    cache: 'default',
-  };
-
-  let url = 'http://api.openweathermap.org/data/2.5/weather?';
-  const FINAL_URL =
-    `${url}&lat=${LAT}&lon=${LONG}&APPID=${API_KEY}&units=metric`;
-  fetch(FINAL_URL, INIT)
-    .then(response => {
-      if (response.status !== 200) {
-        console.warn(
-          `Looks like there was a problem. Status Code: ${response.status}`);
-        return;
-      }
-
-      response.json().then(data => {
-        useWeatherData(data);
-        chrome.storage.local.set({
-          [STORAGE_KEY_WEATHER_DATA]: JSON.stringify(data),
-        });
-      });
-    });
-}
-
-function updateTemperatureUnit(useCelsius) {
-  if (useCelsius) {
-    $temperature.textContent = `${tempC} °C`;
-  } else {
-    $temperature.textContent = `${tempF} °F`;
+function updateTemperatureUnit(unit) {
+  switch (unit) {
+    case settings.TemperatureUnits.CELCIUS:
+      $temperature.textContent = `${temperatureC} °C`;
+      break;
+    case settings.TemperatureUnits.FAHRENHEIT:
+      let temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
+      $temperature.textContent = `${temperatureF} °F`;
+      break;
+    default:
+      $temperature.textContent = '';
   }
 }
 
-app.weather = { display, updateTemperatureUnit };
+app.weather = { load, updateTemperatureUnit };
 
 })(window.app = window.app || {});

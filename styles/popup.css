@@ -1,5 +1,5 @@
 :root {
-  --input-size: 12px;
+  --input-size: 14px;
   --input-margin: 4px;
   --indent-size: calc(var(--input-size) + var(--input-margin) * 2)
 }
@@ -17,7 +17,8 @@ h1 {
   cursor: default;
 }
 
-input[type=checkbox] {
+input[type=checkbox],
+input[type=radio] {
   width: var(--input-size);
   height: var(--input-size);
   margin: var(--input-margin);
@@ -34,7 +35,7 @@ label.checkbox-container {
 }
 
 label.checkbox-container .label {
-  margin: 3px 0 3px 4px;
+  padding: 4px;
   line-height: 14px;
 }
 
@@ -50,7 +51,7 @@ label.checkbox-container .label {
   margin: 8px;
 }
 
-#about {
+#github {
   display: block;
   font-weight: bold;
   text-align: center;
@@ -60,6 +61,6 @@ label.checkbox-container .label {
   padding: 8px;
 }
 
-#about:hover {
+#github:hover {
   text-decoration: underline;
 }
