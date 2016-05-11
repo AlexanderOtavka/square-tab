@@ -1,14 +1,17 @@
 :root {
   --drawer-width: 300px;
   --drawer-transition-duration: 400ms;
+  --drawer-header-height: 68px;
+}
+
+:root.bookmarks-drawer-small {
+  --drawer-width: 64px;
 }
 
 body {
-  font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
-  margin: 0;
-  background: var(--background-image) no-repeat center center fixed;
-  background-size: cover;
+  font-family: 'Helvetica Neue', sans-serif;
   overflow: hidden;
+  margin: 0;
 }
 
 body[unresolved], [hidden] {
@@ -20,14 +23,14 @@ body[unresolved], [hidden] {
   flex-direction: row;
   align-items: center;
   padding: 16px;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 span.title {
   flex-grow: 1;
   font-size: 1.3rem;
-  margin: 4px 8px;
-  -webkit-user-select: none;
-  user-select: none;
+  margin: 0 8px;
   cursor: default;
   white-space: nowrap;
   overflow: hidden;
@@ -40,8 +43,8 @@ span.title {
     rgba(0, 0, 0, .15),
     rgba(0, 0, 0, 0) 60%
   );
-  padding: 32px;
-  margin: -32px;
+  padding: 24px;
+  margin: -24px;
 }
 
 .large-icon {
@@ -53,6 +56,8 @@ span.title {
 .icon-button {
   border-radius: 50%;
   cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 200ms;
 }
 
 .icon-button:active {
@@ -64,7 +69,16 @@ span.title {
   top: 0;
   right: 0;
   left: 0;
+  height: calc(var(--drawer-header-height) - 1px);
   border-bottom: 1px solid rgba(0, 0, 0, .2);;
+}
+
+#background-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -999;
+  object-fit: cover;
 }
 
 #main-toolbar {
@@ -75,61 +89,89 @@ span.title {
   left: 0;
 }
 
-.bookmarks-drawer-locked-open #bookmarks-open-button {
+.bookmarks-drawer-locked-open #bookmarks-open-button-wrapper {
   display: none;
 }
 
-#time-wrapper {
+#info-wrapper {
+  --shadow: 0 0 20px rgba(0, 0, 0, .5);
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-shadow: 0 0 10px rgba(0, 0, 0, .5);
+  font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
+  text-shadow: var(--shadow);
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
+  color: #fff;
   transition: right var(--drawer-transition-duration);
+}
+
+.bookmarks-drawer-locked-open #info-wrapper {
+  right: var(--drawer-width);
+}
+
+#info-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 8px;
+  min-width: 210px;
+}
+
+.boxed-info #info-box {
+  border: 8px solid #fff;
+  box-shadow: var(--shadow);
+}
+
+.boxed-info #info-box::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  box-shadow: var(--shadow) inset;
+}
+
+#info-box > * {
+  margin: 8px;
+}
+
+#time {
+  font-size: 4rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+#greeting {
+  font-size: 1.5rem;
+  font-weight: 300;
 }
 
 #weather-wrapper {
   display: inline-flex;
   flex-direction: row;
   align-items: flex-start;
-  margin: 16px;
+}
+
+#weather-icon {
+  width: 40px;
+  height: 40px;
 }
 
 #temperature {
   font-size: 2rem;
   font-weight: 300;
-  color: #fff;
   padding-left: 16px;
-}
-
-#weather-icon {
-  width: 60px;
-  height: 60px;
-}
-
-.bookmarks-drawer-locked-open #time-wrapper {
-  right: var(--drawer-width);
-}
-
-#time {
-  font-size: 4rem;
-  font-weight: 400;
-  color: #fff;
-  padding: 8px;
-}
-
-#greeting {
-  font-size: 1.5rem;
-  font-weight: 300;
-  color: #fff;
 }
 
 #bookmarks-drawer {
@@ -141,7 +183,7 @@ span.title {
   width: var(--drawer-width);
   background: #fff;
   box-shadow: 0 0 8px rgba(0, 0, 0, .7);
-  transition: right var(--drawer-transition-duration);
+  transition: all var(--drawer-transition-duration);
 }
 
 .bookmarks-drawer-open #bookmarks-drawer,
@@ -154,13 +196,17 @@ span.title {
   background: rgba(255, 255, 255, 0.9);
 }
 
+.bookmarks-drawer-small #bookmarks-drawer-title {
+  display: none;
+}
+
 .bookmarks-drawer-locked-open #bookmarks-close-button {
   display: none;
 }
 
 #bookmarks-drawer-items {
   position: absolute;
-  top: 69px;
+  top: var(--drawer-header-height);
   right: 0;
   bottom: 0;
   left: 0;
