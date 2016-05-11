@@ -59,7 +59,6 @@ weather.onDataLoad.addListener(() => {
 settings.loaded.then(() => {
   if (settings.get(settings.keys.USE_TIME_OF_DAY_IMAGES)) {
     imageResourceURI += `?${getImageTimeOfDay()}`;
-    console.log(imageResourceURI);
   }
 
   chrome.runtime.getBackgroundPage(eventPage => {
