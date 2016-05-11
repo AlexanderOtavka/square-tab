@@ -100,8 +100,8 @@ function getImageTimeOfDay() {
   } else if (5 <= hour && hour < 10) {
     // 5am - 10am
     return 'morning';
-  } else if (19 <= hour && hour < 22) {
-    // 7pm - 10pm
+  } else if (18 <= hour && hour < 22) {
+    // 6pm - 10pm
     return 'evening';
   }
 }
