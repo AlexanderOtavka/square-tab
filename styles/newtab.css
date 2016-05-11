@@ -94,7 +94,6 @@ span.title {
 }
 
 #info-wrapper {
-  --shadow: 0 0 20px rgba(0, 0, 0, .5);
   --scrim: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
@@ -118,27 +117,17 @@ span.title {
 }
 
 #info-box {
-  background: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   padding: 8px;
   min-width: 210px;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .boxed-info #info-box {
   border: 8px solid #fff;
-}
-
-.boxed-info #info-box::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: -1;
 }
 
 #info-box > * {
