@@ -24,7 +24,7 @@ input[type=radio] {
   margin: var(--input-margin);
 }
 
-input[disabled] ~ .label {
+input[disabled] + .label {
   color: #545454;
 }
 

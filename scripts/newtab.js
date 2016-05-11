@@ -24,7 +24,7 @@ const STORAGE_KEY_IMAGE_DATA = 'imgData';
 let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
 let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
 let imageResourceURI = 'https://source.unsplash.com/category/nature/' +
-                       `${screenPxWidth}x${screenPxHeight}`;
+                       `${screenPxWidth}x${screenPxHeight}/`;
 
 // Load cached image
 let backgroundImageReady = new Promise(resolve => {
@@ -73,8 +73,14 @@ weather.onDataLoad.addListener(() => {
 });
 
 // Fetch and cache a new image in the background
-chrome.runtime.getBackgroundPage(eventPage => {
-  eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA);
+settings.loaded.then(() => {
+  if (settings.get(settings.keys.USE_TIME_OF_DAY_IMAGES)) {
+    imageResourceURI += `?${getImageTimeOfDay()}`;
+  }
+
+  chrome.runtime.getBackgroundPage(eventPage => {
+    eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA);
+  });
 });
 
 // Handle bookmarks up navigation
@@ -95,6 +101,20 @@ setInterval(updateTime, 1000);
 $bookmarksOpenButton.addEventListener('click', openBookmarks);
 $bookmarksCloseButton.addEventListener('click', closeBookmarks);
 $drawerBackdrop.addEventListener('click', closeBookmarks);
+
+function getImageTimeOfDay() {
+  let hour = new Date().getHours();
+  if (hour < 5 || 22 <= hour) {
+    // 10pm - 5am
+    return 'night';
+  } else if (5 <= hour && hour < 10) {
+    // 5am - 10am
+    return 'morning';
+  } else if (19 <= hour && hour < 22) {
+    // 7pm - 10pm
+    return 'evening';
+  }
+}
 
 function updateTime() {
   let date = new Date();

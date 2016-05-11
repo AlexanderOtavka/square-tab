@@ -10,6 +10,7 @@ const $bookmarksDrawerSmall = document.querySelector('#bookmarks-drawer-small');
 const $boxedInfo = document.querySelector('#boxed-info');
 const $showWeather = document.querySelector('#show-weather');
 const $temperatureUnit = document.querySelector('#temperature-unit');
+const $todImages = document.querySelector('#tod-images');
 
 bindCheckbox($alwaysShowBookmarks, settings.keys.ALWAYS_SHOW_BOOKMARKS);
 bindCheckbox($bookmarksDrawerSmall, settings.keys.BOOKMARKS_DRAWER_SMALL);
@@ -17,6 +18,7 @@ bindCheckbox($boxedInfo, settings.keys.BOXED_INFO);
 bindCheckbox($showWeather, settings.keys.SHOW_WEATHER);
 bindRadioButtons($temperatureUnit, settings.keys.TEMPERATURE_UNIT,
                  settings.TemperatureUnits);
+bindCheckbox($todImages, settings.keys.USE_TIME_OF_DAY_IMAGES);
 
 function bindCheckbox($wrapper, settingKey) {
   let $checkbox = $wrapper.querySelector('input[type=checkbox]');

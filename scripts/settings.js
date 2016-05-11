@@ -12,6 +12,7 @@ let keys = {
   BOXED_INFO: 'boxedInfo',
   SHOW_WEATHER: 'showWeather',
   TEMPERATURE_UNIT: 'temperatureUnit',
+  USE_TIME_OF_DAY_IMAGES: 'useTimeOfDayImages',
 };
 
 // The default values of each setting if they are not saved in storage.
@@ -21,6 +22,7 @@ let _defaults = {
   [keys.BOXED_INFO]: true,
   [keys.SHOW_WEATHER]: true,
   [keys.TEMPERATURE_UNIT]: TemperatureUnits.FAHRENHEIT,
+  [keys.USE_TIME_OF_DAY_IMAGES]: false,
 };
 
 // Listeners attached to particular settings that set or unset overrides on
@@ -61,13 +63,12 @@ _storageKeysArray.forEach(storageKey => {
 
 let loaded = new Promise(resolve => {
   chrome.storage.sync.get(_storageKeysArray, data => resolve(data));
-});
-
-loaded.then(data => {
-  _storageKeysArray.forEach(storageKey => {
-    _setValue(storageKey, data[storageKey], true);
+})
+  .then(data => {
+    _storageKeysArray.forEach(storageKey => {
+      _setValue(storageKey, data[storageKey], true);
+    });
   });
-});
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'sync') {

@@ -46,7 +46,7 @@ function load() {
     }
   }
 
-  return _initialLoad.then(() => Object.assign({}, _data));
+  return _initialLoad;
 }
 
 function _handleWeatherDataLoad(dataString) {
