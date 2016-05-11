@@ -76,8 +76,24 @@ function _updateWeather(weatherData) {
 
   let date = new Date();
   let hours = date.getHours();
+  let minutes = date.getMinutes();
+  let currentTime = hours + minutes;
+
+  let timerise = weatherData.sys.sunrise * 1000;
+  let timeset = weatherData.sys.sunset * 1000;
+
+  let sunset = new Date(timeset);
+  let sunsetHour = sunset.getHours();
+  let sunsetMinute = sunset.getMinutes() / 60;
+  let sunsetTime = sunsetHour + sunsetMinute;
+
+  let sunrise = new Date(timerise);
+  let sunriseHour = sunrise.getHours();
+  let sunriseMinute = sunrise.getMinutes() / 60;
+  let sunriseTime = sunriseHour + sunriseMinute;
+
   let isNight = false;
-  if (hours < 4 || hours >= 20) {
+  if (currentTime > sunsetTime || currentTime < sunriseTime) {
     isNight = true;
   }
 
