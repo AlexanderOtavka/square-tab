@@ -84,12 +84,12 @@ function _updateWeather(weatherData) {
 
   let sunset = new Date(timeset);
   let sunsetHour = sunset.getHours();
-  let sunsetMinute = sunset.getMinutes();
+  let sunsetMinute = sunset.getMinutes() / 60;
   let sunsetTime = sunsetHour + sunsetMinute;
 
   let sunrise = new Date(timerise);
   let sunriseHour = sunrise.getHours();
-  let sunriseMinute = sunrise.getMinutes();
+  let sunriseMinute = sunrise.getMinutes() / 60;
   let sunriseTime = sunriseHour + sunriseMinute;
 
   let isNight = false;
