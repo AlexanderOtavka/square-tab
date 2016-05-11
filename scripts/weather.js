@@ -1,65 +1,61 @@
 (function (app) {
 'use strict';
 
+const {
+  settings,
+} = app;
+
 const $weatherIcon = document.querySelector('#weather-icon');
 const $temperature = document.querySelector('#temperature');
-const { settings } = app;
 
 const STORAGE_KEY_WEATHER_DATA = 'weatherData';
 
-let isLoaded = false;
-let temperatureC;
+let _loadCalled = false;
+let onDataLoad = new chrome.Event();
+let _data;
+
+let _onInitialLoad;
+let _initialLoad = new Promise(resolve => {
+  _onInitialLoad = resolve;
+});
+
+chrome.storage.onChanged.addListener(
+  ({ [STORAGE_KEY_WEATHER_DATA]: change }, area) => {
+    if (area === 'local' && change) {
+      _handleWeatherDataLoad(change.newValue);
+    }
+  }
+);
+
+onDataLoad.addListener(data => {
+  _data = data;
+  _updateWeather(data);
+});
 
 function load() {
-  if (!isLoaded) {
-    isLoaded = true;
+  if (!_loadCalled) {
+    _loadCalled = true;
 
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        const WEATHER_RESOURCE =
-          'http://api.openweathermap.org/data/2.5/weather';
-        const API_KEY = '55c2586d12873c5d39e99b0dea411dc2';
-        let lat = position.coords.latitude;
-        let long = position.coords.longitude;
-        let qry = `lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
-
-        fetch(`${WEATHER_RESOURCE}?${qry}`, {
-          method: 'GET',
-          mode: 'cors',
-          cache: 'default',
-        })
-          .then(response => {
-            if (response.ok) {
-              return response.json();
-            } else {
-              throw new TypeError(
-                `Weather request failed with status: ${response.status}`
-              );
-            }
-          })
-          .then(data => {
-            _updateWeather(data);
-            chrome.storage.local.set({
-              [STORAGE_KEY_WEATHER_DATA]: JSON.stringify(data),
-            });
-          });
-      });
-
-      return new Promise(resolve => {
-        chrome.storage.local.get(
-          STORAGE_KEY_WEATHER_DATA,
-          ({ [STORAGE_KEY_WEATHER_DATA]: data }) => resolve(data)
-        );
-      })
-        .then(jsonWeatherData => {
-          let data = JSON.parse(jsonWeatherData);
-          _updateWeather(data);
-        });
+      chrome.storage.local.get(
+        STORAGE_KEY_WEATHER_DATA,
+        ({ [STORAGE_KEY_WEATHER_DATA]: data }) => _handleWeatherDataLoad(data)
+      );
     } else {
-      return Promise.reject(new Error('Geolocation is not supported!'));
+      return Promise.reject(new Error('Geolocation is not supported.'));
     }
+  }
+
+  return _initialLoad.then(() => Object.assign({}, _data));
+}
+
+function _handleWeatherDataLoad(dataString) {
+  let data = JSON.parse(dataString || 'null');
+  if (data && Date.now() < data.expiration) {
+    _onInitialLoad();
+    onDataLoad.dispatch(data);
   } else {
-    return Promise.resolve();
+    _fetchAndCacheWeatherData();
   }
 }
 
@@ -77,8 +73,6 @@ function _updateWeather(weatherData) {
 
   let main = weatherData.weather[0].main.toUpperCase();
   let description = weatherData.weather[0].description.toUpperCase();
-
-  temperatureC = Math.round(weatherData.main.temp);
 
   let date = new Date();
   let hours = date.getHours();
@@ -125,24 +119,32 @@ function _updateWeather(weatherData) {
     $weatherIcon.src = '';
   }
 
-  let unit = settings.get(settings.keys.TEMPERATURE_UNIT);
-  updateTemperatureUnit(unit);
+  updateTemperatureUnit(settings.get(settings.keys.TEMPERATURE_UNIT));
+}
+
+function _fetchAndCacheWeatherData() {
+  chrome.runtime.getBackgroundPage(eventPage => {
+    eventPage.fetchAndCacheWeatherData(STORAGE_KEY_WEATHER_DATA);
+  });
 }
 
 function updateTemperatureUnit(unit) {
-  switch (unit) {
-    case settings.TemperatureUnits.CELCIUS:
-      $temperature.textContent = `${temperatureC} °C`;
-      break;
-    case settings.TemperatureUnits.FAHRENHEIT:
-      let temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
-      $temperature.textContent = `${temperatureF} °F`;
-      break;
-    default:
-      $temperature.textContent = '';
+  if (_data) {
+    let temperatureC = Math.round(_data.main.temp);
+    switch (unit) {
+      case settings.TemperatureUnits.CELCIUS:
+        $temperature.textContent = `${temperatureC} °C`;
+        break;
+      case settings.TemperatureUnits.FAHRENHEIT:
+        let temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
+        $temperature.textContent = `${temperatureF} °F`;
+        break;
+      default:
+        $temperature.textContent = '';
+    }
   }
 }
 
-app.weather = { load, updateTemperatureUnit };
+app.weather = { load, updateTemperatureUnit, onDataLoad };
 
 })(window.app = window.app || {});

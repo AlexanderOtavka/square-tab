@@ -10,6 +10,42 @@ function fetchAndCacheImage(resourceURI, storageKey) {
     });
 }
 
+function fetchAndCacheWeatherData(storageKey) {
+  return new Promise(resolve => {
+    navigator.geolocation.getCurrentPosition(position => resolve(position));
+  })
+    .then(position => {
+      const WEATHER_RESOURCE =
+        'http://api.openweathermap.org/data/2.5/weather';
+      const API_KEY = '55c2586d12873c5d39e99b0dea411dc2';
+      let lat = position.coords.latitude;
+      let long = position.coords.longitude;
+      let qry = `lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
+
+      return fetch(`${WEATHER_RESOURCE}?${qry}`, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'default',
+      });
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new TypeError(
+          `Weather request failed with status: ${response.status}`
+        );
+      }
+    })
+    .then(data => {
+      const DATA_LIFETIME_MS = 30 * (1000 * 60);  // 30 Minutes
+      data.expiration = Date.now() + DATA_LIFETIME_MS;
+      chrome.storage.local.set({
+        [storageKey]: JSON.stringify(data),
+      });
+    });
+}
+
 function _readBlob(reader, blobs = []) {
   return reader.read().then(({ done, value }) => {
     if (!done) {
@@ -69,3 +105,4 @@ function _encodeUint8Array(input) {
 }
 
 window.fetchAndCacheImage = fetchAndCacheImage;
+window.fetchAndCacheWeatherData = fetchAndCacheWeatherData;
