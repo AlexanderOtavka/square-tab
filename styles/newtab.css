@@ -1,6 +1,5 @@
 :root {
   --drawer-width: 300px;
-  --drawer-transition-duration: 400ms;
   --drawer-header-height: 68px;
 }
 
@@ -206,9 +205,4 @@ span.title {
   left: 0;
   background: #000;
   opacity: 0;
-}
-
-.bookmarks-drawer-open #drawer-backdrop {
-  display: block;
-  opacity: .5;
 }
