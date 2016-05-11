@@ -15,39 +15,47 @@
     <h1>Clean Tab Settings</h1>
 
     <label id="always-show-bookmarks" class="checkbox-container">
-      <input type="checkbox" />
+      <input type="checkbox" tabindex="-1" />
       <span class="label">Always Show Bookmarks</span>
     </label>
 
     <label id="bookmarks-drawer-small" class="child-1 checkbox-container">
-      <input type="checkbox" />
+      <input type="checkbox" tabindex="-1" />
       <span class="label">Small Bookmarks Drawer</span>
     </label>
 
     <label id="boxed-info" class="checkbox-container">
-      <input type="checkbox" />
+      <input type="checkbox" tabindex="-1" />
       <span class="label">Show Box Around Info</span>
     </label>
 
     <label id="show-weather" class="checkbox-container">
-      <input type="checkbox" />
+      <input type="checkbox" tabindex="-1" />
       <span class="label">Show Weather</span>
     </label>
 
     <div id="temperature-unit" class="child-1">
       <label>
-        <input type="radio" name="TEMPERATURE_UNIT" value="FAHRENHEIT" />
+        <input
+          type="radio"
+          name="TEMPERATURE_UNIT"
+          value="FAHRENHEIT"
+          tabindex="-1" />
         <span class="label">&deg;F</span>
       </label>
 
       <label>
-        <input type="radio" name="TEMPERATURE_UNIT" value="CELCIUS" />
+        <input
+          type="radio"
+          name="TEMPERATURE_UNIT"
+          value="CELCIUS"
+          tabindex="-1" />
         <span class="label">&deg;C</span>
       </label>
     </div>
 
     <label id="tod-images" class="checkbox-container">
-      <input type="checkbox" />
+      <input type="checkbox" tabindex="-1" />
       <span class="label">Filter Images Based on Time</span>
     </label>
   </div>
@@ -55,7 +63,8 @@
   <a
     id="github"
     href="https://github.com/AlexanderOtavka/clean-tab"
-    target="_blank">
+    target="_blank"
+    tabindex="-1">
 
     <span>GitHub</span>
   </a>
