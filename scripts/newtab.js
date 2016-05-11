@@ -67,6 +67,10 @@ settings.addChangeListener(settings.keys.SHOW_WEATHER, updateShowWeather);
 settings.addChangeListener(settings.keys.TEMPERATURE_UNIT,
                            weather.updateTemperatureUnit);
 
+weather.onDataLoad.addListener(() => {
+  updateShowWeather(settings.get(settings.keys.SHOW_WEATHER));
+});
+
 // Fetch and cache a new image in the background
 chrome.runtime.getBackgroundPage(eventPage => {
   eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA);
