@@ -94,7 +94,6 @@ span.title {
 }
 
 #info-wrapper {
-  --scrim: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   justify-content: center;
