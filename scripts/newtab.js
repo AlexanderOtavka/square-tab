@@ -36,17 +36,7 @@ let backgroundImageReady = new Promise(resolve => {
   .then(updateImage);
 
 // Don't show anything until the settings and background image are ready
-Promise.all([settings.loaded, backgroundImageReady])
-  .then(() => {
-    $body.removeAttribute('unresolved');
-    $body.animate([
-        { opacity: 0 },
-        { opacity: 1 },
-      ], {
-        duration: 200,
-        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-      });
-  });
+Promise.all([settings.loaded, backgroundImageReady]).then(resolveBody);
 
 // Handle changes to settings
 settings.onChanged(settings.keys.ALWAYS_SHOW_BOOKMARKS)
@@ -168,6 +158,17 @@ function updateWeather(showWeather) {
     $weatherWrapper.hidden = true;
     return Promise.resolve();
   }
+}
+
+function resolveBody() {
+  $body.removeAttribute('unresolved');
+  $body.animate([
+      { opacity: 0 },
+      { opacity: 1 },
+    ], {
+      duration: 200,
+      easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    });
 }
 
 })(window.app = window.app || {});
