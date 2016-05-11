@@ -24,7 +24,7 @@ const STORAGE_KEY_IMAGE_DATA = 'imgData';
 let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
 let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
 let imageResourceURI = 'https://source.unsplash.com/category/nature/' +
-                       `${screenPxWidth}x${screenPxHeight}`;
+                       `${screenPxWidth}x${screenPxHeight}/`;
 
 // Load cached image
 let backgroundImageReady = new Promise(resolve => {
@@ -58,22 +58,29 @@ Promise.all([settings.loaded, backgroundImageReady])
   });
 
 // Handle changes to settings
-settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
-                           updateBookmarkDrawerLock);
-settings.addChangeListener(settings.keys.BOOKMARKS_DRAWER_SMALL,
-                           updateBookmarkDrawerSmall);
-settings.addChangeListener(settings.keys.BOXED_INFO, updateBoxedInfo);
-settings.addChangeListener(settings.keys.SHOW_WEATHER, updateShowWeather);
-settings.addChangeListener(settings.keys.TEMPERATURE_UNIT,
-                           weather.updateTemperatureUnit);
+settings.onChanged(settings.keys.ALWAYS_SHOW_BOOKMARKS)
+  .addListener(updateBookmarkDrawerLock);
+settings.onChanged(settings.keys.BOOKMARKS_DRAWER_SMALL)
+  .addListener(updateBookmarkDrawerSmall);
+settings.onChanged(settings.keys.BOXED_INFO).addListener(updateBoxedInfo);
+settings.onChanged(settings.keys.SHOW_WEATHER).addListener(updateWeather);
+settings.onChanged(settings.keys.TEMPERATURE_UNIT)
+  .addListener(weather.updateTemperatureUnit);
 
+// Update weather whenever cache changes
 weather.onDataLoad.addListener(() => {
-  updateShowWeather(settings.get(settings.keys.SHOW_WEATHER));
+  updateWeather(settings.get(settings.keys.SHOW_WEATHER));
 });
 
 // Fetch and cache a new image in the background
-chrome.runtime.getBackgroundPage(eventPage => {
-  eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA);
+settings.loaded.then(() => {
+  if (settings.get(settings.keys.USE_TIME_OF_DAY_IMAGES)) {
+    imageResourceURI += `?${getImageTimeOfDay()}`;
+  }
+
+  chrome.runtime.getBackgroundPage(eventPage => {
+    eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA);
+  });
 });
 
 // Handle bookmarks up navigation
@@ -94,6 +101,20 @@ setInterval(updateTime, 1000);
 $bookmarksOpenButton.addEventListener('click', openBookmarks);
 $bookmarksCloseButton.addEventListener('click', closeBookmarks);
 $drawerBackdrop.addEventListener('click', closeBookmarks);
+
+function getImageTimeOfDay() {
+  let hour = new Date().getHours();
+  if (hour < 5 || 22 <= hour) {
+    // 10pm - 5am
+    return 'night';
+  } else if (5 <= hour && hour < 10) {
+    // 5am - 10am
+    return 'morning';
+  } else if (19 <= hour && hour < 22) {
+    // 7pm - 10pm
+    return 'evening';
+  }
+}
 
 function updateTime() {
   let date = new Date();
@@ -141,7 +162,7 @@ function updateBoxedInfo(boxedInfo) {
   $root.classList.toggle('boxed-info', boxedInfo);
 }
 
-function updateShowWeather(showWeather) {
+function updateWeather(showWeather) {
   if (showWeather) {
     return weather.load().then(() => $weatherWrapper.hidden = false);
   } else {
