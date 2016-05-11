@@ -19,7 +19,7 @@ const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 const $drawerBackdrop = document.querySelector('#drawer-backdrop');
 const $weatherWrapper = document.querySelector('#weather-wrapper');
 
-const STORAGE_KEY_IMAGE_DATA = 'imgData';
+const STORAGE_KEY_IMAGE_DATA_URL = 'imageDataURL';
 
 let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
 let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
@@ -29,8 +29,8 @@ let imageResourceURI = 'https://source.unsplash.com/category/nature/' +
 // Load cached image
 let backgroundImageReady = new Promise(resolve => {
   chrome.storage.local.get(
-    STORAGE_KEY_IMAGE_DATA,
-    ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => resolve(imageData)
+    STORAGE_KEY_IMAGE_DATA_URL,
+    ({ [STORAGE_KEY_IMAGE_DATA_URL]: url }) => resolve(url)
   );
 })
   .then(updateImage);
@@ -65,7 +65,7 @@ settings.loaded.then(() => {
   }
 
   chrome.runtime.getBackgroundPage(eventPage => {
-    eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA);
+    eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA_URL);
   });
 });
 
@@ -98,15 +98,8 @@ function getImageTimeOfDay() {
   }
 }
 
-function updateImage(imageData) {
-  let imageURL;
-  if (imageData) {
-    imageURL = `data:image/jpg;base64,${imageData}`;
-  } else {
-    imageURL = imageResourceURI;
-  }
-
-  $backgroundImage.src = imageURL;
+function updateImage(url = imageResourceURI) {
+  $backgroundImage.src = url;
 }
 
 function updateTime() {
