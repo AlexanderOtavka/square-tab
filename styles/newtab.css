@@ -103,11 +103,9 @@ span.title {
   right: 0;
   bottom: 0;
   left: 0;
-  font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
-  color: #fff;
   transition: right var(--drawer-transition-duration);
 }
 
@@ -122,6 +120,10 @@ span.title {
   position: relative;
   padding: 8px;
   min-width: 210px;
+  font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #fff;
   background: rgba(0, 0, 0, 0.2);
 }
 
@@ -139,15 +141,10 @@ span.title {
   line-height: 1;
 }
 
-#greeting {
-  font-size: 1.5rem;
-  font-weight: 300;
-}
-
 #weather-wrapper {
   display: inline-flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
 }
 
 #weather-icon {
@@ -157,7 +154,6 @@ span.title {
 
 #temperature {
   font-size: 2rem;
-  font-weight: 300;
   padding-left: 16px;
 }
 
