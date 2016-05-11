@@ -76,6 +76,12 @@ function _updateWeather(weatherData) {
 
   let date = new Date();
   let hours = date.getHours();
+
+  let sunset = new Date(weatherData.sys.sunset);
+  let sunsetHour = sunset.getHours();
+  let sunsetMinutes = sunset.getMinutes();
+  console.log(sunsetHour + ':' + sunsetMinutes);
+
   let isNight = false;
   if (hours < 4 || hours >= 20) {
     isNight = true;
