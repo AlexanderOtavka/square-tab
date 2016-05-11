@@ -59,6 +59,7 @@ weather.onDataLoad.addListener(() => {
 settings.loaded.then(() => {
   if (settings.get(settings.keys.USE_TIME_OF_DAY_IMAGES)) {
     imageResourceURI += `?${getImageTimeOfDay()}`;
+    console.log(imageResourceURI);
   }
 
   chrome.runtime.getBackgroundPage(eventPage => {
@@ -92,6 +93,8 @@ function getImageTimeOfDay() {
   } else if (19 <= hour && hour < 22) {
     // 7pm - 10pm
     return 'evening';
+  } else {
+    return '';
   }
 }
 
