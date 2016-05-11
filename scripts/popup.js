@@ -26,7 +26,7 @@ function bindCheckbox($wrapper, settingKey) {
     settings.set(settingKey, value);
   });
 
-  settings.addDataChangeListener(settingKey, data => {
+  settings.onDataChanged(settingKey).addListener(data => {
     $checkbox.checked = data.value;
     $checkbox.disabled = data.override !== undefined;
   });
@@ -44,7 +44,7 @@ function bindRadioButtons($wrapper, settingKey, values) {
     });
   });
 
-  settings.addDataChangeListener(settingKey, data => {
+  settings.onDataChanged(settingKey).addListener(data => {
     let valueName = Object.keys(values).find(key => values[key] === data.value);
     let $targetButton = buttons.find($button => $button.value === valueName);
 

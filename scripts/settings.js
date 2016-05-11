@@ -50,12 +50,12 @@ _storageKeysArray.forEach(storageKey => {
   _data[storageKey] = {
     value: undefined,
     override: undefined,
-    valueListeners: [],
-    dataListeners: [],
+    basicListener: new chrome.Event(),
+    dataListener: new chrome.Event(),
   };
 
   if (storageKey in _overrides) {
-    addChangeListener(storageKey, _overrides[storageKey]);
+    onChanged(storageKey).addListener(_overrides[storageKey]);
   }
 });
 
@@ -108,16 +108,12 @@ function _setDataProperty(storageKey, property, value, forceNotify) {
   let newData = getData(storageKey);
   if (newData.value !== oldData.value ||
       newData.override !== oldData.override) {
-    dataItem.dataListeners.forEach(listener => {
-      listener(newData, oldData);
-    });
+    dataItem.dataListener.dispatch(newData, oldData);
   }
 
   let newOverriddenValue = get(storageKey);
   if (newOverriddenValue !== oldOverriddenValue) {
-    dataItem.valueListeners.forEach(listener => {
-      listener(newOverriddenValue, oldOverriddenValue);
-    });
+    dataItem.basicListener.dispatch(newOverriddenValue, oldOverriddenValue);
   }
 }
 
@@ -148,14 +144,14 @@ function set(storageKey, value) {
   chrome.storage.sync.set({ [storageKey]: value });
 }
 
-function addChangeListener(storageKey, callback) {
+function onChanged(storageKey) {
   console.assert(_storageKeysArray.indexOf(storageKey) !== -1);
-  _data[storageKey].valueListeners.push(callback);
+  return _data[storageKey].basicListener;
 }
 
-function addDataChangeListener(storageKey, callback) {
+function onDataChanged(storageKey) {
   console.assert(_storageKeysArray.indexOf(storageKey) !== -1);
-  _data[storageKey].dataListeners.push(callback);
+  return _data[storageKey].dataListener;
 }
 
 app.settings = {
@@ -165,8 +161,8 @@ app.settings = {
   get,
   getData,
   set,
-  addChangeListener,
-  addDataChangeListener,
+  onChanged,
+  onDataChanged,
 };
 
 })(window.app = window.app || {});

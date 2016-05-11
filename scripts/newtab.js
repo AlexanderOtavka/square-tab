@@ -58,17 +58,18 @@ Promise.all([settings.loaded, backgroundImageReady])
   });
 
 // Handle changes to settings
-settings.addChangeListener(settings.keys.ALWAYS_SHOW_BOOKMARKS,
-                           updateBookmarkDrawerLock);
-settings.addChangeListener(settings.keys.BOOKMARKS_DRAWER_SMALL,
-                           updateBookmarkDrawerSmall);
-settings.addChangeListener(settings.keys.BOXED_INFO, updateBoxedInfo);
-settings.addChangeListener(settings.keys.SHOW_WEATHER, updateShowWeather);
-settings.addChangeListener(settings.keys.TEMPERATURE_UNIT,
-                           weather.updateTemperatureUnit);
+settings.onChanged(settings.keys.ALWAYS_SHOW_BOOKMARKS)
+  .addListener(updateBookmarkDrawerLock);
+settings.onChanged(settings.keys.BOOKMARKS_DRAWER_SMALL)
+  .addListener(updateBookmarkDrawerSmall);
+settings.onChanged(settings.keys.BOXED_INFO).addListener(updateBoxedInfo);
+settings.onChanged(settings.keys.SHOW_WEATHER).addListener(updateWeather);
+settings.onChanged(settings.keys.TEMPERATURE_UNIT)
+  .addListener(weather.updateTemperatureUnit);
 
+// Update weather whenever cache changes
 weather.onDataLoad.addListener(() => {
-  updateShowWeather(settings.get(settings.keys.SHOW_WEATHER));
+  updateWeather(settings.get(settings.keys.SHOW_WEATHER));
 });
 
 // Fetch and cache a new image in the background
@@ -141,7 +142,7 @@ function updateBoxedInfo(boxedInfo) {
   $root.classList.toggle('boxed-info', boxedInfo);
 }
 
-function updateShowWeather(showWeather) {
+function updateWeather(showWeather) {
   if (showWeather) {
     return weather.load().then(() => $weatherWrapper.hidden = false);
   } else {
