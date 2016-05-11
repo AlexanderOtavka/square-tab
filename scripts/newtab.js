@@ -2,7 +2,7 @@
 'use strict';
 
 const {
-  bookmarksManager,
+  bookmarks,
   weather,
   settings,
 } = app;
@@ -33,16 +33,7 @@ let backgroundImageReady = new Promise(resolve => {
     ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => resolve(imageData)
   );
 })
-  .then(imageData => {
-    let imageURL;
-    if (imageData) {
-      imageURL = `data:image/jpg;base64,${imageData}`;
-    } else {
-      imageURL = imageResourceURI;
-    }
-
-    $backgroundImage.src = imageURL;
-  });
+  .then(updateImage);
 
 // Don't show anything until the settings and background image are ready
 Promise.all([settings.loaded, backgroundImageReady])
@@ -62,6 +53,8 @@ settings.onChanged(settings.keys.ALWAYS_SHOW_BOOKMARKS)
   .addListener(updateBookmarkDrawerLock);
 settings.onChanged(settings.keys.BOOKMARKS_DRAWER_SMALL)
   .addListener(updateBookmarkDrawerSmall);
+settings.onChanged(settings.keys.BOOKMARKS_DRAWER_SMALL)
+  .addListener(bookmarks.updateSize);
 settings.onChanged(settings.keys.BOXED_INFO).addListener(updateBoxedInfo);
 settings.onChanged(settings.keys.SHOW_WEATHER).addListener(updateWeather);
 settings.onChanged(settings.keys.TEMPERATURE_UNIT)
@@ -83,14 +76,10 @@ settings.loaded.then(() => {
   });
 });
 
-// Handle bookmarks up navigation
-$bookmarksUpButton.addEventListener('click', () => {
-  bookmarksManager.ascend();
-});
-
-// Handle bookmarks down navigation
+// Handle bookmarks navigation
+$bookmarksUpButton.addEventListener('click', bookmarks.ascend);
 $bookmarksDrawerItems.addEventListener('bookmark-clicked', event => {
-  bookmarksManager.openNode(event.detail.node);
+  bookmarks.openNode(event.detail.node);
 }, true);
 
 // Update the clock immediately, then once every second forever
@@ -114,6 +103,17 @@ function getImageTimeOfDay() {
     // 7pm - 10pm
     return 'evening';
   }
+}
+
+function updateImage(imageData) {
+  let imageURL;
+  if (imageData) {
+    imageURL = `data:image/jpg;base64,${imageData}`;
+  } else {
+    imageURL = imageResourceURI;
+  }
+
+  $backgroundImage.src = imageURL;
 }
 
 function updateTime() {
@@ -149,13 +149,12 @@ function closeBookmarks() {
 }
 
 function updateBookmarkDrawerLock(alwaysShowBookmarks) {
-  $root.classList.remove('bookmarks-drawer-open');
+  closeBookmarks();
   $root.classList.toggle('bookmarks-drawer-locked-open', alwaysShowBookmarks);
 }
 
 function updateBookmarkDrawerSmall(drawerSmall) {
   $root.classList.toggle('bookmarks-drawer-small', drawerSmall);
-  bookmarksManager.updateSize(drawerSmall);
 }
 
 function updateBoxedInfo(boxedInfo) {
