@@ -76,7 +76,7 @@ function _updateWeather(weatherData) {
 
   let date = new Date();
   let hours = date.getHours();
-  let minutes = date.getMinutes() / 60;
+  let minutes = date.getMinutes();
   let currentTime = hours + minutes;
 
   let timerise = weatherData.sys.sunrise * 1000;
