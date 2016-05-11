@@ -95,6 +95,7 @@ span.title {
 
 #info-wrapper {
   --shadow: 0 0 20px rgba(0, 0, 0, .5);
+  --scrim: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -105,7 +106,6 @@ span.title {
   bottom: 0;
   left: 0;
   font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
-  text-shadow: var(--shadow);
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
@@ -118,6 +118,7 @@ span.title {
 }
 
 #info-box {
+  background: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,7 +129,6 @@ span.title {
 
 .boxed-info #info-box {
   border: 8px solid #fff;
-  box-shadow: var(--shadow);
 }
 
 .boxed-info #info-box::after {
@@ -139,7 +139,6 @@ span.title {
   bottom: 0;
   left: 0;
   z-index: -1;
-  box-shadow: var(--shadow) inset;
 }
 
 #info-box > * {
