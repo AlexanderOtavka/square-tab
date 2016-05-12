@@ -23,8 +23,8 @@ const STORAGE_KEY_IMAGE_DATA_URL = 'imageDataURL';
 
 let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
 let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
-let imageResourceURI = 'https://source.unsplash.com/category/nature/' +
-                       `${screenPxWidth}x${screenPxHeight}/`;
+const DEFAULT_IMAGE_URL = 'https://source.unsplash.com/category/nature/' +
+                          `${screenPxWidth}x${screenPxHeight}/`;
 
 // Load cached image
 let backgroundImageReady = new Promise(resolve => {
@@ -57,6 +57,8 @@ weather.onDataLoad.addListener(() => {
 
 // Fetch and cache a new image in the background
 settings.loaded.then(() => {
+  let imageResourceURI = DEFAULT_IMAGE_URL;
+
   if (settings.get(settings.keys.USE_TIME_OF_DAY_IMAGES)) {
     let timeOfDay = getImageTimeOfDay();
     if (timeOfDay) {
@@ -106,8 +108,8 @@ function getImageTimeOfDay() {
   }
 }
 
-function updateImage(url = imageResourceURI) {
-  $backgroundImage.src = url;
+function updateImage(uri = DEFAULT_IMAGE_URL) {
+  $backgroundImage.src = uri;
 }
 
 function updateTime() {
