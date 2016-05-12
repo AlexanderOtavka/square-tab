@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
 
-  "name": "Clean Tab",
+  "name": "Square Tab",
   "description": "A clean, minimalistic new tab page.",
   "version": "1.0",
 
@@ -22,7 +22,7 @@
       "19": "images/icon19.png",
       "38": "images/icon38.png"
     },
-    "default_title": "Clean Tab",
+    "default_title": "Square Tab",
     "default_popup": "views/popup.html"
   },
 
