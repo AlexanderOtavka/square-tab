@@ -60,7 +60,7 @@ class XBookmark extends HTMLElement {
     if (this.node && !this.node.url) {
       this.$image.src = '/images/folder-outline.svg';
     } else {
-      this.$image.src = `chrome://favicon/${this.url}`;
+      this.$image.src = `chrome://favicon/size/16@8x/${this.url}`;
     }
   }
 
