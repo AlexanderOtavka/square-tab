@@ -75,8 +75,20 @@ function _updateWeather(weatherData) {
   let description = weatherData.weather[0].description.toUpperCase();
 
   let now = Date.now();
-  let sunrise = weatherData.sys.sunrise * 1000;
+  let nowDate = new Date();
   let sunset = weatherData.sys.sunset * 1000;
+  let sunrise = weatherData.sys.sunrise * 1000;
+  let sunsetDate = new Date(sunset);
+  let sunriseDate =  new Date(sunrise);
+
+  if (sunriseDate.getDay() !== nowDate.getDay()) {
+    sunrise = sunrise - (1000 * 60 * 60 * 24);
+  }
+
+  if (sunsetDate.getDay() !== nowDate.getDay()) {
+    sunset = sunset - (1000 * 60 * 60 * 24);
+  }
+
   let isNight = (now < sunrise || sunset < now);
 
   if (main === CLOUDS) {
