@@ -3,7 +3,7 @@
 
 const $tmpl = document.currentScript.ownerDocument.querySelector('template');
 
-class XBookmarkImpl extends HTMLElement {
+class XBookmark extends HTMLElement {
   createdCallback() {
     let tmplRoot = document.importNode($tmpl.content, true);
     this.createShadowRoot().appendChild(tmplRoot);
@@ -12,44 +12,67 @@ class XBookmarkImpl extends HTMLElement {
     this.$image = this.shadowRoot.querySelector('#image');
     this.$name = this.shadowRoot.querySelector('#name');
 
-    this._node = null;
+    this.node = null;
+    this.dataset.small = 'false';
 
-    this.dataset.image = this.dataset.image || '';
     this.updateImage();
+    this.updateTooltip();
 
     this.addEventListener('click', () => {
-      requestAnimationFrame(() => {
-        this.dispatchEvent(new CustomEvent('bookmark-clicked', {
-          detail: { node: this._node },
-        }));
+      let customEvent = new CustomEvent('bookmark-clicked', {
+        detail: { node: this._node },
       });
+
+      requestAnimationFrame(() => this.dispatchEvent(customEvent));
     });
   }
 
-  getNode() {
+  attributeChangedCallback(attrName) {
+    switch (attrName) {
+      case 'data-small':
+        this.updateTooltip();
+        break;
+    }
+  }
+
+  get node() {
     return this._node;
   }
 
-  setNode(node) {
+  set node(node) {
     this._node = node;
-    this.$link.href = node.url || '#';
-    this.$name.textContent = node.title || '';
     this.updateImage();
+    this.updateTooltip();
+
+    this.$link.href = this.url;
+    this.$name.textContent = this.name;
+  }
+
+  get name() {
+    return this.node ? (this.node.title || this.node.url || '') : '';
+  }
+
+  get url() {
+    return this.node ? (this.node.url || '#') : '#';
   }
 
   updateImage() {
-    if (this._node) {
-      if (this._node.url) {
-        this.$image.src = `chrome://favicon/${this._node.url}`;
-      } else {
-        this.$image.src = '/images/folder-outline.svg';
-      }
+    if (this.node && !this.node.url) {
+      this.$image.src = '/images/folder-outline.svg';
     } else {
-      this.$image.src = 'chrome://favicon';
+      this.$image.src = `chrome://favicon/${this.url}`;
+    }
+  }
+
+  updateTooltip() {
+    if (this.dataset.small === 'true') {
+      this.title = this.name;
+    } else {
+      this.title = '';
     }
   }
 }
 
-app.XBookmark = document.registerElement('x-bookmark', XBookmarkImpl);
+app.XBookmark = document.registerElement('x-bookmark', XBookmark);
 
 })(window.app = window.app || {});

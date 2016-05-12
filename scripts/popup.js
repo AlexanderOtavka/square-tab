@@ -1,38 +1,67 @@
-(function () {
+(function (app) {
 'use strict';
 
+const {
+  settings,
+} = app;
+
 const $alwaysShowBookmarks = document.querySelector('#always-show-bookmarks');
-const $alwaysShowBookmarksCB =
-  document.querySelector('#always-show-bookmarks input[type=checkbox]');
-const $about = document.querySelector('#about');
+const $bookmarksDrawerSmall = document.querySelector('#bookmarks-drawer-small');
+const $boxedInfo = document.querySelector('#boxed-info');
+const $showWeather = document.querySelector('#show-weather');
+const $temperatureUnit = document.querySelector('#temperature-unit');
+const $todImages = document.querySelector('#tod-images');
 
-const STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS = 'alwaysShowBookmarks';
+bindCheckbox($alwaysShowBookmarks, settings.keys.ALWAYS_SHOW_BOOKMARKS);
+bindCheckbox($bookmarksDrawerSmall, settings.keys.BOOKMARKS_DRAWER_SMALL);
+bindCheckbox($boxedInfo, settings.keys.BOXED_INFO);
+bindCheckbox($showWeather, settings.keys.SHOW_WEATHER);
+bindRadioButtons($temperatureUnit, settings.keys.TEMPERATURE_UNIT,
+                 settings.TemperatureUnits);
+bindCheckbox($todImages, settings.keys.USE_TIME_OF_DAY_IMAGES);
 
-$alwaysShowBookmarks.addEventListener('click', () => {
-  let alwaysShowBookmarks = $alwaysShowBookmarksCB.checked;
-  chrome.storage.sync.set({
-    [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks,
-  });
-});
+function bindCheckbox($wrapper, settingKey) {
+  let $checkbox = $wrapper.querySelector('input[type=checkbox]');
 
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === 'sync' && STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS in changes) {
-    updateCheckbox(changes[STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS].newValue);
-  }
-});
-
-chrome.storage.sync.get(
-  STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS,
-  ({ [STORAGE_KEY_ALWAYS_SHOW_BOOKMARKS]: alwaysShowBookmarks = false }) => {
-    updateCheckbox(alwaysShowBookmarks);
+  $wrapper.addEventListener('click', () => {
+    let value = $checkbox.checked;
+    settings.set(settingKey, value);
   });
 
-$about.addEventListener('click', () => {
-  chrome.tabs.create({ url: $about.href });
-});
-
-function updateCheckbox(alwaysShowBookmarks) {
-  $alwaysShowBookmarksCB.checked = alwaysShowBookmarks;
+  settings.onDataChanged(settingKey).addListener(data => {
+    $checkbox.checked = data.value;
+    $checkbox.disabled = data.override !== undefined;
+  });
 }
 
-})();
+function bindRadioButtons($wrapper, settingKey, values) {
+  let buttonsNodelist = $wrapper.querySelectorAll('input[type=radio]');
+  let buttons = Array.prototype.slice.call(buttonsNodelist);
+
+  buttons.forEach($button => {
+    $button.addEventListener('click', () => {
+      if ($button.checked) {
+        settings.set(settingKey, values[$button.value]);
+      }
+    });
+  });
+
+  settings.onDataChanged(settingKey).addListener(data => {
+    let valueName = Object.keys(values).find(key => values[key] === data.value);
+    let $targetButton = buttons.find($button => $button.value === valueName);
+
+    if ($targetButton) {
+      $targetButton.checked = true;
+    } else {
+      let $selectedButton = buttons.find($button => $button.checked);
+      if ($selectedButton) {
+        $selectedButton.checked = false;
+      }
+    }
+
+    let disabled = data.override !== undefined;
+    buttons.forEach($button => $button.disabled = disabled);
+  });
+}
+
+})(window.app = window.app || {});
