@@ -19,7 +19,7 @@ const $bookmarksDrawerItems = document.querySelector('#bookmarks-drawer-items');
 const $drawerBackdrop = document.querySelector('#drawer-backdrop');
 const $weatherWrapper = document.querySelector('#weather-wrapper');
 
-const STORAGE_KEY_IMAGE_DATA = 'imgData';
+const STORAGE_KEY_IMAGE_DATA_URL = 'imageDataURL';
 
 let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
 let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
@@ -29,8 +29,8 @@ let imageResourceURI = 'https://source.unsplash.com/category/nature/' +
 // Load cached image
 let backgroundImageReady = new Promise(resolve => {
   chrome.storage.local.get(
-    STORAGE_KEY_IMAGE_DATA,
-    ({ [STORAGE_KEY_IMAGE_DATA]: imageData }) => resolve(imageData)
+    STORAGE_KEY_IMAGE_DATA_URL,
+    ({ [STORAGE_KEY_IMAGE_DATA_URL]: url }) => resolve(url)
   );
 })
   .then(updateImage);
@@ -65,7 +65,7 @@ settings.loaded.then(() => {
   }
 
   chrome.runtime.getBackgroundPage(eventPage => {
-    eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA);
+    eventPage.fetchAndCacheImage(imageResourceURI, STORAGE_KEY_IMAGE_DATA_URL);
   });
 });
 
@@ -80,6 +80,14 @@ updateTime();
 setInterval(updateTime, 1000);
 
 // Handle opening and closing the bookmarks drawer
+let drawerAnimationDuration = 200;
+let backdropAnimationKeyframes = [
+  { opacity: 0 },
+  { opacity: 0.5 },
+];
+let backdropAnimator;
+$root.style.setProperty('--drawer-transition-duration',
+                        `${drawerAnimationDuration}ms`);
 $bookmarksOpenButton.addEventListener('click', openBookmarks);
 $bookmarksCloseButton.addEventListener('click', closeBookmarks);
 $drawerBackdrop.addEventListener('click', closeBookmarks);
@@ -92,21 +100,14 @@ function getImageTimeOfDay() {
   } else if (5 <= hour && hour < 10) {
     // 5am - 10am
     return 'morning';
-  } else if (19 <= hour && hour < 22) {
-    // 7pm - 10pm
+  } else if (18 <= hour && hour < 22) {
+    // 6pm - 10pm
     return 'evening';
   }
 }
 
-function updateImage(imageData) {
-  let imageURL;
-  if (imageData) {
-    imageURL = `data:image/jpg;base64,${imageData}`;
-  } else {
-    imageURL = imageResourceURI;
-  }
-
-  $backgroundImage.src = imageURL;
+function updateImage(url = imageResourceURI) {
+  $backgroundImage.src = url;
 }
 
 function updateTime() {
@@ -135,10 +136,30 @@ function updateTime() {
 
 function openBookmarks() {
   $root.classList.add('bookmarks-drawer-open');
+  if (backdropAnimator) {
+    backdropAnimator.cancel();
+  }
+
+  $drawerBackdrop.style.display = 'block';
+  backdropAnimator = $drawerBackdrop.animate(backdropAnimationKeyframes, {
+    duration: drawerAnimationDuration,
+    fill: 'both',
+  });
 }
 
 function closeBookmarks() {
   $root.classList.remove('bookmarks-drawer-open');
+  if (backdropAnimator) {
+    backdropAnimator.cancel();
+  }
+
+  backdropAnimator = $drawerBackdrop.animate(backdropAnimationKeyframes, {
+    duration: drawerAnimationDuration,
+    fill: 'both',
+    direction: 'reverse',
+  });
+
+  backdropAnimator.onfinish = () => $drawerBackdrop.style.display = 'none';
 }
 
 function updateBookmarkDrawerLock(alwaysShowBookmarks) {

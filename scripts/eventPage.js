@@ -1,13 +1,17 @@
 'use strict';
 
 function fetchAndCacheImage(resourceURI, storageKey) {
-  fetch(resourceURI)
-    .then(resp => _readBlob(resp.body.getReader()))
-    .then(blob => {
-      chrome.storage.local.set({
-        [storageKey]: _encodeUint8Array(blob),
-      });
-    });
+  return fetch(resourceURI)
+    .then(resp =>
+      _readBlob(resp.body.getReader())
+        .then(blob => {
+          let contentType = resp.headers.get('content-type');
+          let data = _encodeUint8Array(blob);
+          chrome.storage.local.set({
+            [storageKey]: `data:${contentType};base64,${data}`,
+          });
+        })
+    );
 }
 
 function fetchAndCacheWeatherData(storageKey) {
