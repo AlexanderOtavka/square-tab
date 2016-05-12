@@ -4,9 +4,11 @@
   "name": "Square Tab",
   "description": "A clean, minimalistic new tab page.",
   "version": "1.0",
-
-  "chrome_url_overrides": {
-    "newtab": "views/newtab.html"
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png",
+    "512": "images/icon512.png"
   },
 
   "permissions": [
@@ -16,6 +18,10 @@
     "chrome://favicon/",
     "geolocation"
   ],
+
+  "chrome_url_overrides": {
+    "newtab": "views/newtab.html"
+  },
 
   "browser_action": {
     "default_icon": {
