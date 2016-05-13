@@ -1,12 +1,14 @@
 {
   "manifest_version": 2,
 
-  "name": "Clean Tab",
+  "name": "Square Tab",
   "description": "A clean, minimalistic new tab page.",
   "version": "1.0",
-
-  "chrome_url_overrides": {
-    "newtab": "views/newtab.html"
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png",
+    "512": "images/icon512.png"
   },
 
   "permissions": [
@@ -17,12 +19,16 @@
     "geolocation"
   ],
 
+  "chrome_url_overrides": {
+    "newtab": "views/newtab.html"
+  },
+
   "browser_action": {
     "default_icon": {
       "19": "images/icon19.png",
       "38": "images/icon38.png"
     },
-    "default_title": "Clean Tab",
+    "default_title": "Square Tab",
     "default_popup": "views/popup.html"
   },
 

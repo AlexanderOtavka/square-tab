@@ -1,4 +1,4 @@
-# Clean Tab
+# Square Tab
 
 > A minimalistic but functional new tab page inspired by Mac Square's
 [Splash Tab](https://chrome.google.com/webstore/detail/splash-tab/ggljjfbnnofkajgcnleiglffhhbbommh?hl=en).
