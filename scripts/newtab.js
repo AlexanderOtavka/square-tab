@@ -82,14 +82,6 @@ updateTime();
 setInterval(updateTime, 1000);
 
 // Handle opening and closing the bookmarks drawer
-let drawerAnimationDuration = 200;
-let backdropAnimationKeyframes = [
-  { opacity: 0 },
-  { opacity: 0.5 },
-];
-let backdropAnimator;
-$root.style.setProperty('--drawer-transition-duration',
-                        `${drawerAnimationDuration}ms`);
 $bookmarksOpenButton.addEventListener('click', openBookmarks);
 $bookmarksCloseButton.addEventListener('click', closeBookmarks);
 $drawerBackdrop.addEventListener('click', closeBookmarks);
@@ -138,30 +130,10 @@ function updateTime() {
 
 function openBookmarks() {
   $root.classList.add('bookmarks-drawer-open');
-  if (backdropAnimator) {
-    backdropAnimator.cancel();
-  }
-
-  $drawerBackdrop.style.display = 'block';
-  backdropAnimator = $drawerBackdrop.animate(backdropAnimationKeyframes, {
-    duration: drawerAnimationDuration,
-    fill: 'both',
-  });
 }
 
 function closeBookmarks() {
   $root.classList.remove('bookmarks-drawer-open');
-  if (backdropAnimator) {
-    backdropAnimator.cancel();
-  }
-
-  backdropAnimator = $drawerBackdrop.animate(backdropAnimationKeyframes, {
-    duration: drawerAnimationDuration,
-    fill: 'both',
-    direction: 'reverse',
-  });
-
-  backdropAnimator.onfinish = () => $drawerBackdrop.style.display = 'none';
 }
 
 function updateBookmarkDrawerLock(alwaysShowBookmarks) {

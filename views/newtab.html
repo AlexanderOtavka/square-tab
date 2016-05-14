@@ -14,7 +14,7 @@
 <body unresolved>
   <img id="background-image" />
 
-  <div id="main-toolbar" class="toolbar">
+  <header id="main-toolbar" class="toolbar">
     <span class="title"></span>
     <div id="bookmarks-open-button-wrapper" class="radial-shadow">
       <svg
@@ -27,7 +27,7 @@
           d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" />
       </svg>
     </div>
-  </div>
+  </header>
 
   <div id="info-wrapper">
     <div id="info-box">
@@ -41,8 +41,8 @@
     </div>
   </div>
 
-  <div id="bookmarks-drawer">
-    <div class="drawer-header">
+  <aside id="bookmarks-drawer" class="drawer">
+    <header class="drawer-header">
       <div class="toolbar">
         <svg
           id="bookmarks-up-button"
@@ -76,10 +76,10 @@
             d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
         </svg>
       </div>
-    </div>
+    </header>
 
-    <div id="bookmarks-drawer-items"></div>
-  </div>
+    <nav id="bookmarks-drawer-items"></nav>
+  </aside>
 
   <div id="drawer-backdrop"></div>
 
