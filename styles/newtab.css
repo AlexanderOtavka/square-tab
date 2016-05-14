@@ -54,13 +54,23 @@ header {
 }
 
 .radial-shadow {
+  position: relative;
+}
+
+.radial-shadow::before {
+  content: "";
   background: radial-gradient(
     circle at 50% 50%,
     rgba(0, 0, 0, .15),
     rgba(0, 0, 0, 0) 60%
   );
-  padding: 24px;
-  margin: -24px;
+  display: block;
+  position: absolute;
+  top: -24px;
+  right: -24px;
+  bottom: -24px;
+  left: -24px;
+  z-index: -1;
 }
 
 .large-icon {
