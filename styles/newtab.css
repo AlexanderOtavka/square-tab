@@ -96,7 +96,7 @@ header {
   top: 0;
   bottom: 0;
   width: var(--drawer-width);
-  box-shadow: 0 0 8px rgba(0, 0, 0, .7);
+  box-shadow: -2px 0 12px rgba(0, 0, 0, .4);
   transition: all var(--drawer-transition-timing);
 }
 
@@ -213,7 +213,7 @@ header {
 #drawer-backdrop {
   z-index: 19;
   pointer-events: none;
-  background: rgba(0, 0, 0, .4);;
+  background: rgba(0, 0, 0, .4);
   opacity: 0;
   transition: opacity var(--drawer-transition-timing);
   will-change: opacity;
