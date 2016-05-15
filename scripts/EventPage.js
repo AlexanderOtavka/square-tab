@@ -47,7 +47,7 @@ class EventPage {
         }
       })
       .then(data => {
-        const DATA_LIFETIME_MS = 30 * (1000 * 60);  // 30 Minutes
+        const DATA_LIFETIME_MS = 60 * (1000 * 60);  // 60 Minutes
         data.expiration = Date.now() + DATA_LIFETIME_MS;
         chrome.storage.local.set({
           [storageKey]: JSON.stringify(data),

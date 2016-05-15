@@ -76,9 +76,15 @@ class Weather {
     if (data && Date.now() < data.expiration) {
       this._onInitialLoad();
       this.onDataLoad.dispatch(data);
-    } else {
-      this._fetchAndCacheWeatherData();
+
+      // Don't fetch new data if we have refreshed within the safezone
+      const EXPIRATION_SAFEZONE = 10 * 60 * 1000;  // 10 Minutes
+      if (data.expiration - Date.now() < EXPIRATION_SAFEZONE) {
+        return;
+      }
     }
+
+    this._fetchAndCacheWeatherData();
   }
 
   static _updateWeather(weatherData) {
@@ -96,20 +102,11 @@ class Weather {
     let main = weatherData.weather[0].main.toUpperCase();
     let description = weatherData.weather[0].description.toUpperCase();
 
-    let now = Date.now();
-    let nowDate = new Date();
-    let sunset = weatherData.sys.sunset * 1000;
-    let sunrise = weatherData.sys.sunrise * 1000;
-    let sunsetDate = new Date(sunset);
-    let sunriseDate =  new Date(sunrise);
-
-    if (sunriseDate.getDay() !== nowDate.getDay()) {
-      sunrise = sunrise - (1000 * 60 * 60 * 24);
-    }
-
-    if (sunsetDate.getDay() !== nowDate.getDay()) {
-      sunset = sunset - (1000 * 60 * 60 * 24);
-    }
+    const DAY_MS = 1000 * 60 * 60 * 24;
+    let tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
+    let now = (Date.now() - tzOffset) % DAY_MS;
+    let sunset = (weatherData.sys.sunset * 1000 - tzOffset) % DAY_MS;
+    let sunrise = (weatherData.sys.sunrise * 1000 - tzOffset) % DAY_MS;
 
     let isNight = (now < sunrise || sunset < now);
 
