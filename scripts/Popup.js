@@ -2,6 +2,10 @@
 'use strict';
 
 class Popup {
+  constructor() {
+    throw new TypeError('Static class cannot be instantiated.');
+  }
+
   static main() {
     const $alwaysShowBookmarks =
       document.querySelector('#always-show-bookmarks');

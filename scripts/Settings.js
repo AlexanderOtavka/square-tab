@@ -1,6 +1,10 @@
 'use strict';
 
 class Settings {
+  constructor() {
+    throw new TypeError('Static class cannot be instantiated.');
+  }
+
   static get enums() {
     return {
       TemperatureUnits: {

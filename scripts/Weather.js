@@ -2,6 +2,10 @@
 'use strict';
 
 class Weather {
+  constructor() {
+    throw new TypeError('Static class cannot be instantiated.');
+  }
+
   static get STORAGE_KEY_WEATHER_DATA() {
     return 'weatherData';
   }

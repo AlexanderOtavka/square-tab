@@ -2,6 +2,10 @@
 'use strict';
 
 class NewTab {
+  constructor() {
+    throw new TypeError('Static class cannot be instantiated.');
+  }
+
   static get DEFAULT_IMAGE_URL() {
     let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
     let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;

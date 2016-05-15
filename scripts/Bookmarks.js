@@ -2,6 +2,10 @@
 'use strict';
 
 class Bookmarks {
+  constructor() {
+    throw new TypeError('Static class cannot be instantiated.');
+  }
+
   static main() {
     this.$bookmarksTitle = document.querySelector('#bookmarks-drawer .title');
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');

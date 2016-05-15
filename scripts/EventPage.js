@@ -1,6 +1,10 @@
 'use strict';
 
 class EventPage {
+  constructor() {
+    throw new TypeError('Static class cannot be instantiated.');
+  }
+
   static fetchAndCacheImage(resourceURI, storageKey) {
     return fetch(resourceURI)
       .then(resp =>
