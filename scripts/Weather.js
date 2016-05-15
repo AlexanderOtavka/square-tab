@@ -56,17 +56,18 @@ class Weather {
 
   static updateTemperatureUnit(unit) {
     if (this._data) {
-      let temperatureC = Math.round(this._data.main.temp);
+      // Ensure against XSS with the cast to Number
+      let temperatureC = Number(this._data.main.temp);
       switch (unit) {
         case Settings.enums.TemperatureUnits.CELCIUS:
-          this.$temperature.textContent = `${temperatureC} °C`;
+          this.$temperature.innerHTML = `${Math.round(temperatureC)} &deg;C`;
           break;
         case Settings.enums.TemperatureUnits.FAHRENHEIT:
           let temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
-          this.$temperature.textContent = `${temperatureF} °F`;
+          this.$temperature.innerHTML = `${temperatureF} &deg;F`;
           break;
         default:
-          this.$temperature.textContent = '';
+          this.$temperature.innerHTML = '';
       }
     }
   }
@@ -152,8 +153,8 @@ class Weather {
   }
 
   static _fetchAndCacheWeatherData() {
-    chrome.runtime.getBackgroundPage(eventPage => {
-      eventPage.fetchAndCacheWeatherData(this.STORAGE_KEY_WEATHER_DATA);
+    chrome.runtime.getBackgroundPage(({ EventPage }) => {
+      EventPage.fetchAndCacheWeatherData(this.STORAGE_KEY_WEATHER_DATA);
     });
   }
 }

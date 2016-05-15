@@ -85,8 +85,8 @@ class NewTab {
         }
       }
 
-      chrome.runtime.getBackgroundPage(eventPage => {
-        eventPage.fetchAndCacheImage(imageResourceURI,
+      chrome.runtime.getBackgroundPage(({ EventPage }) => {
+        EventPage.fetchAndCacheImage(imageResourceURI,
                                      STORAGE_KEY_IMAGE_DATA_URL);
       });
     });
