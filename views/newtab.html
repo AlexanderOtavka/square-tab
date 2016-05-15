@@ -10,6 +10,7 @@
 
   <link rel="import" href="../elements/x-bookmark/x-bookmark.html" />
   <link rel="import" href="../elements/x-icon/x-icon.html" />
+  <link rel="import" href="../elements/x-context-menu/x-context-menu.html" />
 </head>
 
 <body unresolved>
@@ -53,11 +54,15 @@
 
   <div id="drawer-backdrop" class="fullbleed"></div>
 
+  <x-context-menu id="bookmarks-ctx-menu">
+    <div id="bookmarks-ctx-menu-edit" class="menu-item">Edit</div>
+    <div id="bookmarks-ctx-menu-delete" class="menu-item">Delete</div>
+  </x-context-menu>
+
   <script src="../scripts/Settings.js"></script>
   <script src="../scripts/Bookmarks.js"></script>
   <script src="../scripts/Weather.js"></script>
   <script src="../scripts/NewTab.js"></script>
-
 </body>
 
 </html>

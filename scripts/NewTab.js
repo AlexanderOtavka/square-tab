@@ -19,6 +19,7 @@ class NewTab {
     this.$backgroundImage = document.querySelector('#background-image');
     this.$time = document.querySelector('#time');
     this.$greeting = document.querySelector('#greeting');
+    this.$weatherWrapper = document.querySelector('#weather-wrapper');
     this.$bookmarksOpenButton =
       document.querySelector('#bookmarks-open-button');
     this.$bookmarksCloseButton =
@@ -27,9 +28,16 @@ class NewTab {
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
     this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
-    this.$weatherWrapper = document.querySelector('#weather-wrapper');
+    this.$bookmarksCtxMenu = document.querySelector('#bookmarks-ctx-menu');
+    this.$bookmarksCtxMenuEdit =
+      document.querySelector('#bookmarks-ctx-menu-edit');
+    this.$bookmarksCtxMenuDelete =
+      document.querySelector('#bookmarks-ctx-menu-delete');
 
     const STORAGE_KEY_IMAGE_DATA_URL = 'imageDataURL';
+
+    // Disable the right click menu
+    this.$root.addEventListener('contextmenu', ev => ev.preventDefault(), true);
 
     // Load cached image
     let backgroundImageReady = new Promise(resolve => {
@@ -95,8 +103,14 @@ class NewTab {
     this.$bookmarksUpButton.addEventListener('click', () =>
       Bookmarks.ascend()
     );
-    this.$bookmarksDrawerItems.addEventListener('bookmark-clicked', ev => {
+    this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
       Bookmarks.openNode(ev.detail.node);
+    }, true);
+
+    // Handle bookmarks right click
+    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
+      this.$bookmarksCtxMenu.show(ev.detail.x, ev.detail.y);
+      this.configureBookmarksCtxMenu(ev.detail.node);
     }, true);
 
     // Update the clock immediately, then once every second forever
@@ -113,6 +127,17 @@ class NewTab {
     this.$drawerBackdrop.addEventListener('click', () =>
       this.closeBookmarks()
     );
+  }
+
+  static configureBookmarksCtxMenu(node) {
+    this.$bookmarksCtxMenuEdit.onclick = () => {
+      // TODO: open edit dialog
+      console.log(node);
+    };
+
+    this.$bookmarksCtxMenuDelete.onclick = () => {
+      Bookmarks.deleteNode(node);
+    };
   }
 
   static getImageTimeOfDay() {

@@ -17,19 +17,14 @@ class XBookmarkElement extends HTMLElement {
     this.small = false;
     this.node = null;
 
-    this.addEventListener('click', () => {
-      let customEvent = new CustomEvent('bookmark-clicked', {
-        detail: { node: this._node },
-      });
-
-      requestAnimationFrame(() => this.dispatchEvent(customEvent));
-    });
+    this.addEventListener('click', () => this.onClick());
+    this.addEventListener('contextmenu', ev => this.onContextMenu(ev));
   }
 
   attributeChangedCallback(attrName) {
     switch (attrName) {
       case 'small':
-        this.updateTooltip();
+        this._updateTooltip();
         break;
     }
   }
@@ -40,8 +35,8 @@ class XBookmarkElement extends HTMLElement {
 
   set node(node) {
     this._node = node;
-    this.updateImage();
-    this.updateTooltip();
+    this._updateImage();
+    this._updateTooltip();
 
     this.$link.href = this.url;
     this.$name.textContent = this.name;
@@ -67,7 +62,29 @@ class XBookmarkElement extends HTMLElement {
     }
   }
 
-  updateImage() {
+  onClick() {
+    let customEvent = new CustomEvent('x-bookmark-click', {
+      detail: { node: this._node },
+    });
+
+    requestAnimationFrame(() => this.dispatchEvent(customEvent));
+  }
+
+  onContextMenu(ev) {
+    let customEvent = new CustomEvent('x-bookmark-ctx-open', {
+      detail: {
+        node: this._node,
+        x: ev.x,
+        y: ev.y,
+      },
+    });
+
+    requestAnimationFrame(() => this.dispatchEvent(customEvent));
+
+    ev.preventDefault();
+  }
+
+  _updateImage() {
     if (this.node && !this.node.url) {
       this.$image.src = '/images/folder-outline.svg';
     } else {
@@ -75,7 +92,7 @@ class XBookmarkElement extends HTMLElement {
     }
   }
 
-  updateTooltip() {
+  _updateTooltip() {
     if (this.small) {
       this.title = this.name;
     } else {

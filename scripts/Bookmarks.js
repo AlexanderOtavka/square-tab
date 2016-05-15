@@ -77,6 +77,14 @@ class Bookmarks {
     elements.forEach(element => element.small = small);
   }
 
+  static deleteNode(node) {
+    if (node.children) {
+      node.children.forEach(childNode => this.deleteNode(childNode));
+    }
+
+    chrome.bookmarks.remove(node.id);
+  }
+
   static _getCurrentNode() {
     return this._stack[this._stack.length - 1];
   }
