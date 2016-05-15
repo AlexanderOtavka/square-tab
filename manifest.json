@@ -33,7 +33,7 @@
   },
 
   "background": {
-    "scripts": ["scripts/eventPage.js"],
+    "scripts": ["scripts/EventPage.js"],
     "persistent": false
   }
 }

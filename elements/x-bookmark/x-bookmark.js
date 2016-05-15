@@ -1,22 +1,21 @@
-(function (app) {
 'use strict';
 
-const $tmpl = document.currentScript.ownerDocument.querySelector('template');
+class XBookmarkElement extends HTMLElement {
+  static register() {
+    this.$tmpl = document.currentScript.ownerDocument.querySelector('template');
+    document.registerElement('x-bookmark', this);
+  }
 
-class XBookmark extends HTMLElement {
   createdCallback() {
-    let tmplRoot = document.importNode($tmpl.content, true);
+    let tmplRoot = document.importNode(XBookmarkElement.$tmpl.content, true);
     this.createShadowRoot().appendChild(tmplRoot);
 
     this.$link = this.shadowRoot.querySelector('#link');
     this.$image = this.shadowRoot.querySelector('#image');
     this.$name = this.shadowRoot.querySelector('#name');
 
+    this.small = false;
     this.node = null;
-    this.dataset.small = 'false';
-
-    this.updateImage();
-    this.updateTooltip();
 
     this.addEventListener('click', () => {
       let customEvent = new CustomEvent('bookmark-clicked', {
@@ -29,7 +28,7 @@ class XBookmark extends HTMLElement {
 
   attributeChangedCallback(attrName) {
     switch (attrName) {
-      case 'data-small':
+      case 'small':
         this.updateTooltip();
         break;
     }
@@ -56,6 +55,18 @@ class XBookmark extends HTMLElement {
     return this.node ? (this.node.url || '#') : '#';
   }
 
+  get small() {
+    return this.hasAttribute('small');
+  }
+
+  set small(small) {
+    if (small) {
+      this.setAttribute('small', '');
+    } else {
+      this.removeAttribute('small');
+    }
+  }
+
   updateImage() {
     if (this.node && !this.node.url) {
       this.$image.src = '/images/folder-outline.svg';
@@ -65,7 +76,7 @@ class XBookmark extends HTMLElement {
   }
 
   updateTooltip() {
-    if (this.dataset.small === 'true') {
+    if (this.small) {
       this.title = this.name;
     } else {
       this.title = '';
@@ -73,6 +84,4 @@ class XBookmark extends HTMLElement {
   }
 }
 
-app.XBookmark = document.registerElement('x-bookmark', XBookmark);
-
-})(window.app = window.app || {});
+XBookmarkElement.register();

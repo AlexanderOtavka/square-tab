@@ -1,6 +1,7 @@
 :root {
   --drawer-width: 300px;
   --drawer-header-height: 68px;
+  --drawer-transition-timing: 200ms  cubic-bezier(0, 0, 0.3, 1);
 }
 
 :root.bookmarks-drawer-small {
@@ -17,6 +18,22 @@ body[unresolved], [hidden] {
   display: none !important;
 }
 
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.fullbleed {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
 .toolbar {
   display: flex;
   flex-direction: row;
@@ -26,7 +43,7 @@ body[unresolved], [hidden] {
   user-select: none;
 }
 
-span.title {
+.title {
   flex-grow: 1;
   font-size: 1.3rem;
   margin: 0 8px;
@@ -37,58 +54,62 @@ span.title {
 }
 
 .radial-shadow {
+  position: relative;
+}
+
+.radial-shadow::before {
+  content: "";
   background: radial-gradient(
     circle at 50% 50%,
     rgba(0, 0, 0, .15),
     rgba(0, 0, 0, 0) 60%
   );
-  padding: 24px;
-  margin: -24px;
+  display: block;
+  position: absolute;
+  top: -24px;
+  right: -24px;
+  bottom: -24px;
+  left: -24px;
+  z-index: -1;
 }
 
-.large-icon {
-  width: 28px;
-  height: 28px;
-  padding: 4px;
-}
-
-.icon-button {
-  border-radius: 50%;
-  cursor: pointer;
-  background-color: rgba(0, 0, 0, 0);
-  transition: background-color 200ms;
-}
-
-.icon-button:active {
-  background-color: rgba(0, 0, 0, .1);
+.drawer {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  bottom: 0;
+  width: var(--drawer-width);
+  box-shadow: -2px 0 12px rgba(0, 0, 0, .4);
+  transition: all var(--drawer-transition-timing);
 }
 
 .drawer-header {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
   height: calc(var(--drawer-header-height) - 1px);
   border-bottom: 1px solid rgba(0, 0, 0, .2);;
 }
 
-#background-image {
+.drawer-content {
+  display: block;
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: var(--drawer-header-height);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+}
+
+#background-image {
   z-index: -999;
   object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 
-#main-toolbar {
-  position: absolute;
-  z-index: 10;
-  top: 0;
-  right: 0;
-  left: 0;
+#bookmarks-open-button {
+  fill: #fff;
 }
 
-.bookmarks-drawer-locked-open #bookmarks-open-button-wrapper {
+.bookmarks-drawer-locked-open #bookmarks-open-button {
   display: none;
 }
 
@@ -97,15 +118,10 @@ span.title {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
-  transition: right var(--drawer-transition-duration);
+  transition: right var(--drawer-transition-timing);
 }
 
 .bookmarks-drawer-locked-open #info-wrapper {
@@ -141,7 +157,7 @@ span.title {
 }
 
 #weather-wrapper {
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
 }
@@ -157,25 +173,24 @@ span.title {
 }
 
 #bookmarks-drawer {
-  position: absolute;
-  z-index: 20;
-  top: 0;
-  right: calc(-10px - var(--drawer-width));
-  bottom: 0;
-  width: var(--drawer-width);
+  right: 0;
   background: #fff;
-  box-shadow: 0 0 8px rgba(0, 0, 0, .7);
-  transition: all var(--drawer-transition-duration);
+  transform: translateX(105%);
+  will-change: transform;
 }
 
 .bookmarks-drawer-open #bookmarks-drawer,
 .bookmarks-drawer-locked-open #bookmarks-drawer {
-  right: 0;
+  transform: translateX(0);
 }
 
 .bookmarks-drawer-locked-open #bookmarks-drawer {
   box-shadow: none;
   background: rgba(255, 255, 255, 0.9);
+}
+
+#bookmarks-drawer x-icon {
+  fill: #333;
 }
 
 .bookmarks-drawer-small #bookmarks-drawer-title {
@@ -186,23 +201,16 @@ span.title {
   display: none;
 }
 
-#bookmarks-drawer-items {
-  position: absolute;
-  top: var(--drawer-header-height);
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow-y: auto;
+#drawer-backdrop {
+  z-index: 19;
+  pointer-events: none;
+  background: rgba(0, 0, 0, .4);
+  opacity: 0;
+  transition: opacity var(--drawer-transition-timing);
+  will-change: opacity;
 }
 
-#drawer-backdrop {
-  display: none;
-  position: absolute;
-  z-index: 19;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: #000;
-  opacity: 0;
+.bookmarks-drawer-open #drawer-backdrop {
+  pointer-events: auto;
+  opacity: 1;
 }
