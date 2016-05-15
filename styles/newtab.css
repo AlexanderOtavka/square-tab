@@ -73,23 +73,6 @@ header {
   z-index: -1;
 }
 
-.large-icon {
-  width: 28px;
-  height: 28px;
-  padding: 4px;
-}
-
-.icon-button {
-  border-radius: 50%;
-  cursor: pointer;
-  background-color: rgba(0, 0, 0, 0);
-  transition: background-color 200ms;
-}
-
-.icon-button:active {
-  background-color: rgba(0, 0, 0, .1);
-}
-
 .drawer {
   position: fixed;
   z-index: 20;
@@ -122,7 +105,11 @@ header {
   height: 100%;
 }
 
-.bookmarks-drawer-locked-open #bookmarks-open-button-wrapper {
+#bookmarks-open-button {
+  fill: #fff;
+}
+
+.bookmarks-drawer-locked-open #bookmarks-open-button {
   display: none;
 }
 
@@ -200,6 +187,10 @@ header {
 .bookmarks-drawer-locked-open #bookmarks-drawer {
   box-shadow: none;
   background: rgba(255, 255, 255, 0.9);
+}
+
+#bookmarks-drawer x-icon {
+  fill: #333;
 }
 
 .bookmarks-drawer-small #bookmarks-drawer-title {

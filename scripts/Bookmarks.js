@@ -9,13 +9,13 @@ class Bookmarks {
   static main() {
     this.$bookmarksTitle = document.querySelector('#bookmarks-drawer .title');
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
-    this.$bookmarksTopIcon = document.querySelector('#bookmarks-top-icon');
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
 
     this._stack = [];
 
     this.loadBookmarks();
+    this._updateUpButton();
   }
 
   static loadBookmarks() {
@@ -30,8 +30,7 @@ class Bookmarks {
   static openNode(node = null) {
     if (node && node !== this._getCurrentNode()) {
       this._stack.push(node);
-      this.$bookmarksUpButton.removeAttribute('hidden');
-      this.$bookmarksTopIcon.setAttribute('hidden', '');
+      this._updateUpButton();
     } else {
       node = this._getCurrentNode();
     }
@@ -68,11 +67,7 @@ class Bookmarks {
     if (!this._isTop()) {
       this._stack.pop();
       this.openNode();
-
-      if (this._isTop()) {
-        this.$bookmarksUpButton.setAttribute('hidden', '');
-        this.$bookmarksTopIcon.removeAttribute('hidden');
-      }
+      this._updateUpButton();
     }
   }
 
@@ -88,6 +83,16 @@ class Bookmarks {
 
   static _isTop() {
     return this._stack.length === 1;
+  }
+
+  static _updateUpButton() {
+    if (this._isTop()) {
+      this.$bookmarksUpButton.icon = 'folder';
+      this.$bookmarksUpButton.button = false;
+    } else {
+      this.$bookmarksUpButton.icon = 'folder-up';
+      this.$bookmarksUpButton.button = true;
+    }
   }
 }
 

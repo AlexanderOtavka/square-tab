@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../styles/newtab.css" />
 
   <link rel="import" href="../elements/x-bookmark/x-bookmark.html" />
+  <link rel="import" href="../elements/x-icon/x-icon.html" />
 </head>
 
 <body unresolved>
@@ -16,17 +17,12 @@
 
   <header id="main-toolbar" class="toolbar">
     <span class="title"></span>
-    <div id="bookmarks-open-button-wrapper" class="radial-shadow">
-      <svg
-        id="bookmarks-open-button"
-        class="large-icon icon-button"
-        viewBox="0 0 24 24">
-
-        <path
-          fill="#ffffff"
-          d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" />
-      </svg>
-    </div>
+    <x-icon
+      id="bookmarks-open-button"
+      class="radial-shadow"
+      icon="bookmarks"
+      large button>
+    </x-icon>
   </header>
 
   <div id="info-wrapper" class="fullbleed">
@@ -44,37 +40,11 @@
   <aside id="bookmarks-drawer" class="drawer">
     <header class="drawer-header">
       <div class="toolbar">
-        <svg
-          id="bookmarks-up-button"
-          class="large-icon icon-button"
-          viewBox="0 0 24 24">
-
-          <path
-            fill="#333333"
-            d="M20,6A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4H10L12,6H20M10.75,13H14V17H16V13H19.25L15,8.75" />
-        </svg>
-
-        <svg
-          id="bookmarks-top-icon"
-          class="large-icon"
-          viewBox="0 0 24 24">
-
-          <path
-            fill="#333333"
-            d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z" />
-        </svg>
+        <x-icon id="bookmarks-up-button" large></x-icon>
 
         <span id="bookmarks-drawer-title" class="title"></span>
 
-        <svg
-          id="bookmarks-close-button"
-          class="large-icon icon-button"
-          viewBox="0 0 24 24">
-
-          <path
-            fill="#333333"
-            d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-        </svg>
+        <x-icon id="bookmarks-close-button" icon="close" large button></x-icon>
       </div>
     </header>
 
