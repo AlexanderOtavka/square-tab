@@ -11,6 +11,7 @@
   <link rel="import" href="../elements/x-bookmark/x-bookmark.html" />
   <link rel="import" href="../elements/x-icon/x-icon.html" />
   <link rel="import" href="../elements/x-context-menu/x-context-menu.html" />
+  <link rel="import" href="../elements/x-dialog/x-dialog.html" />
 </head>
 
 <body unresolved>
@@ -26,7 +27,7 @@
     </x-icon>
   </header>
 
-  <div id="info-wrapper" class="fullbleed">
+  <main id="info-wrapper" class="fullbleed">
     <div id="info-box">
       <div id="time"></div>
       <div id="greeting"></div>
@@ -36,7 +37,7 @@
         <div id="temperature"></div>
       </div>
     </div>
-  </div>
+  </main>
 
   <aside id="bookmarks-drawer" class="drawer">
     <header class="drawer-header">
@@ -52,12 +53,23 @@
     <nav id="bookmarks-drawer-items" class="drawer-content"></nav>
   </aside>
 
-  <div id="drawer-backdrop" class="fullbleed"></div>
+  <div id="drawer-backdrop" class="fullbleed backdrop"></div>
 
   <x-context-menu id="bookmarks-ctx-menu">
     <div id="bookmarks-ctx-menu-edit" class="menu-item">Edit</div>
     <div id="bookmarks-ctx-menu-delete" class="menu-item">Delete</div>
   </x-context-menu>
+
+  <x-dialog id="bookmarks-edit-dialog">
+    <img id="bookmarks-edit-dialog-favicon" class="dialog-title" />
+    <h1 class="dialog-title">Edit</h1>
+
+    <div class="row">
+      <input id="bookmarks-edit-dialog-name" type="text" placeholder="Name" />
+      <input id="bookmarks-edit-dialog-url" type="text" placeholder="URL" />
+    </div>
+    <button class="dialog-confirm">Done</button>
+  </x-dialog>
 
   <script src="../scripts/Settings.js"></script>
   <script src="../scripts/Bookmarks.js"></script>

@@ -16,6 +16,8 @@ class Bookmarks {
 
     this.loadBookmarks();
     this._updateUpButton();
+
+    // TODO: handle bookmarks tree changes
   }
 
   static loadBookmarks() {
@@ -75,14 +77,6 @@ class Bookmarks {
     let elements =
       Array.prototype.slice.call(this.$bookmarksDrawerItems.childNodes);
     elements.forEach(element => element.small = small);
-  }
-
-  static deleteNode(node) {
-    if (node.children) {
-      node.children.forEach(childNode => this.deleteNode(childNode));
-    }
-
-    chrome.bookmarks.remove(node.id);
   }
 
   static _getCurrentNode() {

@@ -33,6 +33,16 @@ class NewTab {
       document.querySelector('#bookmarks-ctx-menu-edit');
     this.$bookmarksCtxMenuDelete =
       document.querySelector('#bookmarks-ctx-menu-delete');
+    this.$bookmarksEditDialog =
+      document.querySelector('#bookmarks-edit-dialog');
+    this.$bookmarksEditDialogFavicon =
+      document.querySelector('#bookmarks-edit-dialog-favicon');
+    this.$bookmarksEditDialogName =
+      document.querySelector('#bookmarks-edit-dialog-name');
+    this.$bookmarksEditDialogURL =
+      document.querySelector('#bookmarks-edit-dialog-url');
+    this.$bookmarksEditDialogDone =
+      document.querySelector('#bookmarks-edit-dialog .dialog-confirm');
 
     const STORAGE_KEY_IMAGE_DATA_URL = 'imageDataURL';
 
@@ -109,8 +119,7 @@ class NewTab {
 
     // Handle bookmarks right click
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
-      this.$bookmarksCtxMenu.show(ev.detail.x, ev.detail.y);
-      this.configureBookmarksCtxMenu(ev.detail.node);
+      this.openBookmarksCtxMenu(ev.detail.x, ev.detail.y, ev.detail.node);
     }, true);
 
     // Update the clock immediately, then once every second forever
@@ -127,17 +136,59 @@ class NewTab {
     this.$drawerBackdrop.addEventListener('click', () =>
       this.closeBookmarks()
     );
+
+    this.$bookmarksEditDialogURL.addEventListener('change', () => {
+      this.$bookmarksEditDialogURL.value =
+        this.fixUrl(this.$bookmarksEditDialogURL.value);
+    });
   }
 
-  static configureBookmarksCtxMenu(node) {
+  static openBookmarksCtxMenu(x, y, node) {
+    this.$bookmarksCtxMenu.show(x, y);
+
     this.$bookmarksCtxMenuEdit.onclick = () => {
-      // TODO: open edit dialog
-      console.log(node);
+      this.openBookmarksEditDialog(node);
     };
 
     this.$bookmarksCtxMenuDelete.onclick = () => {
-      Bookmarks.deleteNode(node);
+      if (node.children) {
+        chrome.bookmarks.removeTree(node.id);
+      } else {
+        chrome.bookmarks.remove(node.id);
+      }
     };
+  }
+
+  static openBookmarksEditDialog(node) {
+    this.$bookmarksEditDialog.open();
+
+    this.$bookmarksEditDialogName.value = node.title || '';
+    if (node.children) {
+      this.$bookmarksEditDialogURL.hidden = true;
+      this.$bookmarksEditDialogFavicon.src = '/images/folder-outline.svg';
+    } else {
+      let url = node.url || '';
+      this.$bookmarksEditDialogURL.hidden = false;
+      this.$bookmarksEditDialogURL.value = url;
+      this.$bookmarksEditDialogFavicon.src =
+        `chrome://favicon/size/16@8x/${url}`;
+    }
+
+    this.$bookmarksEditDialogDone.onclick = () => {
+      chrome.bookmarks.update(node.id, {
+        title: this.$bookmarksEditDialogName.value,
+        url: this.$bookmarksEditDialogURL.value,
+      });
+      this.$bookmarksEditDialog.close();
+    };
+  }
+
+  static fixUrl(url) {
+    if (url.search('://') === -1) {
+      url = `http://${url}`;
+    }
+
+    return url;
   }
 
   static getImageTimeOfDay() {
