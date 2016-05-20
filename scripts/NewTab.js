@@ -19,6 +19,7 @@ class NewTab {
     this.$backgroundImage = document.querySelector('#background-image');
     this.$time = document.querySelector('#time');
     this.$greeting = document.querySelector('#greeting');
+    this.$weatherWrapper = document.querySelector('#weather-wrapper');
     this.$bookmarksOpenButton =
       document.querySelector('#bookmarks-open-button');
     this.$bookmarksCloseButton =
@@ -27,9 +28,30 @@ class NewTab {
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
     this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
-    this.$weatherWrapper = document.querySelector('#weather-wrapper');
+    this.$bookmarksCtxMenu = document.querySelector('#bookmarks-ctx-menu');
+    this.$bookmarksCtxMenuEdit =
+      document.querySelector('#bookmarks-ctx-menu-edit');
+    this.$bookmarksCtxMenuDelete =
+      document.querySelector('#bookmarks-ctx-menu-delete');
+    this.$bookmarksCtxMenuAddPage =
+      document.querySelector('#bookmarks-ctx-menu-add-page');
+    this.$bookmarksCtxMenuAddFolder =
+      document.querySelector('#bookmarks-ctx-menu-add-folder');
+    this.$bookmarksEditDialog =
+      document.querySelector('#bookmarks-edit-dialog');
+    this.$bookmarksEditDialogFavicon =
+      document.querySelector('#bookmarks-edit-dialog-favicon');
+    this.$bookmarksEditDialogName =
+      document.querySelector('#bookmarks-edit-dialog-name');
+    this.$bookmarksEditDialogURL =
+      document.querySelector('#bookmarks-edit-dialog-url');
+    this.$bookmarksEditDialogDone =
+      document.querySelector('#bookmarks-edit-dialog .dialog-confirm');
 
     const STORAGE_KEY_IMAGE_DATA_URL = 'imageDataURL';
+
+    // Disable the right click menu
+    this.$root.addEventListener('contextmenu', ev => ev.preventDefault(), true);
 
     // Load cached image
     let backgroundImageReady = new Promise(resolve => {
@@ -95,9 +117,18 @@ class NewTab {
     this.$bookmarksUpButton.addEventListener('click', () =>
       Bookmarks.ascend()
     );
-    this.$bookmarksDrawerItems.addEventListener('bookmark-clicked', ev => {
-      Bookmarks.openNode(ev.detail.node);
+    this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
+      Bookmarks.openBookmark(ev.detail.nodeId);
     }, true);
+
+    // Handle bookmarks right click
+    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
+      this.openBookmarksCtxMenu(ev.detail.x, ev.detail.y, ev.detail.nodeId);
+    }, true);
+    this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
+      ev.preventDefault();
+      this.openBookmarksCtxMenu(ev.x, ev.y, null);
+    });
 
     // Update the clock immediately, then once every second forever
     this.updateTime();
@@ -113,6 +144,127 @@ class NewTab {
     this.$drawerBackdrop.addEventListener('click', () =>
       this.closeBookmarks()
     );
+
+    this.$bookmarksEditDialogURL.addEventListener('change', () => {
+      this.$bookmarksEditDialogURL.value =
+        this.fixUrl(this.$bookmarksEditDialogURL.value);
+    });
+  }
+
+  static openBookmarksCtxMenu(x, y, nodeId) {
+    this.$bookmarksCtxMenu.show(x, y);
+
+    this.$bookmarksCtxMenuAddPage.classList.remove('disabled');
+    this.$bookmarksCtxMenuAddPage.onclick = () => {
+      this.openBookmarksCreateDialog(false, nodeId);
+    };
+
+    this.$bookmarksCtxMenuAddFolder.classList.remove('disabled');
+    this.$bookmarksCtxMenuAddFolder.onclick = () => {
+      this.openBookmarksCreateDialog(true, nodeId);
+    };
+
+    if (nodeId) {
+      chrome.bookmarks.get(nodeId, ([{ url }]) => {
+        if (url) {
+          this.$bookmarksCtxMenuAddPage.classList.add('disabled');
+          this.$bookmarksCtxMenuAddPage.onclick = () => {};
+
+          this.$bookmarksCtxMenuAddFolder.classList.add('disabled');
+          this.$bookmarksCtxMenuAddFolder.onclick = () => {};
+        }
+      });
+
+      this.$bookmarksCtxMenuEdit.classList.remove('disabled');
+      this.$bookmarksCtxMenuEdit.onclick = () => {
+        this.openBookmarksEditDialog(nodeId);
+      };
+
+      this.$bookmarksCtxMenuDelete.classList.remove('disabled');
+      this.$bookmarksCtxMenuDelete.onclick = () => {
+        chrome.bookmarks.getChildren(nodeId, children => {
+          if (children) {
+            chrome.bookmarks.removeTree(nodeId);
+          } else {
+            chrome.bookmarks.remove(nodeId);
+          }
+        });
+      };
+    } else {
+      this.$bookmarksCtxMenuEdit.classList.add('disabled');
+      this.$bookmarksCtxMenuEdit.onclick = () => {};
+
+      this.$bookmarksCtxMenuDelete.classList.add('disabled');
+      this.$bookmarksCtxMenuDelete.onclick = () => {};
+    }
+  }
+
+  static openBookmarksEditDialog(nodeId) {
+    this.$bookmarksEditDialog.open();
+
+    chrome.bookmarks.get(nodeId, ([{ title, url }]) => {
+      this.$bookmarksEditDialogName.value = title || '';
+      if (url) {
+        this.$bookmarksEditDialogURL.hidden = false;
+        this.$bookmarksEditDialogURL.value = url;
+        this.$bookmarksEditDialogFavicon.src =
+          `chrome://favicon/size/16@8x/${url}`;
+      } else {
+        this.$bookmarksEditDialogURL.hidden = true;
+        this.$bookmarksEditDialogFavicon.src = '/images/folder-outline.svg';
+      }
+    });
+
+    this.$bookmarksEditDialogDone.onclick = () => {
+      chrome.bookmarks.update(nodeId, {
+        title: this.$bookmarksEditDialogName.value,
+        url: this.$bookmarksEditDialogURL.value,
+      });
+      this.$bookmarksEditDialog.close();
+    };
+  }
+
+  static openBookmarksCreateDialog(isFolder, nodeId) {
+    this.$bookmarksEditDialog.open();
+    this.$bookmarksEditDialogName.value = '';
+    this.$bookmarksEditDialogURL.value = '';
+    this.$bookmarksEditDialogURL.hidden = isFolder;
+    this.$bookmarksEditDialogFavicon.src = isFolder ?
+      '/images/folder-outline.svg' : 'chrome://favicon/size/16@8x/';
+
+    this.$bookmarksEditDialogDone.onclick = () => {
+      if (!isFolder && !this.$bookmarksEditDialogURL.value) {
+        return;
+      }
+
+      let create = parentId => chrome.bookmarks.create({
+        parentId,
+        title: this.$bookmarksEditDialogName.value,
+        url: this.$bookmarksEditDialogURL.value,
+      });
+
+      if (nodeId) {
+        chrome.bookmarks.get(nodeId, ([node]) => {
+          if (node.url) {
+            create(node.parentId);
+          } else {
+            create(node.id);
+          }
+        });
+      } else {
+        create(Bookmarks.currentFolder);
+      }
+
+      this.$bookmarksEditDialog.close();
+    };
+  }
+
+  static fixUrl(url) {
+    if (url.search('://') === -1) {
+      url = `http://${url}`;
+    }
+
+    return url;
   }
 
   static getImageTimeOfDay() {

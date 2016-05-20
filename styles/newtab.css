@@ -1,7 +1,10 @@
 :root {
   --drawer-width: 300px;
   --drawer-header-height: 68px;
-  --drawer-transition-timing: 200ms  cubic-bezier(0, 0, 0.3, 1);
+  --drawer-transition-timing: 200ms cubic-bezier(0, 0, .3, 1);
+  --x-dialog-transition-timing: 100ms cubic-bezier(0, 0, .3, 1);
+  --backdrop-background: rgba(0, 0, 0, .4);
+  --shadow-1: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
 :root.bookmarks-drawer-small {
@@ -26,6 +29,45 @@ header {
   z-index: 1;
 }
 
+button {
+  position: relative;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 3px;
+  background-color: #ddd;
+  color: #333;
+  cursor: pointer;
+  box-shadow: none;
+  transition: box-shadow 400ms;
+}
+
+button::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, .1);
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+button:hover {
+  box-shadow: var(--shadow-1);
+}
+
+button:focus {
+  outline: none;
+}
+
+button:active::after {
+  opacity: 1;
+}
+
 .fullbleed {
   position: fixed;
   top: 0;
@@ -45,6 +87,7 @@ header {
 
 .title {
   flex-grow: 1;
+  flex-basis: 1px;
   font-size: 1.3rem;
   margin: 0 8px;
   cursor: default;
@@ -96,6 +139,11 @@ header {
   bottom: 0;
   left: 0;
   overflow-y: auto;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
 }
 
 #background-image {
@@ -201,10 +249,14 @@ header {
   display: none;
 }
 
+#bookmarks-drawer-items {
+  padding-bottom: 32px;
+}
+
 #drawer-backdrop {
   z-index: 19;
   pointer-events: none;
-  background: rgba(0, 0, 0, .4);
+  background: var(--backdrop-background);
   opacity: 0;
   transition: opacity var(--drawer-transition-timing);
   will-change: opacity;
@@ -213,4 +265,18 @@ header {
 .bookmarks-drawer-open #drawer-backdrop {
   pointer-events: auto;
   opacity: 1;
+}
+
+#bookmarks-edit-dialog {
+  --x-dialog-width: 350px;
+}
+
+#bookmarks-edit-dialog-name {
+  flex-grow: 1;
+  flex-basis: 1px;
+}
+
+#bookmarks-edit-dialog-url {
+  flex-grow: 2;
+  flex-basis: 1px;
 }
