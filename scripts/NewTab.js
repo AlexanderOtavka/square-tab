@@ -114,12 +114,12 @@ class NewTab {
       Bookmarks.ascend()
     );
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
-      Bookmarks.openNode(ev.detail.node);
+      Bookmarks.openBookmark(ev.detail.nodeId);
     }, true);
 
     // Handle bookmarks right click
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
-      this.openBookmarksCtxMenu(ev.detail.x, ev.detail.y, ev.detail.node);
+      this.openBookmarksCtxMenu(ev.detail.x, ev.detail.y, ev.detail.nodeId);
     }, true);
 
     // Update the clock immediately, then once every second forever
@@ -143,39 +143,42 @@ class NewTab {
     });
   }
 
-  static openBookmarksCtxMenu(x, y, node) {
+  static openBookmarksCtxMenu(x, y, nodeId) {
     this.$bookmarksCtxMenu.show(x, y);
 
     this.$bookmarksCtxMenuEdit.onclick = () => {
-      this.openBookmarksEditDialog(node);
+      this.openBookmarksEditDialog(nodeId);
     };
 
     this.$bookmarksCtxMenuDelete.onclick = () => {
-      if (node.children) {
-        chrome.bookmarks.removeTree(node.id);
-      } else {
-        chrome.bookmarks.remove(node.id);
-      }
+      chrome.bookmarks.getChildren(nodeId, children => {
+        if (children) {
+          chrome.bookmarks.removeTree(nodeId);
+        } else {
+          chrome.bookmarks.remove(nodeId);
+        }
+      });
     };
   }
 
-  static openBookmarksEditDialog(node) {
+  static openBookmarksEditDialog(nodeId) {
     this.$bookmarksEditDialog.open();
 
-    this.$bookmarksEditDialogName.value = node.title || '';
-    if (node.children) {
-      this.$bookmarksEditDialogURL.hidden = true;
-      this.$bookmarksEditDialogFavicon.src = '/images/folder-outline.svg';
-    } else {
-      let url = node.url || '';
-      this.$bookmarksEditDialogURL.hidden = false;
-      this.$bookmarksEditDialogURL.value = url;
-      this.$bookmarksEditDialogFavicon.src =
-        `chrome://favicon/size/16@8x/${url}`;
-    }
+    chrome.bookmarks.get(nodeId, ([node]) => {
+      this.$bookmarksEditDialogName.value = node.title || '';
+      if (node.url) {
+        this.$bookmarksEditDialogURL.hidden = false;
+        this.$bookmarksEditDialogURL.value = node.url;
+        this.$bookmarksEditDialogFavicon.src =
+          `chrome://favicon/size/16@8x/${node.url}`;
+      } else {
+        this.$bookmarksEditDialogURL.hidden = true;
+        this.$bookmarksEditDialogFavicon.src = '/images/folder-outline.svg';
+      }
+    });
 
     this.$bookmarksEditDialogDone.onclick = () => {
-      chrome.bookmarks.update(node.id, {
+      chrome.bookmarks.update(nodeId, {
         title: this.$bookmarksEditDialogName.value,
         url: this.$bookmarksEditDialogURL.value,
       });

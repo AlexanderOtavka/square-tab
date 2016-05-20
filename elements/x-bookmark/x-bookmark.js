@@ -64,7 +64,7 @@ class XBookmarkElement extends HTMLElement {
 
   onClick() {
     let customEvent = new CustomEvent('x-bookmark-click', {
-      detail: { node: this._node },
+      detail: { nodeId: this._node.id },
     });
 
     requestAnimationFrame(() => this.dispatchEvent(customEvent));
@@ -73,7 +73,7 @@ class XBookmarkElement extends HTMLElement {
   onContextMenu(ev) {
     let customEvent = new CustomEvent('x-bookmark-ctx-open', {
       detail: {
-        node: this._node,
+        nodeId: this._node.id,
         x: ev.x,
         y: ev.y,
       },
