@@ -16,34 +16,34 @@ class Bookmarks {
     const BOOKMARKS_BAR_ID = '1';
     this._stack = [ROOT_ID, BOOKMARKS_BAR_ID];
 
-    this.openBookmark(this._currentFolder);
+    this.openBookmark(this.currentFolder);
 
     chrome.bookmarks.onCreated.addListener((id, node) => {
-      if (node.parentId === this._currentFolder) {
+      if (node.parentId === this.currentFolder) {
         this._createElement(node);
       }
     });
 
     chrome.bookmarks.onRemoved.addListener((id, { parentId, index }) => {
-      if (parentId === this._currentFolder) {
+      if (parentId === this.currentFolder) {
         this._deleteElementByIndex(index);
       } else if (this._stack.indexOf(id) !== -1) {
         this._stack.splice(this._stack.indexOf(id));
-        this.openBookmark(this._currentFolder);
+        this.openBookmark(this.currentFolder);
       }
     });
 
     chrome.bookmarks.onMoved.addListener((id, moveInfo) => {
-      if (moveInfo.parentId === this._currentFolder) {
+      if (moveInfo.parentId === this.currentFolder) {
         chrome.bookmarks.get(id, node => {
           this._createElement(node);
         });
-      } else if (moveInfo.oldParentId === this._currentFolder) {
+      } else if (moveInfo.oldParentId === this.currentFolder) {
         this._deleteElementByIndex(moveInfo.oldIndex);
       } else if (this._stack.indexOf(id) !== -1) {
         this._generateStackFrom(id).then(stack => {
           this._stack = stack;
-          this.openBookmark(this._currentFolder);
+          this.openBookmark(this.currentFolder);
         });
       }
     });
@@ -56,14 +56,14 @@ class Bookmarks {
     });
 
     chrome.bookmarks.onChildrenReordered.addListener(id => {
-      if (id === this._currentFolder) {
-        this.openBookmark(this._currentFolder);
+      if (id === this.currentFolder) {
+        this.openBookmark(this.currentFolder);
       }
     });
   }
 
   static openBookmark(id) {
-    if (id !== this._currentFolder) {
+    if (id !== this.currentFolder) {
       this._stack.push(id);
     }
 
@@ -98,7 +98,7 @@ class Bookmarks {
   static ascend() {
     if (!this._isTop) {
       this._stack.pop();
-      this.openBookmark(this._currentFolder);
+      this.openBookmark(this.currentFolder);
     }
   }
 
@@ -106,7 +106,7 @@ class Bookmarks {
     this._elements.forEach(element => element.small = small);
   }
 
-  static get _currentFolder() {
+  static get currentFolder() {
     return this._stack[this._stack.length - 1];
   }
 

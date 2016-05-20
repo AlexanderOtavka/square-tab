@@ -58,11 +58,14 @@
   <x-context-menu id="bookmarks-ctx-menu">
     <div id="bookmarks-ctx-menu-edit" class="menu-item">Edit</div>
     <div id="bookmarks-ctx-menu-delete" class="menu-item">Delete</div>
+    <hr />
+    <div id="bookmarks-ctx-menu-add-page" class="menu-item">Add Page</div>
+    <div id="bookmarks-ctx-menu-add-folder" class="menu-item">Add Folder</div>
   </x-context-menu>
 
   <x-dialog id="bookmarks-edit-dialog">
     <img id="bookmarks-edit-dialog-favicon" class="dialog-title" />
-    <h1 class="dialog-title">Edit</h1>
+    <h1 id="bookmarks-edit-dialog-title" class="dialog-title">Edit</h1>
 
     <div class="row">
       <input id="bookmarks-edit-dialog-name" type="text" placeholder="Name" />

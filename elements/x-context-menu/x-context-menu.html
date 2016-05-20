@@ -40,10 +40,18 @@
       display: block;
       padding: 8px;
       font-size: .9rem;
+      color: #000;
+      background: rgba(0, 0, 0, 0);
+      transition: background 200ms;
     }
 
-    ::content .menu-item:active {
+    ::content .menu-item:not(.disabled):active {
       background: rgba(0, 0, 0, .2);
+    }
+
+    ::content .menu-item.disabled {
+      color: #bbb;
+      cursor: default;
     }
 
     ::content hr {

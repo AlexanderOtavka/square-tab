@@ -30,6 +30,7 @@ header {
 }
 
 button {
+  position: relative;
   text-transform: uppercase;
   padding: 8px 16px;
   border: none;
@@ -41,8 +42,30 @@ button {
   transition: box-shadow 400ms;
 }
 
+button::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, .1);
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
 button:hover {
   box-shadow: var(--shadow-1);
+}
+
+button:focus {
+  outline: none;
+}
+
+button:active::after {
+  opacity: 1;
 }
 
 .fullbleed {
@@ -224,6 +247,10 @@ button:hover {
 
 .bookmarks-drawer-locked-open #bookmarks-close-button {
   display: none;
+}
+
+#bookmarks-drawer-items {
+  padding-bottom: 32px;
 }
 
 #drawer-backdrop {

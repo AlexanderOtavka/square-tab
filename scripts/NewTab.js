@@ -33,6 +33,10 @@ class NewTab {
       document.querySelector('#bookmarks-ctx-menu-edit');
     this.$bookmarksCtxMenuDelete =
       document.querySelector('#bookmarks-ctx-menu-delete');
+    this.$bookmarksCtxMenuAddPage =
+      document.querySelector('#bookmarks-ctx-menu-add-page');
+    this.$bookmarksCtxMenuAddFolder =
+      document.querySelector('#bookmarks-ctx-menu-add-folder');
     this.$bookmarksEditDialog =
       document.querySelector('#bookmarks-edit-dialog');
     this.$bookmarksEditDialogFavicon =
@@ -121,6 +125,10 @@ class NewTab {
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
       this.openBookmarksCtxMenu(ev.detail.x, ev.detail.y, ev.detail.nodeId);
     }, true);
+    this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
+      ev.preventDefault();
+      this.openBookmarksCtxMenu(ev.x, ev.y, null);
+    });
 
     // Update the clock immediately, then once every second forever
     this.updateTime();
@@ -146,31 +154,61 @@ class NewTab {
   static openBookmarksCtxMenu(x, y, nodeId) {
     this.$bookmarksCtxMenu.show(x, y);
 
-    this.$bookmarksCtxMenuEdit.onclick = () => {
-      this.openBookmarksEditDialog(nodeId);
+    this.$bookmarksCtxMenuAddPage.classList.remove('disabled');
+    this.$bookmarksCtxMenuAddPage.onclick = () => {
+      this.openBookmarksCreateDialog(false, nodeId);
     };
 
-    this.$bookmarksCtxMenuDelete.onclick = () => {
-      chrome.bookmarks.getChildren(nodeId, children => {
-        if (children) {
-          chrome.bookmarks.removeTree(nodeId);
-        } else {
-          chrome.bookmarks.remove(nodeId);
+    this.$bookmarksCtxMenuAddFolder.classList.remove('disabled');
+    this.$bookmarksCtxMenuAddFolder.onclick = () => {
+      this.openBookmarksCreateDialog(true, nodeId);
+    };
+
+    if (nodeId) {
+      chrome.bookmarks.get(nodeId, ([{ url }]) => {
+        if (url) {
+          this.$bookmarksCtxMenuAddPage.classList.add('disabled');
+          this.$bookmarksCtxMenuAddPage.onclick = () => {};
+
+          this.$bookmarksCtxMenuAddFolder.classList.add('disabled');
+          this.$bookmarksCtxMenuAddFolder.onclick = () => {};
         }
       });
-    };
+
+      this.$bookmarksCtxMenuEdit.classList.remove('disabled');
+      this.$bookmarksCtxMenuEdit.onclick = () => {
+        this.openBookmarksEditDialog(nodeId);
+      };
+
+      this.$bookmarksCtxMenuDelete.classList.remove('disabled');
+      this.$bookmarksCtxMenuDelete.onclick = () => {
+        chrome.bookmarks.getChildren(nodeId, children => {
+          if (children) {
+            chrome.bookmarks.removeTree(nodeId);
+          } else {
+            chrome.bookmarks.remove(nodeId);
+          }
+        });
+      };
+    } else {
+      this.$bookmarksCtxMenuEdit.classList.add('disabled');
+      this.$bookmarksCtxMenuEdit.onclick = () => {};
+
+      this.$bookmarksCtxMenuDelete.classList.add('disabled');
+      this.$bookmarksCtxMenuDelete.onclick = () => {};
+    }
   }
 
   static openBookmarksEditDialog(nodeId) {
     this.$bookmarksEditDialog.open();
 
-    chrome.bookmarks.get(nodeId, ([node]) => {
-      this.$bookmarksEditDialogName.value = node.title || '';
-      if (node.url) {
+    chrome.bookmarks.get(nodeId, ([{ title, url }]) => {
+      this.$bookmarksEditDialogName.value = title || '';
+      if (url) {
         this.$bookmarksEditDialogURL.hidden = false;
-        this.$bookmarksEditDialogURL.value = node.url;
+        this.$bookmarksEditDialogURL.value = url;
         this.$bookmarksEditDialogFavicon.src =
-          `chrome://favicon/size/16@8x/${node.url}`;
+          `chrome://favicon/size/16@8x/${url}`;
       } else {
         this.$bookmarksEditDialogURL.hidden = true;
         this.$bookmarksEditDialogFavicon.src = '/images/folder-outline.svg';
@@ -182,6 +220,41 @@ class NewTab {
         title: this.$bookmarksEditDialogName.value,
         url: this.$bookmarksEditDialogURL.value,
       });
+      this.$bookmarksEditDialog.close();
+    };
+  }
+
+  static openBookmarksCreateDialog(isFolder, nodeId) {
+    this.$bookmarksEditDialog.open();
+    this.$bookmarksEditDialogName.value = '';
+    this.$bookmarksEditDialogURL.value = '';
+    this.$bookmarksEditDialogURL.hidden = isFolder;
+    this.$bookmarksEditDialogFavicon.src = isFolder ?
+      '/images/folder-outline.svg' : 'chrome://favicon/size/16@8x/';
+
+    this.$bookmarksEditDialogDone.onclick = () => {
+      if (!isFolder && !this.$bookmarksEditDialogURL.value) {
+        return;
+      }
+
+      let create = parentId => chrome.bookmarks.create({
+        parentId,
+        title: this.$bookmarksEditDialogName.value,
+        url: this.$bookmarksEditDialogURL.value,
+      });
+
+      if (nodeId) {
+        chrome.bookmarks.get(nodeId, ([node]) => {
+          if (node.url) {
+            create(node.parentId);
+          } else {
+            create(node.id);
+          }
+        });
+      } else {
+        create(Bookmarks.currentFolder);
+      }
+
       this.$bookmarksEditDialog.close();
     };
   }
