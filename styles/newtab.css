@@ -245,6 +245,7 @@ button:active::after {
   display: none;
 }
 
+.bookmarks-drawer-small #bookmarks-close-button,
 .bookmarks-drawer-locked-open #bookmarks-close-button {
   display: none;
 }

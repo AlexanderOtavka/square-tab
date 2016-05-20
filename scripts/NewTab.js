@@ -41,6 +41,8 @@ class NewTab {
       document.querySelector('#bookmarks-edit-dialog');
     this.$bookmarksEditDialogFavicon =
       document.querySelector('#bookmarks-edit-dialog-favicon');
+    this.$bookmarksEditDialogTitle =
+      document.querySelector('#bookmarks-edit-dialog-title');
     this.$bookmarksEditDialogName =
       document.querySelector('#bookmarks-edit-dialog-name');
     this.$bookmarksEditDialogURL =
@@ -202,6 +204,8 @@ class NewTab {
   static openBookmarksEditDialog(nodeId) {
     this.$bookmarksEditDialog.open();
 
+    this.$bookmarksEditDialogTitle.textContent = 'Edit';
+
     chrome.bookmarks.get(nodeId, ([{ title, url }]) => {
       this.$bookmarksEditDialogName.value = title || '';
       if (url) {
@@ -226,6 +230,8 @@ class NewTab {
 
   static openBookmarksCreateDialog(isFolder, nodeId) {
     this.$bookmarksEditDialog.open();
+    this.$bookmarksEditDialogTitle.textContent = isFolder ?
+      'Add Folder' : 'Add Page';
     this.$bookmarksEditDialogName.value = '';
     this.$bookmarksEditDialogURL.value = '';
     this.$bookmarksEditDialogURL.hidden = isFolder;
