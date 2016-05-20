@@ -1,5 +1,27 @@
 <template>
   <style>
+    :host {
+      position: relative;
+      display: inline-block;
+      z-index: inherit;
+    }
+
+    :host::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      bottom: -4px;
+      left: -4px;
+      z-index: -1;
+      pointer-events: none;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, .1);
+      opacity: 0;
+      transition: opacity 200ms;
+    }
+
     :host([large]) {
       width: 28px;
       height: 28px;
@@ -7,14 +29,11 @@
     }
 
     :host([button]) {
-      border-radius: 50%;
       cursor: pointer;
-      background-color: rgba(0, 0, 0, 0);
-      transition: background-color 200ms;
     }
 
-    :host([button]:active) {
-      background-color: rgba(0, 0, 0, .1);
+    :host([button]:active)::after {
+      opacity: 1;
     }
   </style>
 
