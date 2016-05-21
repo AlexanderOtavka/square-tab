@@ -17,8 +17,13 @@ class XBookmarkElement extends HTMLElement {
     this.small = false;
     this.node = null;
 
+    this.setAttribute('draggable', 'true');
+
     this.addEventListener('click', () => this.onClick());
     this.addEventListener('contextmenu', ev => this.onContextMenu(ev));
+    this.addEventListener('dragstart', ev => this.onDragStart(ev));
+    this.addEventListener('dragover', ev => this.onDragOver(ev));
+    this.addEventListener('drop', ev => this.onDrop(ev));
   }
 
   attributeChangedCallback(attrName) {
@@ -82,6 +87,38 @@ class XBookmarkElement extends HTMLElement {
     requestAnimationFrame(() => this.dispatchEvent(customEvent));
 
     ev.preventDefault();
+  }
+
+  onDragStart(ev) {
+    ev.dataTransfer.setDragImage(this, ev.offsetX, ev.offsetY);
+    ev.dataTransfer.setData('text/x-bookmark-id', this.node.id);
+
+    let customEvent = new CustomEvent('x-bookmark-drag-start');
+    this.dispatchEvent(customEvent);
+  }
+
+  onDragOver(ev) {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'move';
+
+    let customEvent = new CustomEvent('x-bookmark-drag-over');
+    this.dispatchEvent(customEvent);
+  }
+
+  onDrop(ev) {
+    ev.preventDefault();
+
+    let title = ev.dataTransfer.getData('text/plain');
+    let uri = ev.dataTransfer.getData('text/uri-list') || title;
+    let customEvent = new CustomEvent('x-bookmark-drop', {
+      detail: {
+        bookmarkId: ev.dataTransfer.getData('text/x-bookmark-id') || null,
+        title,
+        uri,
+      },
+    });
+
+    this.dispatchEvent(customEvent);
   }
 
   _updateImage() {

@@ -1,7 +1,7 @@
 /* globals Settings */
 'use strict';
 
-class Bookmarks {
+class BookmarksNavigator {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');
   }
@@ -34,7 +34,18 @@ class Bookmarks {
     });
 
     chrome.bookmarks.onMoved.addListener((id, moveInfo) => {
-      if (moveInfo.parentId === this.currentFolder) {
+      if (moveInfo.parentId === this.currentFolder &&
+          moveInfo.oldParentId === this.currentFolder) {
+        let element = this.$bookmarksDrawerItems.childNodes[moveInfo.oldIndex];
+        if (element.node.id === id) {
+          this.$bookmarksDrawerItems.removeChild(element);
+
+          let beforeElement =
+            this.$bookmarksDrawerItems.childNodes[moveInfo.index];
+          console.assert(beforeElement ? (beforeElement.node.id !== id) : true);
+          this.$bookmarksDrawerItems.insertBefore(element, beforeElement);
+        }
+      } else if (moveInfo.parentId === this.currentFolder) {
         chrome.bookmarks.get(id, node => {
           this._createElement(node);
         });
@@ -71,7 +82,7 @@ class Bookmarks {
 
     chrome.bookmarks.get(id, ([node]) => {
       if (!node.url) {
-        this.$bookmarksTitle.textContent = node.title || 'Bookmarks';
+        this.$bookmarksTitle.textContent = node.title || 'BookmarksNavigator';
 
         chrome.bookmarks.getChildren(id, children => {
           let elements = this.$bookmarksDrawerItems.childNodes;
@@ -155,6 +166,6 @@ class Bookmarks {
   }
 }
 
-Bookmarks.main();
+BookmarksNavigator.main();
 
-window.Bookmarks = Bookmarks;
+window.BookmarksNavigator = BookmarksNavigator;

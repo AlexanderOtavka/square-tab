@@ -1,4 +1,4 @@
-/* globals Bookmarks, Settings, Weather */
+/* globals BookmarksNavigator, BookmarksEditor, Settings, Weather */
 'use strict';
 
 class NewTab {
@@ -76,7 +76,7 @@ class NewTab {
     Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL)
       .addListener(small => {
         this.updateBookmarkDrawerSmall(small);
-        Bookmarks.updateSize(small);
+        BookmarksNavigator.updateSize(small);
       });
 
     Settings.onChanged(Settings.keys.BOXED_INFO)
@@ -117,10 +117,10 @@ class NewTab {
 
     // Handle bookmarks navigation
     this.$bookmarksUpButton.addEventListener('click', () =>
-      Bookmarks.ascend()
+      BookmarksNavigator.ascend()
     );
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
-      Bookmarks.openBookmark(ev.detail.nodeId);
+      BookmarksNavigator.openBookmark(ev.detail.nodeId);
     }, true);
 
     // Handle bookmarks right click
@@ -131,6 +131,23 @@ class NewTab {
       ev.preventDefault();
       this.openBookmarksCtxMenu(ev.x, ev.y, null);
     });
+
+    // Handle bookmark drag/drop events
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-drag-start',
+      ev => BookmarksEditor.onDragStart(ev),
+      true
+    );
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-drag-over',
+      ev => BookmarksEditor.onDragOver(ev),
+      true
+    );
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-drop',
+      ev => BookmarksEditor.onDrop(ev),
+      true
+    );
 
     // Update the clock immediately, then once every second forever
     this.updateTime();
@@ -258,7 +275,7 @@ class NewTab {
           }
         });
       } else {
-        create(Bookmarks.currentFolder);
+        create(BookmarksNavigator.currentFolder);
       }
 
       this.$bookmarksEditDialog.close();
