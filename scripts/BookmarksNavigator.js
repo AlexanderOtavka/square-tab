@@ -20,7 +20,7 @@ class BookmarksNavigator {
 
     chrome.bookmarks.onCreated.addListener((id, node) => {
       if (node.parentId === this.currentFolder) {
-        this._createElement(node);
+        this._createOrUpdateElement(node);
       }
     });
 
@@ -47,7 +47,7 @@ class BookmarksNavigator {
         }
       } else if (moveInfo.parentId === this.currentFolder) {
         chrome.bookmarks.get(id, node => {
-          this._createElement(node);
+          this._createOrUpdateElement(node);
         });
       } else if (moveInfo.oldParentId === this.currentFolder) {
         this._deleteElementByIndex(moveInfo.oldIndex);
@@ -96,7 +96,7 @@ class BookmarksNavigator {
           children.forEach((child, i) => {
             let bookmark = elements[i];
             if (!bookmark) {
-              this._createElement(child);
+              this._createOrUpdateElement(child);
             } else {
               bookmark.node = child;
             }
@@ -129,12 +129,19 @@ class BookmarksNavigator {
     return Array.prototype.slice.call(this.$bookmarksDrawerItems.childNodes);
   }
 
-  static _createElement(node) {
+  static _createOrUpdateElement(node) {
     let beforeElement = this.$bookmarksDrawerItems.childNodes[node.index];
-    let bookmark = document.createElement('x-bookmark');
+    let bookmark;
+    if ((beforeElement && !beforeElement.node) ||
+        (beforeElement && beforeElement.node.id === node.id)) {
+      bookmark = beforeElement;
+    } else {
+      bookmark = document.createElement('x-bookmark');
+      this.$bookmarksDrawerItems.insertBefore(bookmark, beforeElement);
+    }
+
     bookmark.small = Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL);
     bookmark.node = node;
-    this.$bookmarksDrawerItems.insertBefore(bookmark, beforeElement);
   }
 
   static _deleteElementByIndex(index) {

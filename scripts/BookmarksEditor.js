@@ -18,11 +18,11 @@ class BookmarksEditor {
     this._currentDraggedBookmarkIndex = Array.prototype.indexOf.call(
       this.$bookmarksDrawerItems.childNodes, ev.target);
     this._currentDraggedOverBookmarkIndex = this._currentDraggedBookmarkIndex;
-
-    this.$bookmarksDrawerItems.classList.add('animate-translate');
   }
 
   static onDragOver(ev) {
+    this.$bookmarksDrawerItems.classList.add('animate-translate');
+
     if (ev.target === this._currentDraggedBookmark) {
       let childNodes = this.$bookmarksDrawerItems.childNodes;
       let startI = this._currentDraggedBookmarkIndex;
@@ -44,7 +44,8 @@ class BookmarksEditor {
       let childNodes = this.$bookmarksDrawerItems.childNodes;
       let startI = this._currentDraggedBookmarkIndex;
       let endI = Array.prototype.indexOf.call(childNodes, ev.target);
-      let oldEndI = this._currentDraggedOverBookmarkIndex;
+      let oldEndI = Math.min(this._currentDraggedOverBookmarkIndex,
+                             childNodes.length);
       this._currentDraggedOverBookmarkIndex = endI;
 
       if (startI < endI) {
@@ -82,16 +83,28 @@ class BookmarksEditor {
 
       // When we are dragging down, we put it after the current hovered one.
       if (this._currentDraggedBookmarkIndex < index) {
+        console.log('dragging down');
         index++;
         beforeElement = beforeElement.nextSibling;
       }
 
-      if (ev.detail.bookmarkId) {
+      if (element) {
         this.$bookmarksDrawerItems.removeChild(element);
         this.$bookmarksDrawerItems.insertBefore(element, beforeElement);
 
         chrome.bookmarks.move(ev.detail.bookmarkId, {
           parentId: BookmarksNavigator.currentFolder,
+          index,
+        });
+      } else {
+        let beforeElement = this.$bookmarksDrawerItems.childNodes[index];
+        let bookmark = document.createElement('x-bookmark');
+        this.$bookmarksDrawerItems.insertBefore(bookmark, beforeElement);
+
+        chrome.bookmarks.create({
+          parentId: BookmarksNavigator.currentFolder,
+          title: ev.detail.title,
+          url: ev.detail.uri,
           index,
         });
       }
@@ -103,8 +116,8 @@ class BookmarksEditor {
   static _resetDragState() {
     this._currentDraggedBookmark = null;
     this._currentDraggedOverBookmark = null;
-    this._currentDraggedBookmarkIndex = 0;
-    this._currentDraggedOverBookmarkIndex = 0;
+    this._currentDraggedBookmarkIndex = Number.MAX_SAFE_INTEGER;
+    this._currentDraggedOverBookmarkIndex = Number.MAX_SAFE_INTEGER;
 
     this.$bookmarksDrawerItems.classList.remove('animate-translate');
 
