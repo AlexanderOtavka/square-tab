@@ -1,4 +1,5 @@
-/* globals BookmarksNavigator, BookmarksEditor, Settings, Weather */
+/* globals BookmarksNavigator, BookmarksEditor, Settings, Weather,
+           StorageKeys */
 'use strict';
 
 class NewTab {
@@ -29,16 +30,14 @@ class NewTab {
       document.querySelector('#bookmarks-drawer-items');
     this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
 
-    const STORAGE_KEY_IMAGE_DATA_URL = 'imageDataURL';
-
     // Disable the right click menu
     this.$root.addEventListener('contextmenu', ev => ev.preventDefault(), true);
 
     // Load cached image
     let backgroundImageReady = new Promise(resolve => {
       chrome.storage.local.get(
-        STORAGE_KEY_IMAGE_DATA_URL,
-        ({ [STORAGE_KEY_IMAGE_DATA_URL]: uri }) => resolve(uri)
+        StorageKeys.IMAGE_DATA_URL,
+        ({ [StorageKeys.IMAGE_DATA_URL]: uri }) => resolve(uri)
       );
     })
       .then(uri => this.updateImage(uri));
@@ -89,8 +88,7 @@ class NewTab {
       }
 
       chrome.runtime.getBackgroundPage(({ EventPage }) => {
-        EventPage.fetchAndCacheImage(imageResourceURI,
-                                     STORAGE_KEY_IMAGE_DATA_URL);
+        EventPage.fetchAndCacheImage(imageResourceURI);
       });
     });
 
