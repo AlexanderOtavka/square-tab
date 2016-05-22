@@ -14,7 +14,6 @@
   "permissions": [
     "bookmarks",
     "storage",
-    "https://source.unsplash.com/",
     "chrome://favicon/",
     "geolocation"
   ],
