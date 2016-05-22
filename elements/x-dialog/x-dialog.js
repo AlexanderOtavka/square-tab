@@ -31,6 +31,11 @@ class XDialogElement extends HTMLElement {
     if (!ev.target.classList.contains('dialog-no-close') &&
         (ev.target.classList.contains('dialog-confirm') ||
          ev.target.classList.contains('dialog-cancel'))) {
+      if (ev.target.classList.contains('dialog-confirm')) {
+        let customEvent = new CustomEvent('x-dialog-confirm');
+        this.dispatchEvent(customEvent);
+      }
+
       requestAnimationFrame(() => this.close());
     }
   }
