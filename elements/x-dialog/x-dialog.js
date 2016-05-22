@@ -21,10 +21,16 @@ class XDialogElement extends HTMLElement {
 
   open() {
     this.setAttribute('open', '');
+
+    let customEvent = new CustomEvent('x-dialog-open');
+    this.dispatchEvent(customEvent);
   }
 
   close() {
     this.removeAttribute('open');
+
+    let customEvent = new CustomEvent('x-dialog-close');
+    this.dispatchEvent(customEvent);
   }
 
   onFooterClick(ev) {

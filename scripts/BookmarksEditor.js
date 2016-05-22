@@ -29,6 +29,22 @@ class BookmarksEditor {
 
     this._resetDragState();
 
+    this.$editDialog.addEventListener('x-dialog-open', () => {
+      requestAnimationFrame(() => this.$editDialogName.focus());
+    });
+
+    this.$editDialogName.addEventListener('keypress', ev => {
+      if (ev.keyCode === 13) {
+        this.$editDialogDone.click();
+      }
+    });
+
+    this.$editDialogURL.addEventListener('keypress', ev => {
+      if (ev.keyCode === 13) {
+        this.$editDialogDone.click();
+      }
+    });
+
     this.$editDialogURL.addEventListener('change', () => {
       this.$editDialogURL.value =
         BookmarksEditor._fixUrl(this.$editDialogURL.value);
