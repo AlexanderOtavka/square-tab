@@ -236,7 +236,6 @@ button:active::after {
 
 .bookmarks-drawer-locked-open #bookmarks-drawer {
   box-shadow: none;
-  background: rgba(255, 255, 255, 0.9);
 }
 
 #bookmarks-drawer x-icon {

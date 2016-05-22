@@ -135,17 +135,35 @@ class NewTab {
     // Handle bookmark drag/drop events
     this.$bookmarksDrawerItems.addEventListener(
       'x-bookmark-drag-start',
-      ev => BookmarksEditor.onDragStart(ev),
+      ev => BookmarksEditor.onBookmarkDragStart(ev),
       true
     );
     this.$bookmarksDrawerItems.addEventListener(
       'x-bookmark-drag-over',
-      ev => BookmarksEditor.onDragOver(ev),
+      ev => BookmarksEditor.onBookmarkDragOver(ev),
       true
     );
     this.$bookmarksDrawerItems.addEventListener(
       'x-bookmark-drop',
-      ev => BookmarksEditor.onDrop(ev),
+      ev => BookmarksEditor.onBookmarkDrop(ev),
+      true
+    );
+    this.$bookmarksDrawerItems.addEventListener(
+      'dragover',
+      ev => BookmarksEditor.onItemsDragOver(ev)
+    );
+    this.$bookmarksDrawerItems.addEventListener(
+      'drop',
+      ev => BookmarksEditor.onItemsDrop(ev)
+    );
+    this.$bookmarksDrawerItems.addEventListener(
+      'dragleave',
+      ev => BookmarksEditor.onDragLeave(ev),
+      true
+    );
+    this.$bookmarksDrawerItems.addEventListener(
+      'dragend',
+      ev => BookmarksEditor.onDragEnd(ev),
       true
     );
 

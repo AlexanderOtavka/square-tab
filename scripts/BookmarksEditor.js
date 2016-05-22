@@ -13,77 +13,142 @@ class BookmarksEditor {
     this._resetDragState();
   }
 
-  static onDragStart(ev) {
+  static onBookmarkDragStart(ev) {
     this._currentDraggedBookmark = ev.target;
     this._currentDraggedBookmarkIndex = Array.prototype.indexOf.call(
       this.$bookmarksDrawerItems.childNodes, ev.target);
     this._currentDraggedOverBookmarkIndex = this._currentDraggedBookmarkIndex;
   }
 
-  static onDragOver(ev) {
-    this.$bookmarksDrawerItems.classList.add('animate-translate');
+  static onBookmarkDragOver(ev) {
+    let index = Array.prototype.indexOf.call(
+      this.$bookmarksDrawerItems.childNodes, ev.target);
+    this._handleDragOver(index);
+  }
 
-    if (ev.target === this._currentDraggedBookmark) {
+  static onBookmarkDrop(ev) {
+    let index = Array.prototype.indexOf.call(
+      this.$bookmarksDrawerItems.childNodes, ev.target);
+    this._handleDrop(ev.detail, index, ev.target);
+  }
+
+  static onItemsDragOver(ev) {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'move';
+
+    this.$bookmarksDrawerItems.classList.add('drag-over');
+
+    if (ev.target === this.$bookmarksDrawerItems) {
+      this._handleDragOver(this.$bookmarksDrawerItems.childElementCount);
+    }
+  }
+
+  static onItemsDrop(ev) {
+    ev.preventDefault();
+
+    if (ev.target === this.$bookmarksDrawerItems) {
+      let bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
+      let title = ev.dataTransfer.getData('text/plain');
+      let url = ev.dataTransfer.getData('text/uri-list') || title;
+      let index = this.$bookmarksDrawerItems.childElementCount;
+      this._handleDrop({ bookmarkId, title, url }, index, null);
+    }
+  }
+
+  static onDragLeave(ev) {
+    let rect = this.$bookmarksDrawerItems.getBoundingClientRect();
+    if (ev.x < rect.left || ev.x > rect.right ||
+        ev.y < rect.top || ev.y > rect.bottom) {
+      this._returnDragHome();
+    }
+  }
+
+  static onDragEnd() {
+    this._resetDragState();
+  }
+
+  static _handleDragOver(targetI) {
+    if (targetI !== this._currentDraggedOverBookmarkIndex) {
+      this.$bookmarksDrawerItems.classList.remove('no-animate-translate');
+
       let childNodes = this.$bookmarksDrawerItems.childNodes;
       let startI = this._currentDraggedBookmarkIndex;
-      let oldEndI = this._currentDraggedOverBookmarkIndex;
-      this._currentDraggedOverBookmarkIndex = startI;
+      let oldTargetI = Math.min(this._currentDraggedOverBookmarkIndex,
+                                childNodes.length);
 
-      if (startI < oldEndI) {
-        for (let i = startI + 1; i <= oldEndI; i++) {
-          childNodes[i].classList.remove('translate-up');
-        }
-      } else if (startI > oldEndI) {
-        for (let i = oldEndI; i < startI; i++) {
-          childNodes[i].classList.remove('translate-down');
-        }
-      }
-    } else if (ev.target !== this._currentDraggedOverBookmark) {
-      this._currentDraggedOverBookmark = ev.target;
+      this._currentDraggedOverBookmarkIndex = targetI;
 
-      let childNodes = this.$bookmarksDrawerItems.childNodes;
-      let startI = this._currentDraggedBookmarkIndex;
-      let endI = Array.prototype.indexOf.call(childNodes, ev.target);
-      let oldEndI = Math.min(this._currentDraggedOverBookmarkIndex,
-                             childNodes.length);
-      this._currentDraggedOverBookmarkIndex = endI;
+      if (targetI === startI) {
+        if (startI < oldTargetI) {
+          startI++;
+          oldTargetI++;
 
-      if (startI < endI) {
-        if (oldEndI < endI) {
-          for (let i = oldEndI + 1; i <= endI; i++) {
-            childNodes[i].classList.add('translate-up');
-            childNodes[i].classList.remove('translate-down');
-          }
-        } else {
-          for (let i = endI + 1; i <= oldEndI; i++) {
+          for (let i = startI; i < oldTargetI; i++) {
             childNodes[i].classList.remove('translate-up');
+          }
+        } else if (startI > oldTargetI) {
+          for (let i = oldTargetI; i < startI; i++) {
+            childNodes[i].classList.remove('translate-down');
           }
         }
       } else {
-        if (oldEndI > endI) {
-          for (let i = endI; i < oldEndI; i++) {
-            childNodes[i].classList.add('translate-down');
-            childNodes[i].classList.remove('translate-up');
+        if (startI < targetI) {
+          targetI++;
+          oldTargetI++;
+
+          if (oldTargetI < targetI) {
+            // When in whitespace, targetI can get too big when ++'d, so we
+            // snap it back down to avoid index-out-of-bounds problems.
+            if (targetI > childNodes.length) {
+              targetI = childNodes.length;
+            }
+
+            for (let i = oldTargetI; i < targetI; i++) {
+              childNodes[i].classList.add('translate-up');
+              childNodes[i].classList.remove('translate-down');
+            }
+          } else {
+            // When coming out of whitespace, oldTargetI can get too big when
+            // ++'d, so we snap it back down to avoid index-out-of-bounds
+            // problems.
+            if (oldTargetI > childNodes.length) {
+              oldTargetI = childNodes.length;
+            }
+
+            for (let i = targetI; i < oldTargetI; i++) {
+              childNodes[i].classList.remove('translate-up');
+            }
           }
         } else {
-          for (let i = oldEndI; i < endI; i++) {
-            childNodes[i].classList.remove('translate-down');
+          if (oldTargetI === targetI) {
+            // They are dragging upwards in the whitespace below the bookmarks,
+            // meaning they are dragging in an external link/other thing
+            console.assert(targetI === childNodes.length);
+            let lastChild = this.$bookmarksDrawerItems.lastChild;
+            if (lastChild) {
+              lastChild.classList.remove('translate-down');
+            }
+          } else if (oldTargetI > targetI) {
+            for (let i = targetI; i < oldTargetI; i++) {
+              childNodes[i].classList.add('translate-down');
+              childNodes[i].classList.remove('translate-up');
+            }
+          } else {
+            for (let i = oldTargetI; i < targetI; i++) {
+              childNodes[i].classList.remove('translate-down');
+            }
           }
         }
       }
     }
   }
 
-  static onDrop(ev) {
-    if (ev.target !== this._currentDraggedBookmark) {
-      let index = Array.prototype.indexOf.call(
-        this.$bookmarksDrawerItems.childNodes, ev.target);
-      let element = this._currentDraggedBookmark;
-      let beforeElement = ev.target;
+  static _handleDrop(detail, index, beforeElement) {
+    let element = this._currentDraggedBookmark;
 
+    if (!element || element !== beforeElement) {
       // When we are dragging down, we put it after the current hovered one.
       if (this._currentDraggedBookmarkIndex < index) {
-        console.log('dragging down');
         index++;
         beforeElement = beforeElement.nextSibling;
       }
@@ -92,7 +157,7 @@ class BookmarksEditor {
         this.$bookmarksDrawerItems.removeChild(element);
         this.$bookmarksDrawerItems.insertBefore(element, beforeElement);
 
-        chrome.bookmarks.move(ev.detail.bookmarkId, {
+        chrome.bookmarks.move(detail.bookmarkId, {
           parentId: BookmarksNavigator.currentFolder,
           index,
         });
@@ -103,8 +168,8 @@ class BookmarksEditor {
 
         chrome.bookmarks.create({
           parentId: BookmarksNavigator.currentFolder,
-          title: ev.detail.title,
-          url: ev.detail.uri,
+          title: detail.title,
+          url: detail.url,
           index,
         });
       }
@@ -115,11 +180,17 @@ class BookmarksEditor {
 
   static _resetDragState() {
     this._currentDraggedBookmark = null;
-    this._currentDraggedOverBookmark = null;
     this._currentDraggedBookmarkIndex = Number.MAX_SAFE_INTEGER;
-    this._currentDraggedOverBookmarkIndex = Number.MAX_SAFE_INTEGER;
 
-    this.$bookmarksDrawerItems.classList.remove('animate-translate');
+    this.$bookmarksDrawerItems.classList.add('no-animate-translate');
+
+    this._returnDragHome();
+  }
+
+  static _returnDragHome() {
+    this._currentDraggedOverBookmarkIndex = this._currentDraggedBookmarkIndex;
+
+    this.$bookmarksDrawerItems.classList.remove('drag-over');
 
     let childNodes = this.$bookmarksDrawerItems.childNodes;
     Array.prototype.slice.call(childNodes).forEach(element => {

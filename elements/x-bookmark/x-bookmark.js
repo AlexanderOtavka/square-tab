@@ -23,6 +23,8 @@ class XBookmarkElement extends HTMLElement {
     this.addEventListener('contextmenu', ev => this.onContextMenu(ev));
     this.addEventListener('dragstart', ev => this.onDragStart(ev));
     this.addEventListener('dragover', ev => this.onDragOver(ev));
+    this.addEventListener('dragenter', ev => this.onDragOver(ev));
+    this.addEventListener('dragend', ev => this.onDragEnd(ev));
     this.addEventListener('drop', ev => this.onDrop(ev));
   }
 
@@ -90,6 +92,8 @@ class XBookmarkElement extends HTMLElement {
   }
 
   onDragStart(ev) {
+    requestAnimationFrame(() => this.classList.add('dragging'));
+
     ev.dataTransfer.setDragImage(this, ev.offsetX, ev.offsetY);
     ev.dataTransfer.setData('text/x-bookmark-id', this.node.id);
 
@@ -105,17 +109,18 @@ class XBookmarkElement extends HTMLElement {
     this.dispatchEvent(customEvent);
   }
 
+  onDragEnd() {
+    requestAnimationFrame(() => this.classList.remove('dragging'));
+  }
+
   onDrop(ev) {
     ev.preventDefault();
 
+    let bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
     let title = ev.dataTransfer.getData('text/plain');
-    let uri = ev.dataTransfer.getData('text/uri-list') || title;
+    let url = ev.dataTransfer.getData('text/uri-list') || title;
     let customEvent = new CustomEvent('x-bookmark-drop', {
-      detail: {
-        bookmarkId: ev.dataTransfer.getData('text/x-bookmark-id') || null,
-        title,
-        uri,
-      },
+      detail: { bookmarkId, title, url },
     });
 
     this.dispatchEvent(customEvent);
