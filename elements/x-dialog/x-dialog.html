@@ -24,8 +24,6 @@
     }
 
     #box {
-      display: flex;
-      flex-direction: column;
       padding: 16px;
       background: #fff;
       border-radius: 2px;
@@ -47,6 +45,14 @@
       flex-direction: row;
       align-items: center;
       margin-bottom: 12px;
+    }
+
+    #footer {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: flex-end;
+      margin-top: 16px;
     }
 
     #backdrop {
@@ -80,8 +86,8 @@
     }
 
     ::content .dialog-confirm {
-      margin: 16px 0 0 0;
-      align-self: flex-end;
+      background-color: #2196F3;
+      color: #fff;
     }
   </style>
 
@@ -90,7 +96,11 @@
       <content select=".dialog-title"></content>
       <x-icon id="close-button" icon="close" large button></x-icon>
     </header>
-    <content select="*"></content>
+    <content select=".dialog-content"></content>
+    <footer id="footer">
+      <content select=".dialog-cancel"></content>
+      <content select=".dialog-confirm"></content>
+    </footer>
   </section>
 
   <div id="backdrop"></div>

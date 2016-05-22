@@ -259,7 +259,6 @@ class NewTab {
         title: this.$bookmarksEditDialogName.value,
         url: this.$bookmarksEditDialogURL.value,
       });
-      this.$bookmarksEditDialog.close();
     };
   }
 
@@ -301,7 +300,7 @@ class NewTab {
   }
 
   static fixUrl(url) {
-    if (url.search('://') === -1) {
+    if (url && url.search('://') === -1) {
       url = `http://${url}`;
     }
 
