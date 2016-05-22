@@ -50,6 +50,83 @@ class NewTab {
     this.addBookmarksDrawerListeners();
   }
 
+  static loadImage() {
+    return new Promise(resolve => {
+      chrome.storage.local.get(
+        StorageKeys.IMAGE_DATA_URL,
+        ({ [StorageKeys.IMAGE_DATA_URL]: uri }) => resolve(uri)
+      );
+    });
+  }
+
+  static updateImage(uri = this.DEFAULT_IMAGE_URL) {
+    this.$backgroundImage.src = uri;
+  }
+
+  static fetchAndCacheImage() {
+    let imageResourceURI = this.DEFAULT_IMAGE_URL;
+
+    if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
+      let timeOfDay = this.getImageTimeOfDay();
+      if (timeOfDay) {
+        imageResourceURI += `?${timeOfDay}`;
+      }
+    }
+
+    chrome.runtime.getBackgroundPage(({ EventPage }) => {
+      EventPage.fetchAndCacheImage(imageResourceURI);
+    });
+  }
+
+  static getImageTimeOfDay() {
+    let hour = new Date().getHours();
+    if (hour < 5 || 22 <= hour) {
+      // 10pm - 5am
+      return 'night';
+    } else if (5 <= hour && hour < 10) {
+      // 5am - 10am
+      return 'morning';
+    } else if (18 <= hour && hour < 22) {
+      // 6pm - 10pm
+      return 'evening';
+    }
+  }
+
+  static resolveBody() {
+    this.$body.removeAttribute('unresolved');
+    this.$body.animate([
+        { opacity: 0 },
+        { opacity: 1 },
+      ], {
+        duration: 200,
+        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+      });
+  }
+
+  static updateTime() {
+    let date = new Date();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    let minutesStr = String(minutes);
+    if (minutesStr.length < 2) {
+      minutesStr = `0${minutesStr}`;
+    }
+
+    this.$time.textContent = `${hours % 12 || 12}:${minutesStr}`;
+
+    let greeting;
+    if (hours >= 0 && hours < 12) {
+      greeting = 'Good Morning';
+    } else if (hours >= 12 && hours < 18) {
+      greeting = 'Good Afternoon';
+    } else {
+      greeting = 'Good Evening';
+    }
+
+    this.$greeting.textContent = greeting;
+  }
+
   static disableDefaultRightClick() {
     this.$root.addEventListener('contextmenu', ev => ev.preventDefault(), true);
   }
@@ -78,11 +155,34 @@ class NewTab {
       .addListener(unit => Weather.updateTemperatureUnit(unit));
   }
 
+  static updateBookmarkDrawerLock(alwaysShowBookmarks) {
+    this.closeBookmarks();
+    this.$root.classList.toggle('bookmarks-drawer-locked-open',
+                                alwaysShowBookmarks);
+  }
+
+  static updateBookmarkDrawerSmall(drawerSmall) {
+    this.$root.classList.toggle('bookmarks-drawer-small', drawerSmall);
+  }
+
+  static updateBoxedInfo(boxedInfo) {
+    this.$root.classList.toggle('boxed-info', boxedInfo);
+  }
+
   static addWeatherChangeListeners() {
     Weather.onDataLoad.addListener(() => {
       let showWeather = Settings.get(Settings.keys.SHOW_WEATHER);
       this.updateWeather(showWeather);
     });
+  }
+
+  static updateWeather(showWeather) {
+    if (showWeather) {
+      return Weather.load().then(() => this.$weatherWrapper.hidden = false);
+    } else {
+      this.$weatherWrapper.hidden = true;
+      return Promise.resolve();
+    }
   }
 
   static addBookmarksDragDropListeners() {
@@ -152,112 +252,12 @@ class NewTab {
     );
   }
 
-  static loadImage() {
-    return new Promise(resolve => {
-      chrome.storage.local.get(
-        StorageKeys.IMAGE_DATA_URL,
-        ({ [StorageKeys.IMAGE_DATA_URL]: uri }) => resolve(uri)
-      );
-    });
-  }
-
-  static fetchAndCacheImage() {
-    let imageResourceURI = this.DEFAULT_IMAGE_URL;
-
-    if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-      let timeOfDay = this.getImageTimeOfDay();
-      if (timeOfDay) {
-        imageResourceURI += `?${timeOfDay}`;
-      }
-    }
-
-    chrome.runtime.getBackgroundPage(({ EventPage }) => {
-      EventPage.fetchAndCacheImage(imageResourceURI);
-    });
-  }
-
-  static getImageTimeOfDay() {
-    let hour = new Date().getHours();
-    if (hour < 5 || 22 <= hour) {
-      // 10pm - 5am
-      return 'night';
-    } else if (5 <= hour && hour < 10) {
-      // 5am - 10am
-      return 'morning';
-    } else if (18 <= hour && hour < 22) {
-      // 6pm - 10pm
-      return 'evening';
-    }
-  }
-
-  static updateImage(uri = this.DEFAULT_IMAGE_URL) {
-    this.$backgroundImage.src = uri;
-  }
-
-  static updateTime() {
-    let date = new Date();
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-
-    let minutesStr = String(minutes);
-    if (minutesStr.length < 2) {
-      minutesStr = `0${minutesStr}`;
-    }
-
-    this.$time.textContent = `${hours % 12 || 12}:${minutesStr}`;
-
-    let greeting;
-    if (hours >= 0 && hours < 12) {
-      greeting = 'Good Morning';
-    } else if (hours >= 12 && hours < 18) {
-      greeting = 'Good Afternoon';
-    } else {
-      greeting = 'Good Evening';
-    }
-
-    this.$greeting.textContent = greeting;
-  }
-
   static openBookmarks() {
     this.$root.classList.add('bookmarks-drawer-open');
   }
 
   static closeBookmarks() {
     this.$root.classList.remove('bookmarks-drawer-open');
-  }
-
-  static updateBookmarkDrawerLock(alwaysShowBookmarks) {
-    this.closeBookmarks();
-    this.$root.classList.toggle('bookmarks-drawer-locked-open',
-                                alwaysShowBookmarks);
-  }
-
-  static updateBookmarkDrawerSmall(drawerSmall) {
-    this.$root.classList.toggle('bookmarks-drawer-small', drawerSmall);
-  }
-
-  static updateBoxedInfo(boxedInfo) {
-    this.$root.classList.toggle('boxed-info', boxedInfo);
-  }
-
-  static updateWeather(showWeather) {
-    if (showWeather) {
-      return Weather.load().then(() => this.$weatherWrapper.hidden = false);
-    } else {
-      this.$weatherWrapper.hidden = true;
-      return Promise.resolve();
-    }
-  }
-
-  static resolveBody() {
-    this.$body.removeAttribute('unresolved');
-    this.$body.animate([
-        { opacity: 0 },
-        { opacity: 1 },
-      ], {
-        duration: 200,
-        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-      });
   }
 }
 
