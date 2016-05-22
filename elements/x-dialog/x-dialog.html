@@ -2,6 +2,8 @@
 
 <template>
   <style>
+    @import url("../../styles/shared-styles.css");
+
     :host {
       display: flex;
       flex-direction: column;
@@ -24,7 +26,6 @@
     }
 
     #box {
-      padding: 16px;
       background: #fff;
       border-radius: 2px;
       box-shadow: var(--shadow-2);
@@ -40,19 +41,10 @@
       transform: translateY(0);
     }
 
-    #header {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
     #footer {
-      display: flex;
-      flex-direction: row;
       align-items: flex-end;
       justify-content: flex-end;
-      margin-top: 16px;
+      padding: 16px 12px;
     }
 
     #backdrop {
@@ -85,19 +77,28 @@
       margin-right: 16px;
     }
 
+    ::content .dialog-content {
+      margin: 0 16px;
+    }
+
     ::content .dialog-confirm {
       background-color: #2196F3;
       color: #fff;
     }
+
+    ::content .dialog-confirm,
+    ::content .dialog-cancel {
+      margin: 0 6px;
+    }
   </style>
 
   <section id="box">
-    <header id="header">
+    <header id="header" class="toolbar">
       <content select=".dialog-title"></content>
       <x-icon id="close-button" icon="close" large button></x-icon>
     </header>
     <content select=".dialog-content"></content>
-    <footer id="footer">
+    <footer id="footer" class="row">
       <content select=".dialog-cancel"></content>
       <content select=".dialog-confirm"></content>
     </footer>
