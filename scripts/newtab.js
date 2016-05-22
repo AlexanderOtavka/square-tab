@@ -7,7 +7,7 @@ class NewTab {
     throw new TypeError('Static class cannot be instantiated.');
   }
 
-  static get DEFAULT_IMAGE_URL() {
+  static get defaultImageUrl() {
     let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
     let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
     return 'https://source.unsplash.com/category/nature/' +
@@ -59,12 +59,12 @@ class NewTab {
     });
   }
 
-  static updateImage(uri = this.DEFAULT_IMAGE_URL) {
+  static updateImage(uri = this.defaultImageUrl) {
     this.$backgroundImage.src = uri;
   }
 
   static fetchAndCacheImage() {
-    let imageResourceURI = this.DEFAULT_IMAGE_URL;
+    let imageResourceURI = this.defaultImageUrl;
 
     if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
       let timeOfDay = this.getImageTimeOfDay();
