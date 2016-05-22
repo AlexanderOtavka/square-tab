@@ -30,24 +30,31 @@ class NewTab {
       document.querySelector('#bookmarks-drawer-items');
     this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
 
-    // Disable the right click menu
-    this.$root.addEventListener('contextmenu', ev => ev.preventDefault(), true);
-
-    // Load cached image
-    let backgroundImageReady = new Promise(resolve => {
-      chrome.storage.local.get(
-        StorageKeys.IMAGE_DATA_URL,
-        ({ [StorageKeys.IMAGE_DATA_URL]: uri }) => resolve(uri)
-      );
-    })
+    let backgroundImageReady = this.loadImage()
       .then(uri => this.updateImage(uri));
+    Settings.loaded.then(() => this.fetchAndCacheImage());
 
-    // Don't show anything until the settings and background image are ready
     Promise.all([Settings.loaded, backgroundImageReady]).then(() =>
       this.resolveBody()
     );
 
-    // Handle changes to settings
+    this.updateTime();
+    setInterval(() => this.updateTime(), 1000);
+
+    this.disableDefaultRightClick();
+    this.addSettingsChangeListeners();
+    this.addWeatherChangeListeners();
+    this.addBookmarksDragDropListeners();
+    this.addBookmarksNavigationListeners();
+    this.addBookmarksRightClickListeners();
+    this.addBookmarksDrawerListeners();
+  }
+
+  static disableDefaultRightClick() {
+    this.$root.addEventListener('contextmenu', ev => ev.preventDefault(), true);
+  }
+
+  static addSettingsChangeListeners() {
     Settings.onChanged(Settings.keys.ALWAYS_SHOW_BOOKMARKS)
       .addListener(show => this.updateBookmarkDrawerLock(show));
 
@@ -69,47 +76,16 @@ class NewTab {
 
     Settings.onChanged(Settings.keys.TEMPERATURE_UNIT)
       .addListener(unit => Weather.updateTemperatureUnit(unit));
+  }
 
-    // Update weather whenever cache changes
+  static addWeatherChangeListeners() {
     Weather.onDataLoad.addListener(() => {
       let showWeather = Settings.get(Settings.keys.SHOW_WEATHER);
       this.updateWeather(showWeather);
     });
+  }
 
-    // Fetch and cache a new image in the background
-    Settings.loaded.then(() => {
-      let imageResourceURI = this.DEFAULT_IMAGE_URL;
-
-      if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-        let timeOfDay = this.getImageTimeOfDay();
-        if (timeOfDay) {
-          imageResourceURI += `?${timeOfDay}`;
-        }
-      }
-
-      chrome.runtime.getBackgroundPage(({ EventPage }) => {
-        EventPage.fetchAndCacheImage(imageResourceURI);
-      });
-    });
-
-    // Handle bookmarks navigation
-    this.$bookmarksUpButton.addEventListener('click', () =>
-      BookmarksNavigator.ascend()
-    );
-    this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
-      BookmarksNavigator.openBookmark(ev.detail.nodeId);
-    }, true);
-
-    // Handle bookmarks right click
-    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
-      BookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.detail.nodeId);
-    }, true);
-    this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
-      ev.preventDefault();
-      BookmarksEditor.openCtxMenu(ev.x, ev.y, null);
-    });
-
-    // Handle bookmark drag/drop events
+  static addBookmarksDragDropListeners() {
     this.$bookmarksDrawerItems.addEventListener(
       'x-bookmark-drag-start',
       ev => BookmarksEditor.onBookmarkDragStart(ev),
@@ -143,12 +119,28 @@ class NewTab {
       ev => BookmarksEditor.onDragEnd(ev),
       true
     );
+  }
 
-    // Update the clock immediately, then once every second forever
-    this.updateTime();
-    setInterval(() => this.updateTime(), 1000);
+  static addBookmarksNavigationListeners() {
+    this.$bookmarksUpButton.addEventListener('click', () =>
+      BookmarksNavigator.ascend()
+    );
+    this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
+      BookmarksNavigator.openBookmark(ev.detail.nodeId);
+    }, true);
+  }
 
-    // Handle opening and closing the bookmarks drawer
+  static addBookmarksRightClickListeners() {
+    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
+      BookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.detail.nodeId);
+    }, true);
+    this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
+      ev.preventDefault();
+      BookmarksEditor.openCtxMenu(ev.x, ev.y, null);
+    });
+  }
+
+  static addBookmarksDrawerListeners() {
     this.$bookmarksOpenButton.addEventListener('click', () =>
       this.openBookmarks()
     );
@@ -158,6 +150,30 @@ class NewTab {
     this.$drawerBackdrop.addEventListener('click', () =>
       this.closeBookmarks()
     );
+  }
+
+  static loadImage() {
+    return new Promise(resolve => {
+      chrome.storage.local.get(
+        StorageKeys.IMAGE_DATA_URL,
+        ({ [StorageKeys.IMAGE_DATA_URL]: uri }) => resolve(uri)
+      );
+    });
+  }
+
+  static fetchAndCacheImage() {
+    let imageResourceURI = this.DEFAULT_IMAGE_URL;
+
+    if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
+      let timeOfDay = this.getImageTimeOfDay();
+      if (timeOfDay) {
+        imageResourceURI += `?${timeOfDay}`;
+      }
+    }
+
+    chrome.runtime.getBackgroundPage(({ EventPage }) => {
+      EventPage.fetchAndCacheImage(imageResourceURI);
+    });
   }
 
   static getImageTimeOfDay() {
