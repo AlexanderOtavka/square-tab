@@ -24,6 +24,7 @@ class XBookmarkElement extends HTMLElement {
     this.addEventListener('dragstart', ev => this.onDragStart(ev));
     this.addEventListener('dragover', ev => this.onDragOver(ev));
     this.addEventListener('dragenter', ev => this.onDragOver(ev));
+    this.addEventListener('dragleave', ev => this.onDragLeave(ev));
     this.addEventListener('dragend', ev => this.onDragEnd(ev));
     this.addEventListener('drop', ev => this.onDrop(ev));
   }
@@ -55,6 +56,10 @@ class XBookmarkElement extends HTMLElement {
 
   get url() {
     return this.node ? (this.node.url || '#') : '#';
+  }
+
+  get isFolder() {
+    return !this.node.url;
   }
 
   get small() {
@@ -105,8 +110,14 @@ class XBookmarkElement extends HTMLElement {
     ev.preventDefault();
     ev.dataTransfer.dropEffect = 'move';
 
-    let customEvent = new CustomEvent('x-bookmark-drag-over');
+    let customEvent = new CustomEvent('x-bookmark-drag-over', {
+      detail: { isFolder: this.isFolder, y: ev.y },
+    });
     this.dispatchEvent(customEvent);
+  }
+
+  onDragLeave() {
+    this.classList.remove('expand');
   }
 
   onDragEnd() {
@@ -120,7 +131,7 @@ class XBookmarkElement extends HTMLElement {
     let title = ev.dataTransfer.getData('text/plain');
     let url = ev.dataTransfer.getData('text/uri-list') || title;
     let customEvent = new CustomEvent('x-bookmark-drop', {
-      detail: { bookmarkId, title, url },
+      detail: { bookmarkId, title, url, y: ev.y },
     });
 
     this.dispatchEvent(customEvent);

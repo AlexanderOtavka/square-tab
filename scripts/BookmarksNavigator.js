@@ -46,7 +46,7 @@ class BookmarksNavigator {
           this.$bookmarksDrawerItems.insertBefore(element, beforeElement);
         }
       } else if (moveInfo.parentId === this.currentFolder) {
-        chrome.bookmarks.get(id, node => {
+        chrome.bookmarks.get(id, ([node]) => {
           this._createOrUpdateElement(node);
         });
       } else if (moveInfo.oldParentId === this.currentFolder) {
@@ -132,8 +132,8 @@ class BookmarksNavigator {
   static _createOrUpdateElement(node) {
     let beforeElement = this.$bookmarksDrawerItems.childNodes[node.index];
     let bookmark;
-    if ((beforeElement && !beforeElement.node) ||
-        (beforeElement && beforeElement.node.id === node.id)) {
+    if (beforeElement &&
+        (!beforeElement.node || beforeElement.node.id === node.id)) {
       bookmark = beforeElement;
     } else {
       bookmark = document.createElement('x-bookmark');

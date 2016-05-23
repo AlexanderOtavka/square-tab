@@ -1,7 +1,8 @@
 <template>
   <style>
+    /* TODO: use build process to remove imports and concat files instead */
     @import url("../../styles/shared-styles.css");
-  
+
     :host {
       display: block;
       position: relative;
@@ -9,7 +10,8 @@
     }
 
     :host(.translate-down),
-    :host(.translate-up) {
+    :host(.translate-up),
+    :host(.expand) {
       z-index: 2;
     }
 
@@ -47,6 +49,10 @@
 
     :host(.translate-down) #link {
       transform: translateY(100%);
+    }
+
+    :host(.expand) #link {
+      transform: scale(1.2) translate(6%, 0);
     }
 
     :host(.dragging) #link {

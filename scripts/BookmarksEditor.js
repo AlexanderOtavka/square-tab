@@ -61,7 +61,7 @@ class BookmarksEditor {
   static onBookmarkDragOver(ev) {
     let index = Array.prototype.indexOf.call(this.$drawerItems.childNodes,
                                              ev.target);
-    this._handleDragOver(index);
+    this._handleDragOver(ev.target, index, ev.detail.isFolder, ev.detail.y);
   }
 
   static onBookmarkDrop(ev) {
@@ -77,7 +77,8 @@ class BookmarksEditor {
     this.$drawerItems.classList.add('drag-over');
 
     if (ev.target === this.$drawerItems) {
-      this._handleDragOver(this.$drawerItems.childElementCount);
+      this._handleDragOver(null, this.$drawerItems.childElementCount, false,
+                           ev.y);
     }
   }
 
@@ -89,7 +90,7 @@ class BookmarksEditor {
       let title = ev.dataTransfer.getData('text/plain');
       let url = ev.dataTransfer.getData('text/uri-list') || title;
       let index = this.$drawerItems.childElementCount;
-      this._handleDrop({ bookmarkId, title, url }, index, null);
+      this._handleDrop({ bookmarkId, title, url, y: ev.y }, index, null);
     }
   }
 
@@ -153,18 +154,31 @@ class BookmarksEditor {
     }
   }
 
-  static _handleDragOver(targetI) {
+  static _handleDragOver(target, targetI, isFolder, y) {
+    let startI = this._currentDraggedBookmarkIndex;
+    let isDraggingDown = (startI < targetI);
+    let isAtStart = (targetI === startI);
+
+    if (target && !isAtStart) {
+      if (this._isFolderDrop(isFolder, isDraggingDown, y,
+                             target.getBoundingClientRect())) {
+        target.classList.add('expand');
+      } else {
+        target.classList.remove('expand');
+      }
+    }
+
     if (targetI !== this._currentDraggedOverBookmarkIndex) {
       this.$drawerItems.classList.remove('no-animate-translate');
 
       let childNodes = this.$drawerItems.childNodes;
-      let startI = this._currentDraggedBookmarkIndex;
       let oldTargetI = Math.min(this._currentDraggedOverBookmarkIndex,
                                 childNodes.length);
 
       this._currentDraggedOverBookmarkIndex = targetI;
 
-      if (targetI === startI) {
+      if (isAtStart) {
+        // Back at start
         if (startI < oldTargetI) {
           startI++;
           oldTargetI++;
@@ -178,7 +192,7 @@ class BookmarksEditor {
           }
         }
       } else {
-        if (startI < targetI) {
+        if (isDraggingDown) {
           targetI++;
           oldTargetI++;
 
@@ -229,23 +243,50 @@ class BookmarksEditor {
     }
   }
 
-  static _handleDrop(detail, index, beforeElement) {
+  static _handleDrop(detail, index, dropTarget) {
     let element = this._currentDraggedBookmark;
 
-    if (!element || element !== beforeElement) {
-      // When we are dragging down, we put it after the current hovered one.
-      if (this._currentDraggedBookmarkIndex < index) {
-        index++;
-        beforeElement = beforeElement.nextSibling;
-      }
+    if (!element || element !== dropTarget) {
 
       if (element) {
-        this.$drawerItems.removeChild(element);
-        this.$drawerItems.insertBefore(element, beforeElement);
+        let startI = this._currentDraggedBookmarkIndex;
+        let isDraggingDown = (startI < index);
+        let rect = dropTarget ? dropTarget.getBoundingClientRect() : null;
 
-        chrome.bookmarks.move(detail.bookmarkId, {
-          parentId: BookmarksNavigator.currentFolder,
-          index,
+        if (dropTarget &&
+            this._isFolderDrop(dropTarget.isFolder, isDraggingDown, detail.y,
+                               rect)) {
+          dropTarget.classList.remove('expand');
+          chrome.bookmarks.move(detail.bookmarkId, {
+            parentId: dropTarget.node.id,
+          });
+        } else {
+          let beforeElement;
+          if (dropTarget && this._currentDraggedBookmarkIndex < index) {
+            // When we are dragging down, we put it after the current hovered
+            // one.
+            index++;
+            beforeElement = dropTarget.nextSibling;
+          } else {
+            beforeElement = dropTarget;
+          }
+
+          console.log('reorder');
+          this.$drawerItems.removeChild(element);
+          this.$drawerItems.insertBefore(element, beforeElement);
+
+          chrome.bookmarks.move(detail.bookmarkId, {
+            parentId: BookmarksNavigator.currentFolder,
+            index,
+          });
+        }
+      } else if (dropTarget &&
+                 this._isFolderDrop(dropTarget.isFolder, false, detail.y,
+                                    dropTarget.getBoundingClientRect())) {
+        chrome.bookmarks.create({
+          parentId: dropTarget.node.id,
+          title: detail.title,
+          url: this._fixUrl(detail.url),
         });
       } else {
         let beforeElement = this.$drawerItems.childNodes[index];
@@ -262,6 +303,19 @@ class BookmarksEditor {
     }
 
     this._resetDragState();
+  }
+
+  static _isFolderDrop(isFolder, isDraggingDown, y, rect) {
+    if (isFolder) {
+      let deadWidth = 0.3 * rect.height;
+      if (isDraggingDown) {
+        return rect.bottom - deadWidth > y;
+      } else {
+        return rect.top + deadWidth < y;
+      }
+    } else {
+      return false;
+    }
   }
 
   static _resetDragState() {

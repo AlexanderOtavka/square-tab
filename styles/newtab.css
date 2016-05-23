@@ -129,6 +129,7 @@ header {
 }
 
 .bookmarks-drawer-locked-open #bookmarks-drawer {
+  opacity: .9;
   box-shadow: none;
 }
 
