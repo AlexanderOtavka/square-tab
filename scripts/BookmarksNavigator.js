@@ -6,6 +6,15 @@ class BookmarksNavigator {
     throw new TypeError('Static class cannot be instantiated.');
   }
 
+  static get currentFolder() {
+    return this._stack[this._stack.length - 1];
+  }
+
+  static get parentFolder() {
+    return (this._stack.length > 1) ?
+      this._stack[this._stack.length - 2] : null;
+  }
+
   static main() {
     this.$bookmarksTitle = document.querySelector('#bookmarks-drawer .title');
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
@@ -115,10 +124,6 @@ class BookmarksNavigator {
 
   static updateSize(small) {
     this._elements.forEach(element => element.small = small);
-  }
-
-  static get currentFolder() {
-    return this._stack[this._stack.length - 1];
   }
 
   static get _isTop() {

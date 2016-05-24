@@ -201,6 +201,7 @@ class NewTab {
       ev => BookmarksEditor.onBookmarkDrop(ev),
       true
     );
+
     this.$bookmarksDrawerItems.addEventListener(
       'dragover',
       ev => BookmarksEditor.onItemsDragOver(ev)
@@ -209,6 +210,20 @@ class NewTab {
       'drop',
       ev => BookmarksEditor.onItemsDrop(ev)
     );
+
+    this.$bookmarksUpButton.addEventListener(
+      'dragover',
+      ev => BookmarksEditor.onUpButtonDragOver(ev)
+    );
+    this.$bookmarksUpButton.addEventListener(
+      'dragleave',
+      ev => BookmarksEditor.onUpButtonDragLeave(ev)
+    );
+    this.$bookmarksUpButton.addEventListener(
+      'drop',
+      ev => BookmarksEditor.onUpButtonDrop(ev)
+    );
+
     this.$bookmarksDrawerItems.addEventListener(
       'dragleave',
       ev => BookmarksEditor.onDragLeave(ev),

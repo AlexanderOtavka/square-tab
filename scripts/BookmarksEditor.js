@@ -7,6 +7,7 @@ class BookmarksEditor {
   }
 
   static main() {
+    this.$upButton = document.querySelector('#bookmarks-up-button');
     this.$drawerItems = document.querySelector('#bookmarks-drawer-items');
     this.$ctxMenu = document.querySelector('#bookmarks-ctx-menu');
     this.$ctxMenuEdit = document.querySelector('#bookmarks-ctx-menu-edit');
@@ -91,6 +92,38 @@ class BookmarksEditor {
       let url = ev.dataTransfer.getData('text/uri-list') || title;
       let index = this.$drawerItems.childElementCount;
       this._handleDrop({ bookmarkId, title, url, y: ev.y }, index, null);
+    }
+  }
+
+  static onUpButtonDragOver(ev) {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'move';
+
+    if (BookmarksNavigator.parentFolder) {
+      this.$upButton.classList.add('expand');
+    }
+  }
+
+  static onUpButtonDragLeave(ev) {
+    if (ev.target === this.$upButton) {
+      this.$upButton.classList.remove('expand');
+    }
+  }
+
+  static onUpButtonDrop(ev) {
+    ev.preventDefault();
+    this.$upButton.classList.remove('expand');
+
+    let parentId = BookmarksNavigator.parentFolder;
+    if (parentId) {
+      let bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
+      if (bookmarkId) {
+        chrome.bookmarks.move(bookmarkId, { parentId });
+      } else {
+        let title = ev.dataTransfer.getData('text/plain');
+        let url = ev.dataTransfer.getData('text/uri-list') || title;
+        chrome.bookmarks.create({ parentId, title, url });
+      }
     }
   }
 
@@ -271,7 +304,6 @@ class BookmarksEditor {
             beforeElement = dropTarget;
           }
 
-          console.log('reorder');
           this.$drawerItems.removeChild(element);
           this.$drawerItems.insertBefore(element, beforeElement);
 

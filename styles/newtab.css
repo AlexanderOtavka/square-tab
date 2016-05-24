@@ -137,6 +137,14 @@ header {
   fill: #333;
 }
 
+#bookmarks-up-button {
+  transition: transform var(--drag-drop-animation-timing);
+}
+
+#bookmarks-up-button.expand {
+  transform: scale(1.2);
+}
+
 .bookmarks-drawer-small #bookmarks-drawer-title {
   display: none;
 }
