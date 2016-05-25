@@ -26,14 +26,6 @@ gulp.task('pack', ['build:dist'], () =>
     .pipe(gulp.dest('.'))
 );
 
-gulp.task('build:dist', callback => {
-  runSequence(
-    'clean',
-    ['copy:dist', 'styles:dist', 'elements:dist'],
-    callback
-  );
-});
-
 gulp.task('build:dev', callback => {
   runSequence(
     'clean',
@@ -62,6 +54,14 @@ gulp.task('elements:dev', () =>
     .pipe($.postcss({ preserveVars: false }))
     .pipe(dev('elements'))
 );
+
+gulp.task('build:dist', callback => {
+  runSequence(
+    'clean',
+    ['copy:dist', 'styles:dist', 'elements:dist'],
+    callback
+  );
+});
 
 gulp.task('copy:dist', () =>
   gulp.src([
