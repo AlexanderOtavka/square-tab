@@ -2,6 +2,7 @@
 
 const gulp = require('gulp');
 const $ = require('require-dir')('tasks', { camelcase: true });
+const zip = require('gulp-zip');
 const runSequence = require('run-sequence');
 const del = require('del');
 
@@ -18,6 +19,12 @@ gulp.task('watch', ['build:dev'], () => {
   gulp.watch(srcPath('styles'), ['styles:dev']);
   gulp.watch(srcPath('elements'), ['elements:dev']);
 });
+
+gulp.task('pack', ['build:dist'], () =>
+  gulp.src('dist/**')
+    .pipe(zip('square-tab.zip'))
+    .pipe(gulp.dest('.'))
+);
 
 gulp.task('build:dist', callback => {
   runSequence(
@@ -77,7 +84,7 @@ gulp.task('elements:dist', () =>
     .pipe(dist('elements'))
 );
 
-gulp.task('clean', () => del(['dev/**/*', 'dist/**']));
+gulp.task('clean', () => del(['dev/**/*', 'dist/**/*']));
 
 function srcPath(path, files) {
   return path ? `src/${path}/${files || '**/*'}` : `src/${files || '**/*'}`;
