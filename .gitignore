@@ -1,6 +1,7 @@
 node_modules
+dev
+dist
 
 .DS_Store
 npm-debug.log
 *.sw[op]
-
