@@ -73,7 +73,12 @@ class BookmarksEditor {
 
   static onItemsDragOver(ev) {
     ev.preventDefault();
-    ev.dataTransfer.dropEffect = 'move';
+
+    if (this._currentDraggedBookmark) {
+      ev.dataTransfer.dropEffect = 'move';
+    } else {
+      ev.dataTransfer.dropEffect = 'copy';
+    }
 
     this.$drawerItems.classList.add('drag-over');
 
@@ -97,7 +102,12 @@ class BookmarksEditor {
 
   static onUpButtonDragOver(ev) {
     ev.preventDefault();
-    ev.dataTransfer.dropEffect = 'move';
+
+    if (this._currentDraggedBookmark) {
+      ev.dataTransfer.dropEffect = 'move';
+    } else {
+      ev.dataTransfer.dropEffect = 'copy';
+    }
 
     if (BookmarksNavigator.parentFolder) {
       this.$upButton.classList.add('expand');
