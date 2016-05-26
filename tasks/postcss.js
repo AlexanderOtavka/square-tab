@@ -9,7 +9,7 @@ const postcssAutoprefixer = require('autoprefixer');
 const postcssCssVariables = require('postcss-css-variables');
 
 module.exports = config => {
-  let plugins = () => [
+  let plugins = [
     postcssImport({
       path: ['src'],
     }),
@@ -23,6 +23,6 @@ module.exports = config => {
   ];
 
   return fastpipe()
-    .pipe(gulpif('**/*.html', htmlPostcss(plugins())))
-    .pipe(gulpif('**/*.css', postcss(plugins())));
+    .pipe(gulpif('**/*.html', htmlPostcss(plugins)))
+    .pipe(gulpif('**/*.css', postcss(plugins)));
 };
