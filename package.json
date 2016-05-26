@@ -3,6 +3,7 @@
   "devDependencies": {
     "autoprefixer": "^6.3.6",
     "del": "^2.2.0",
+    "fastpipe": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-html-postcss": "^6.0.1",
     "gulp-if": "^2.0.1",
@@ -11,8 +12,6 @@
     "postcss-css-variables": "^0.5.1",
     "postcss-import": "^8.1.2",
     "require-dir": "^0.3.0",
-    "run-sequence": "^1.2.1",
-    "stream-combiner": "^0.2.2",
-    "stream-combiner2": "^1.1.1"
+    "run-sequence": "^1.2.1"
   }
 }

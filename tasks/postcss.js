@@ -1,6 +1,6 @@
 'use strict';
 
-const combine = require('stream-combiner');
+const fastpipe = require('fastpipe');
 const gulpif = require('gulp-if');
 const htmlPostcss = require('gulp-html-postcss');
 const postcss = require('gulp-postcss');
@@ -22,8 +22,7 @@ module.exports = config => {
     }),
   ];
 
-  return combine(
-    gulpif('**/*.html', htmlPostcss(plugins())),
-    gulpif('**/*.css', postcss(plugins()))
-  );
+  return fastpipe()
+    .pipe(gulpif('**/*.html', htmlPostcss(plugins())))
+    .pipe(gulpif('**/*.css', postcss(plugins())));
 };
