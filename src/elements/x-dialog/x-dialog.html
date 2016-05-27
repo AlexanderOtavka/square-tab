@@ -2,6 +2,8 @@
 
 <template>
   <style>
+    @import "../../styles/shared-styles.css";
+
     :host {
       display: flex;
       flex-direction: column;
@@ -24,12 +26,9 @@
     }
 
     #box {
-      display: flex;
-      flex-direction: column;
-      padding: 16px;
       background: #fff;
       border-radius: 2px;
-      box-shadow: var(--shadow-1);
+      box-shadow: var(--shadow-2);
       width: var(--x-dialog-width);
       min-width: 200px;
       max-width: 400px;
@@ -42,11 +41,10 @@
       transform: translateY(0);
     }
 
-    #header {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-bottom: 12px;
+    #footer {
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 16px 12px;
     }
 
     #backdrop {
@@ -62,8 +60,7 @@
 
     ::content .dialog-title {
       margin: 0;
-      font-size: 20px;
-      line-height: 1;
+      font-size: 1rem;
       flex-grow: 1;
       flex-basis: 1px;
       overflow-x: hidden;
@@ -80,18 +77,31 @@
       margin-right: 16px;
     }
 
+    ::content .dialog-content {
+      margin: 0 16px;
+    }
+
     ::content .dialog-confirm {
-      margin: 16px 0 0 0;
-      align-self: flex-end;
+      background-color: #2196F3;
+      color: #fff;
+    }
+
+    ::content .dialog-confirm,
+    ::content .dialog-cancel {
+      margin: 0 6px;
     }
   </style>
 
   <section id="box">
-    <header id="header">
+    <header id="header" class="toolbar">
       <content select=".dialog-title"></content>
       <x-icon id="close-button" icon="close" large button></x-icon>
     </header>
-    <content select="*"></content>
+    <content select=".dialog-content"></content>
+    <footer id="footer" class="row">
+      <content select=".dialog-cancel"></content>
+      <content select=".dialog-confirm"></content>
+    </footer>
   </section>
 
   <div id="backdrop"></div>

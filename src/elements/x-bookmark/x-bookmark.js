@@ -17,8 +17,16 @@ class XBookmarkElement extends HTMLElement {
     this.small = false;
     this.node = null;
 
+    this.setAttribute('draggable', 'true');
+
     this.addEventListener('click', () => this.onClick());
     this.addEventListener('contextmenu', ev => this.onContextMenu(ev));
+    this.addEventListener('dragstart', ev => this.onDragStart(ev));
+    this.addEventListener('dragover', ev => this.onDragOver(ev));
+    this.addEventListener('dragenter', ev => this.onDragOver(ev));
+    this.addEventListener('dragleave', ev => this.onDragLeave(ev));
+    this.addEventListener('dragend', ev => this.onDragEnd(ev));
+    this.addEventListener('drop', ev => this.onDrop(ev));
   }
 
   attributeChangedCallback(attrName) {
@@ -48,6 +56,10 @@ class XBookmarkElement extends HTMLElement {
 
   get url() {
     return this.node ? (this.node.url || '#') : '#';
+  }
+
+  get isFolder() {
+    return !this.node.url;
   }
 
   get small() {
@@ -82,6 +94,47 @@ class XBookmarkElement extends HTMLElement {
     requestAnimationFrame(() => this.dispatchEvent(customEvent));
 
     ev.preventDefault();
+  }
+
+  onDragStart(ev) {
+    requestAnimationFrame(() => this.classList.add('dragging'));
+
+    ev.dataTransfer.setDragImage(this, ev.offsetX, ev.offsetY);
+    ev.dataTransfer.setData('text/x-bookmark-id', this.node.id);
+
+    let customEvent = new CustomEvent('x-bookmark-drag-start');
+    this.dispatchEvent(customEvent);
+  }
+
+  onDragOver(ev) {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'move';
+
+    let customEvent = new CustomEvent('x-bookmark-drag-over', {
+      detail: { isFolder: this.isFolder, y: ev.y },
+    });
+    this.dispatchEvent(customEvent);
+  }
+
+  onDragLeave() {
+    this.classList.remove('expand');
+  }
+
+  onDragEnd() {
+    requestAnimationFrame(() => this.classList.remove('dragging'));
+  }
+
+  onDrop(ev) {
+    ev.preventDefault();
+
+    let bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
+    let title = ev.dataTransfer.getData('text/plain');
+    let url = ev.dataTransfer.getData('text/uri-list') || title;
+    let customEvent = new CustomEvent('x-bookmark-drop', {
+      detail: { bookmarkId, title, url, y: ev.y },
+    });
+
+    this.dispatchEvent(customEvent);
   }
 
   _updateImage() {

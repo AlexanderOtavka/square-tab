@@ -14,7 +14,6 @@
   "permissions": [
     "bookmarks",
     "storage",
-    "https://source.unsplash.com/",
     "chrome://favicon/",
     "geolocation"
   ],
@@ -33,7 +32,7 @@
   },
 
   "background": {
-    "scripts": ["scripts/EventPage.js"],
+    "scripts": ["scripts/StorageKeys.js", "scripts/EventPage.js"],
     "persistent": false
   }
 }

@@ -1,3 +1,4 @@
+/* globals StorageKeys */
 'use strict';
 
 class EventPage {
@@ -5,21 +6,31 @@ class EventPage {
     throw new TypeError('Static class cannot be instantiated.');
   }
 
-  static fetchAndCacheImage(resourceURI, storageKey) {
+  static main() {
+    chrome.runtime.onInstalled.addListener(() => {
+      chrome.storage.local.clear(() => {
+        this.fetchAndCacheImage('https://source.unsplash.com/category/nature/');
+        this.fetchAndCacheWeatherData();
+      });
+    });
+  }
+
+  static fetchAndCacheImage(resourceURI) {
     return fetch(resourceURI)
       .then(resp =>
         this._readBlob(resp.body.getReader())
           .then(blob => {
             let contentType = resp.headers.get('content-type');
             let data = this._encodeUint8Array(blob);
+            let dataUrl = `data:${contentType};base64,${data}`;
             chrome.storage.local.set({
-              [storageKey]: `data:${contentType};base64,${data}`,
+              [StorageKeys.IMAGE_DATA_URL]: dataUrl,
             });
           })
       );
   }
 
-  static fetchAndCacheWeatherData(storageKey) {
+  static fetchAndCacheWeatherData() {
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(position => resolve(position));
     })
@@ -50,7 +61,7 @@ class EventPage {
         const DATA_LIFETIME_MS = 60 * (1000 * 60);  // 60 Minutes
         data.expiration = Date.now() + DATA_LIFETIME_MS;
         chrome.storage.local.set({
-          [storageKey]: JSON.stringify(data),
+          [StorageKeys.WEATHER_DATA]: JSON.stringify(data),
         });
       });
   }
@@ -113,5 +124,7 @@ class EventPage {
     return output;
   }
 }
+
+EventPage.main();
 
 window.EventPage = EventPage;

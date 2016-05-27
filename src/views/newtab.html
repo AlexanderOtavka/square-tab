@@ -1,11 +1,12 @@
 <!doctype html>
 
-<html lang="en" class="bookmarks-drawer-small">
+<html lang="en">
 
 <head>
   <meta charset="utf-8" />
   <title>New Tab</title>
 
+  <link rel="stylesheet" href="../styles/shared-styles.css" />
   <link rel="stylesheet" href="../styles/newtab.css" />
 
   <link rel="import" href="../elements/x-bookmark/x-bookmark.html" />
@@ -65,19 +66,23 @@
 
   <x-dialog id="bookmarks-edit-dialog">
     <img id="bookmarks-edit-dialog-favicon" class="dialog-title" />
-    <h1 id="bookmarks-edit-dialog-title" class="dialog-title">Edit</h1>
+    <h1 id="bookmarks-edit-dialog-title" class="dialog-title"></h1>
 
-    <div class="row">
+    <div class="dialog-content row">
       <input id="bookmarks-edit-dialog-name" type="text" placeholder="Name" />
-      <input id="bookmarks-edit-dialog-url" type="text" placeholder="URL" />
+      <input id="bookmarks-edit-dialog-url" type="url" placeholder="URL" />
     </div>
+
+    <button class="dialog-cancel">Cancel</button>
     <button class="dialog-confirm">Done</button>
   </x-dialog>
 
+  <script src="../scripts/StorageKeys.js"></script>
   <script src="../scripts/Settings.js"></script>
-  <script src="../scripts/Bookmarks.js"></script>
+  <script src="../scripts/BookmarksNavigator.js"></script>
+  <script src="../scripts/BookmarksEditor.js"></script>
   <script src="../scripts/Weather.js"></script>
-  <script src="../scripts/NewTab.js"></script>
+  <script src="../scripts/newtab.js"></script>
 </body>
 
 </html>

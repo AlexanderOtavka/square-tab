@@ -1,13 +1,9 @@
-/* globals Settings */
+/* globals Settings, StorageKeys */
 'use strict';
 
 class Weather {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');
-  }
-
-  static get STORAGE_KEY_WEATHER_DATA() {
-    return 'weatherData';
   }
 
   static main() {
@@ -23,7 +19,7 @@ class Weather {
     });
 
     chrome.storage.onChanged.addListener(
-      ({ [this.STORAGE_KEY_WEATHER_DATA]: change }, area) => {
+      ({ [StorageKeys.WEATHER_DATA]: change }, area) => {
         if (area === 'local' && change) {
           this._handleWeatherDataLoad(change.newValue);
         }
@@ -42,8 +38,8 @@ class Weather {
 
       if (navigator.geolocation) {
         chrome.storage.local.get(
-          this.STORAGE_KEY_WEATHER_DATA,
-          ({ [this.STORAGE_KEY_WEATHER_DATA]: data }) =>
+          StorageKeys.WEATHER_DATA,
+          ({ [StorageKeys.WEATHER_DATA]: data }) =>
             this._handleWeatherDataLoad(data)
         );
       } else {
@@ -154,7 +150,7 @@ class Weather {
 
   static _fetchAndCacheWeatherData() {
     chrome.runtime.getBackgroundPage(({ EventPage }) => {
-      EventPage.fetchAndCacheWeatherData(this.STORAGE_KEY_WEATHER_DATA);
+      EventPage.fetchAndCacheWeatherData();
     });
   }
 }

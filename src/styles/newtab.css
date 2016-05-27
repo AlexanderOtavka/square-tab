@@ -2,23 +2,10 @@
   --drawer-width: 300px;
   --drawer-header-height: 68px;
   --drawer-transition-timing: 200ms cubic-bezier(0, 0, .3, 1);
-  --x-dialog-transition-timing: 100ms cubic-bezier(0, 0, .3, 1);
-  --backdrop-background: rgba(0, 0, 0, .4);
-  --shadow-1: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
 :root.bookmarks-drawer-small {
   --drawer-width: 64px;
-}
-
-body {
-  font-family: 'Helvetica Neue', sans-serif;
-  overflow: hidden;
-  margin: 0;
-}
-
-body[unresolved], [hidden] {
-  display: none !important;
 }
 
 header {
@@ -27,93 +14,6 @@ header {
   left: 0;
   right: 0;
   z-index: 1;
-}
-
-button {
-  position: relative;
-  text-transform: uppercase;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 3px;
-  background-color: #ddd;
-  color: #333;
-  cursor: pointer;
-  box-shadow: none;
-  transition: box-shadow 400ms;
-}
-
-button::after {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  background-color: rgba(0, 0, 0, .1);
-  opacity: 0;
-  transition: opacity 200ms;
-}
-
-button:hover {
-  box-shadow: var(--shadow-1);
-}
-
-button:focus {
-  outline: none;
-}
-
-button:active::after {
-  opacity: 1;
-}
-
-.fullbleed {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.toolbar {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 16px;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.title {
-  flex-grow: 1;
-  flex-basis: 1px;
-  font-size: 1.3rem;
-  margin: 0 8px;
-  cursor: default;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.radial-shadow {
-  position: relative;
-}
-
-.radial-shadow::before {
-  content: "";
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(0, 0, 0, .15),
-    rgba(0, 0, 0, 0) 60%
-  );
-  display: block;
-  position: absolute;
-  top: -24px;
-  right: -24px;
-  bottom: -24px;
-  left: -24px;
-  z-index: -1;
 }
 
 .drawer {
@@ -139,11 +39,6 @@ button:active::after {
   bottom: 0;
   left: 0;
   overflow-y: auto;
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
 }
 
 #background-image {
@@ -233,18 +128,27 @@ button:active::after {
 }
 
 .bookmarks-drawer-locked-open #bookmarks-drawer {
+  opacity: .9;
   box-shadow: none;
-  background: rgba(255, 255, 255, 0.9);
 }
 
 #bookmarks-drawer x-icon {
   fill: #333;
 }
 
+#bookmarks-up-button {
+  transition: transform var(--drag-drop-animation-timing);
+}
+
+#bookmarks-up-button.expand {
+  transform: scale(1.2);
+}
+
 .bookmarks-drawer-small #bookmarks-drawer-title {
   display: none;
 }
 
+.bookmarks-drawer-small #bookmarks-close-button,
 .bookmarks-drawer-locked-open #bookmarks-close-button {
   display: none;
 }
