@@ -184,3 +184,16 @@ header {
   flex-grow: 2;
   flex-basis: 1px;
 }
+
+#source a {
+  font-size: 22px;
+  font-family: 'Arial', sans-serif;
+  text-decoration: none;
+  color: #fff;
+  display: flex;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  margin-left: 6px;
+  margin-bottom: 6px;
+}

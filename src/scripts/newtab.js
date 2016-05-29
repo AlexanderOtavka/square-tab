@@ -29,6 +29,7 @@ class NewTab {
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
     this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
+    this.$sourceLink = document.querySelector('#source-link');
 
     let backgroundImageReady = this.loadImage()
       .then(uri => this.updateImage(uri));
@@ -61,6 +62,7 @@ class NewTab {
 
   static updateImage(uri = this.defaultImageUrl) {
     this.$backgroundImage.src = uri;
+    this.$sourceLink.href = uri;
   }
 
   static fetchAndCacheImage() {
