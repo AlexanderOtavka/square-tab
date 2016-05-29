@@ -37,7 +37,7 @@ class Popup {
 
     Settings.onDataChanged(settingKey).addListener(data => {
       $checkbox.checked = data.value;
-      $checkbox.disabled = data.override !== undefined;
+      $checkbox.disabled = data.activeOverride !== undefined;
     });
   }
 
@@ -68,7 +68,7 @@ class Popup {
         }
       }
 
-      let disabled = data.override !== undefined;
+      let disabled = data.activeOverride !== undefined;
       buttons.forEach($button => $button.disabled = disabled);
     });
   }

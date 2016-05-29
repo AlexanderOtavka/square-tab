@@ -45,13 +45,13 @@ gulp.task('copy:dev', () =>
 
 gulp.task('styles:dev', () =>
   gulp.src(srcPath('styles'))
-    .pipe($.postcss({ preserveVars: false }))
+    .pipe($.postcss({ preserveVars: true }))
     .pipe(dev('styles'))
 );
 
 gulp.task('elements:dev', () =>
   gulp.src(srcPath('elements'))
-    .pipe($.postcss({ preserveVars: false }))
+    .pipe($.postcss({ preserveVars: true }))
     .pipe(dev('elements'))
 );
 
