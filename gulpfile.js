@@ -18,6 +18,7 @@ let distCopyPath = [
   `!${srcPath('scripts')}`,
   `!${srcPath('styles')}`,
   `!${srcPath('elements')}`,
+  `!${srcPath('images')}`,
   `!${srcPath('views')}`,
 ];
 
@@ -43,7 +44,12 @@ gulp.task('pack', ['build:dist'], () =>
 gulp.task('build:dev', callback => {
   runSequence(
     'clean',
-    ['copy:dev', 'styles:dev', 'elements:dev', 'views:dev'],
+    [
+      'copy:dev',
+      'styles:dev',
+      'elements:dev',
+      'views:dev',
+    ],
     callback
   );
 });
@@ -59,6 +65,7 @@ gulp.task('styles:dev', () =>
 gulp.task('elements:dev', () =>
   gulp.src(srcPath('elements'))
     .pipe($.postcss())
+    .pipe($.useref())
     .pipe(dev('elements'))
 );
 
@@ -73,7 +80,14 @@ gulp.task('views:dev', () =>
 gulp.task('build:dist', callback => {
   runSequence(
     'clean',
-    ['copy:dist', 'scripts:dist', 'styles:dist', 'elements:dist', 'views:dist'],
+    [
+      'copy:dist',
+      'scripts:dist',
+      'styles:dist',
+      'elements:dist',
+      'images:dist',
+      'views:dist',
+    ],
     callback
   );
 });
@@ -83,12 +97,14 @@ gulp.task('copy:dist', () => gulp.src(distCopyPath).pipe(dist()));
 gulp.task('scripts:dist', () =>
   gulp.src(srcPath('scripts'))
     .pipe($.babel())
+    .pipe($.optimizeJs())
     .pipe(dist('scripts'))
 );
 
 gulp.task('styles:dist', () =>
   gulp.src(srcPath('styles'))
     .pipe($.postcss())
+    .pipe($.optimizeCss())
     .pipe(dist('styles'))
 );
 
@@ -96,12 +112,23 @@ gulp.task('elements:dist', () =>
   gulp.src(srcPath('elements'))
     .pipe($.postcss())
     .pipe($.babel())
+    .pipe($.useref())
+    .pipe($.optimizeCss())
+    .pipe($.optimizeJs())
+    .pipe($.optimizeHtml())
     .pipe(dist('elements'))
+);
+
+gulp.task('images:dist', () =>
+  gulp.src(srcPath('images'))
+    .pipe($.optimizeImages())
+    .pipe(dist('images'))
 );
 
 gulp.task('views:dist', () =>
   gulp.src(srcPath('views'))
     .pipe($.useref())
+    .pipe($.optimizeHtml())
     .pipe(dist('views'))
 );
 
