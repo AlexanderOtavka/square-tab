@@ -8,21 +8,19 @@ const postcssImport = require('postcss-import');
 const postcssAutoprefixer = require('autoprefixer');
 const postcssCssVariables = require('postcss-css-variables');
 
-module.exports = config => {
-  let plugins = [
-    postcssImport({
-      path: ['src'],
-    }),
-    postcssAutoprefixer({
-      // First version with native webcomponents
-      browsers: ['Chrome >= 36'],
-    }),
-    postcssCssVariables({
-      preserve: config.preserveVars,
-    }),
-  ];
+let plugins = [
+  postcssImport({
+    path: ['src'],
+  }),
+  postcssAutoprefixer({
+    // First version with native webcomponents
+    browsers: ['Chrome >= 36'],
+  }),
+  postcssCssVariables({
+    preserve: true,
+  }),
+];
 
-  return fastpipe()
-    .pipe(gulpif('**/*.html', htmlPostcss(plugins)))
-    .pipe(gulpif('**/*.css', postcss(plugins)));
-};
+module.exports = () => fastpipe()
+  .pipe(gulpif('**/*.html', htmlPostcss(plugins)))
+  .pipe(gulpif('**/*.css', postcss(plugins)));
