@@ -63,7 +63,6 @@ header {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  -webkit-user-select: none;
   user-select: none;
   cursor: default;
   transition: right var(--drawer-transition-timing);

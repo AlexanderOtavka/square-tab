@@ -8,7 +8,6 @@
 
 body {
   width: 220px;
-  -webkit-user-select: none;
   user-select: none;
 }
 
