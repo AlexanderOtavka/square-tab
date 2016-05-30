@@ -26,7 +26,6 @@ button {
   background-color: #ccc;
   color: #333;
   cursor: pointer;
-  -webkit-user-select: none;
   user-select: none;
   box-shadow: none;
   transition: box-shadow 400ms;
@@ -118,7 +117,6 @@ input[type=url]:hover:invalid {
   flex-direction: row;
   align-items: center;
   padding: 16px;
-  -webkit-user-select: none;
   user-select: none;
 }
 
