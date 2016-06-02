@@ -44,19 +44,26 @@ class Settings {
    */
   static get _overrides() {
     return {
+      _startup: (chromeVersion) => {
+        if (chromeVersion < 49) {
+          // CSS variables don't work right
+          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 0, false);
+        }
+      },
+
       [this.keys.ALWAYS_SHOW_BOOKMARKS]: value => {
         if (!value) {
-          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, false);
+          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1, false);
         } else {
-          this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL);
+          this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1);
         }
       },
 
       [this.keys.SHOW_WEATHER]: value => {
         if (!value) {
-          this._setOverride(this.keys.TEMPERATURE_UNIT, null);
+          this._setOverride(this.keys.TEMPERATURE_UNIT, 0, null);
         } else {
-          this._unsetOverride(this.keys.TEMPERATURE_UNIT);
+          this._unsetOverride(this.keys.TEMPERATURE_UNIT, 0);
         }
       },
     };
@@ -68,16 +75,17 @@ class Settings {
     );
 
     this._data = {};
+    let overrides = this._overrides;
     this._storageKeysArray.forEach(storageKey => {
       this._data[storageKey] = {
         value: undefined,
-        override: undefined,
+        overrides: [],
         basicListener: new chrome.Event(),
         dataListener: new chrome.Event(),
       };
 
       if (storageKey in this._overrides) {
-        this.onChanged(storageKey).addListener(this._overrides[storageKey]);
+        this.onChanged(storageKey).addListener(overrides[storageKey]);
       }
     });
 
@@ -88,6 +96,10 @@ class Settings {
         this._storageKeysArray.forEach(storageKey => {
           this._setValue(storageKey, data[storageKey], true);
         });
+
+        var chromeVersion =
+          Number(navigator.userAgent.match(/Chrom(?:e|ium)\/([0-9]+)/)[1]);
+        overrides._startup(chromeVersion);
       });
 
     chrome.storage.onChanged.addListener((changes, area) => {
@@ -101,8 +113,9 @@ class Settings {
 
   static get(storageKey) {
     console.assert(this._storageKeysArray.indexOf(storageKey) !== -1);
-    if (this._data[storageKey].override !== undefined) {
-      return this._data[storageKey].override;
+    let override = this._getActiveOverride(storageKey);
+    if (override !== undefined) {
+      return override;
     } else if (this._data[storageKey].value !== undefined) {
       return this._data[storageKey].value;
     } else {
@@ -118,7 +131,9 @@ class Settings {
       value = this._defaults[storageKey];
     }
 
-    return { value, override: d.override };
+    let activeOverride = this._getActiveOverride(storageKey);
+
+    return { value, overrides: d.overrides.slice(), activeOverride };
   }
 
   static set(storageKey, value) {
@@ -136,29 +151,35 @@ class Settings {
     return this._data[storageKey].dataListener;
   }
 
+  static _getActiveOverride(storageKey) {
+    return this._data[storageKey].overrides.find(ovr => ovr !== undefined);
+  }
+
   static _setValue(storageKey, newValue, forceNotify = false) {
     const PROP_NAME = 'value';
     this._setDataProperty(storageKey, PROP_NAME, newValue, forceNotify);
   }
 
-  static _setOverride(storageKey, newOverride, forceNotify = false) {
-    const PROP_NAME = 'override';
-    this._setDataProperty(storageKey, PROP_NAME, newOverride, forceNotify);
+  static _setOverride(storageKey, priority, newOverride, forceNotify = false) {
+    const PROP_NAME = 'overrides';
+    let overrides = this._data[storageKey].overrides.slice();
+    overrides[priority] = newOverride;
+    this._setDataProperty(storageKey, PROP_NAME, overrides, forceNotify);
   }
 
-  static _unsetOverride(storageKey) {
-    this._setOverride(storageKey, undefined);
+  static _unsetOverride(storageKey, priority) {
+    this._setOverride(storageKey, priority, undefined);
   }
 
   static _setDataProperty(storageKey, property, value, forceNotify) {
     let oldData;
     let oldOverriddenValue;
-    if (!forceNotify) {
+    if (forceNotify) {
+      oldData = { value: undefined, overrides: [] };
+      oldOverriddenValue = undefined;
+    } else {
       oldData = this.getData(storageKey);
       oldOverriddenValue = this.get(storageKey);
-    } else {
-      oldData = { value: undefined, override: undefined };
-      oldOverriddenValue = undefined;
     }
 
     let dataItem = this._data[storageKey];
@@ -166,7 +187,7 @@ class Settings {
 
     let newData = this.getData(storageKey);
     if (newData.value !== oldData.value ||
-        newData.override !== oldData.override) {
+        this._overridesChanged(newData, oldData)) {
       dataItem.dataListener.dispatch(newData, oldData);
     }
 
@@ -174,6 +195,17 @@ class Settings {
     if (newOverriddenValue !== oldOverriddenValue) {
       dataItem.basicListener.dispatch(newOverriddenValue, oldOverriddenValue);
     }
+  }
+
+  static _overridesChanged(newData, oldData) {
+    let len = Math.max(newData.overrides.length, oldData.overrides.length);
+    for (let i = 0; i < len; i++) {
+      if (newData.overrides[i] !== oldData.overrides[i]) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 
