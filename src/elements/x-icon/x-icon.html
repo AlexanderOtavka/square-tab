@@ -8,9 +8,17 @@
       z-index: inherit;
     }
 
-    :host::after {
-      content: "";
-      display: block;
+    :host([large]) {
+      width: 28px;
+      height: 28px;
+      padding: 4px;
+    }
+
+    :host([button]) {
+      cursor: pointer;
+    }
+
+    #button-click-circle {
       position: absolute;
       top: -4px;
       right: -4px;
@@ -24,20 +32,12 @@
       transition: opacity 200ms;
     }
 
-    :host([large]) {
-      width: 28px;
-      height: 28px;
-      padding: 4px;
-    }
-
-    :host([button]) {
-      cursor: pointer;
-    }
-
-    :host([button]:active)::after {
+    :host([button]:active) #button-click-circle {
       opacity: 1;
     }
   </style>
+
+  <div id="button-click-circle"></div>
 
   <template id="icons">
     <svg id="bookmarks" viewBox="0 0 24 24">
