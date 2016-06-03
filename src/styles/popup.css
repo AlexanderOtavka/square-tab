@@ -54,12 +54,7 @@ label.checkbox-container .label {
   display: block;
   font-weight: bold;
   text-align: center;
-  text-decoration: none;
   color: #333;
   background-color: #f0f0f0;
   padding: 8px;
-}
-
-#github:hover {
-  text-decoration: underline;
 }

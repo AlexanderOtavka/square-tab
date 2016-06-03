@@ -32,7 +32,7 @@ class NewTab {
     this.$sourceLink = document.querySelector('#source-link');
 
     let backgroundImageReady = this.loadImage()
-      .then(uri => this.updateImage(uri));
+      .then(({ dataUrl, sourceUrl }) => this.updateImage(dataUrl, sourceUrl));
     Settings.loaded.then(() => this.fetchAndCacheImage());
 
     Promise.all([Settings.loaded, backgroundImageReady]).then(() =>
@@ -53,16 +53,19 @@ class NewTab {
 
   static loadImage() {
     return new Promise(resolve => {
-      chrome.storage.local.get(
-        StorageKeys.IMAGE_DATA_URL,
-        ({ [StorageKeys.IMAGE_DATA_URL]: uri }) => resolve(uri)
-      );
+      const KEYS = [StorageKeys.IMAGE_DATA_URL, StorageKeys.IMAGE_SOURCE_URL];
+      chrome.storage.local.get(KEYS, data => {
+        resolve({
+          dataUrl: data[StorageKeys.IMAGE_DATA_URL],
+          sourceUrl: data[StorageKeys.IMAGE_SOURCE_URL],
+        });
+      });
     });
   }
 
-  static updateImage(uri = this.defaultImageUrl) {
-    this.$backgroundImage.src = uri;
-    this.$sourceLink.href = uri;
+  static updateImage(dataUrl = this.defaultImageUrl, sourceUrl = dataUrl) {
+    this.$backgroundImage.src = dataUrl;
+    this.$sourceLink.href = sourceUrl;
   }
 
   static fetchAndCacheImage() {

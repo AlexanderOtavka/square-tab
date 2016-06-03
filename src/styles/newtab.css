@@ -50,6 +50,22 @@ header {
   height: 100%;
 }
 
+#main-toolbar {
+  font-size: 16px;
+  font-weight: 300;
+  text-shadow: var(--shadow-text);
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.bookmarks-drawer-locked-open #main-toolbar {
+  right: var(--drawer-width);
+}
+
+#main-toolbar > a {
+  margin: 8px;
+}
+
 #bookmarks-open-button {
   fill: #fff;
 }
@@ -186,17 +202,4 @@ header {
 #bookmarks-edit-dialog-url {
   flex-grow: 2;
   flex-basis: 1px;
-}
-
-#source a {
-  font-size: 22px;
-  font-family: 'Arial', sans-serif;
-  text-decoration: none;
-  color: #fff;
-  display: flex;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  margin-left: 6px;
-  margin-bottom: 6px;
 }
