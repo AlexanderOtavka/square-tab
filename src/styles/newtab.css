@@ -4,10 +4,15 @@
   --drawer-width: 300px;
   --drawer-header-height: 68px;
   --drawer-transition-timing: 200ms cubic-bezier(0, 0, .3, 1);
+  --main-right-margin: 0;
 }
 
 :root.bookmarks-drawer-small {
   --drawer-width: 64px;
+}
+
+:root.bookmarks-drawer-mode-always {
+  --main-right-margin: var(--drawer-width);
 }
 
 header {
@@ -56,10 +61,8 @@ header {
   text-shadow: var(--shadow-text);
   text-transform: uppercase;
   color: #fff;
-}
-
-.bookmarks-drawer-locked-open #main-toolbar {
-  right: var(--drawer-width);
+  right: var(--main-right-margin);
+  transition: right var(--drawer-transition-timing);
 }
 
 #main-toolbar > a {
@@ -70,7 +73,8 @@ header {
   fill: #fff;
 }
 
-.bookmarks-drawer-locked-open #bookmarks-open-button {
+.bookmarks-drawer-mode-always #bookmarks-open-button,
+.bookmarks-drawer-mode-hover #bookmarks-open-button {
   display: none;
 }
 
@@ -81,11 +85,8 @@ header {
   align-items: center;
   user-select: none;
   cursor: default;
+  right: var(--main-right-margin);
   transition: right var(--drawer-transition-timing);
-}
-
-.bookmarks-drawer-locked-open #info-wrapper {
-  right: var(--drawer-width);
 }
 
 #info-box {
@@ -140,13 +141,18 @@ header {
 }
 
 .bookmarks-drawer-open #bookmarks-drawer,
-.bookmarks-drawer-locked-open #bookmarks-drawer {
+.bookmarks-drawer-mode-always #bookmarks-drawer,
+.bookmarks-drawer-mode-hover #bookmarks-drawer {
   transform: translateX(0);
 }
 
-.bookmarks-drawer-locked-open #bookmarks-drawer {
+.bookmarks-drawer-mode-always #bookmarks-drawer {
   opacity: .9;
   box-shadow: none;
+}
+
+.bookmarks-drawer-mode-hover #bookmarks-drawer:not(:hover) {
+  opacity: 0;
 }
 
 #bookmarks-drawer x-icon {
@@ -166,7 +172,8 @@ header {
 }
 
 .bookmarks-drawer-small #bookmarks-close-button,
-.bookmarks-drawer-locked-open #bookmarks-close-button {
+.bookmarks-drawer-mode-always #bookmarks-close-button,
+.bookmarks-drawer-mode-hover #bookmarks-close-button {
   display: none;
 }
 

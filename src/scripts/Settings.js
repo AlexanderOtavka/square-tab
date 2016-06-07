@@ -11,12 +11,17 @@ class Settings {
         CELCIUS: 'c',
         FAHRENHEIT: 'f',
       },
+      BookmarkDrawerModes: {
+        TOGGLE: 'toggle',
+        HOVER: 'hover',
+        ALWAYS: 'always',
+      },
     };
   }
 
   static get keys() {
     return {
-      ALWAYS_SHOW_BOOKMARKS: 'alwaysShowBookmarks',
+      BOOKMARKS_DRAWER_MODE: 'bookmarkDrawerMode',
       BOOKMARKS_DRAWER_SMALL: 'bookmarksDrawerSmall',
       BOXED_INFO: 'boxedInfo',
       SHOW_WEATHER: 'showWeather',
@@ -30,7 +35,7 @@ class Settings {
    */
   static get _defaults() {
     return {
-      [this.keys.ALWAYS_SHOW_BOOKMARKS]: false,
+      [this.keys.BOOKMARKS_DRAWER_MODE]: this.enums.BookmarkDrawerModes.TOGGLE,
       [this.keys.BOOKMARKS_DRAWER_SMALL]: true,
       [this.keys.BOXED_INFO]: true,
       [this.keys.SHOW_WEATHER]: true,
@@ -51,8 +56,8 @@ class Settings {
         }
       },
 
-      [this.keys.ALWAYS_SHOW_BOOKMARKS]: value => {
-        if (!value) {
+      [this.keys.BOOKMARKS_DRAWER_MODE]: value => {
+        if (value === this.enums.BookmarkDrawerModes.TOGGLE) {
           this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1, false);
         } else {
           this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1);

@@ -1,14 +1,16 @@
 @import "shared-styles.css";
 
 :root {
-  --input-size: 14px;
-  --input-margin: 4px;
-  --indent-size: calc(var(--input-size) + var(--input-margin) * 2)
+  --small-input-size: 14px;
+  --small-input-margin: 4px;
+  --indent-size: calc(var(--small-input-size) + var(--small-input-margin) * 2)
 }
 
 body {
   width: 220px;
   user-select: none;
+  font-size: .8rem;
+  font-weight: 400;
 }
 
 h1 {
@@ -16,24 +18,31 @@ h1 {
   cursor: default;
 }
 
+h2 {
+  font-size: inherit;
+  cursor: default;
+  font-weight: inherit;
+  margin: 4px 0;
+}
+
 input[type=checkbox],
 input[type=radio] {
-  width: var(--input-size);
-  height: var(--input-size);
-  margin: var(--input-margin);
+  width: var(--small-input-size);
+  height: var(--small-input-size);
+  margin: var(--small-input-margin);
 }
 
 input[disabled] + .label {
   color: #545454;
 }
 
-label.checkbox-container {
+.small-input-container {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
 }
 
-label.checkbox-container .label {
+.small-input-container .label {
   padding: 4px;
   line-height: 14px;
 }

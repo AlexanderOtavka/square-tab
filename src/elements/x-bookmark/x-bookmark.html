@@ -27,8 +27,6 @@
       padding: 4px 8px;
       cursor: pointer;
       user-select: none;
-      background-color: rgba(0, 0, 0, 0);
-      transition: background-color 200ms;
       background: #fff;
       transition: transform var(--drag-drop-animation-timing);
     }
@@ -68,7 +66,7 @@
       background-color: rgba(0, 0, 0, .2);
       pointer-events: none;
       opacity: 0;
-      transition: opacity 200ms;
+      transition: opacity var(--mouse-effect-transition-timing);
     }
 
     #link:active::after {

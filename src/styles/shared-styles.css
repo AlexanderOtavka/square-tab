@@ -5,6 +5,7 @@
   --shadow-2: 0 3px 8px rgba(0, 0, 0, .2);
   --drag-drop-animation-timing: 100ms cubic-bezier(0, 0, .3, 1);
   --x-dialog-transition-timing: 100ms cubic-bezier(0, 0, .3, 1);
+  --mouse-effect-transition-timing: 200ms;
 }
 
 body {

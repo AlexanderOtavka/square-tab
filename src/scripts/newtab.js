@@ -137,33 +137,42 @@ class NewTab {
   }
 
   static addSettingsChangeListeners() {
-    Settings.onChanged(Settings.keys.ALWAYS_SHOW_BOOKMARKS)
-      .addListener(show => this.updateBookmarkDrawerLock(show));
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE)
+      .addListener(value => this.updateBookmarkDrawerMode(value));
 
     Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL)
-      .addListener(small => {
-        this.updateBookmarkDrawerSmall(small);
-        BookmarksNavigator.updateSize(small);
+      .addListener(value => {
+        this.updateBookmarkDrawerSmall(value);
+        BookmarksNavigator.updateSize(value);
       });
 
     Settings.onChanged(Settings.keys.BOXED_INFO)
-      .addListener(boxed =>
-        this.updateBoxedInfo(boxed)
+      .addListener(value =>
+        this.updateBoxedInfo(value)
       );
 
     Settings.onChanged(Settings.keys.SHOW_WEATHER)
-      .addListener(show =>
-        this.updateWeather(show)
+      .addListener(value =>
+        this.updateWeather(value)
       );
 
     Settings.onChanged(Settings.keys.TEMPERATURE_UNIT)
-      .addListener(unit => Weather.updateTemperatureUnit(unit));
+      .addListener(value => Weather.updateTemperatureUnit(value));
   }
 
-  static updateBookmarkDrawerLock(alwaysShowBookmarks) {
+  static updateBookmarkDrawerMode(mode) {
+    const ALWAYS = 'bookmarks-drawer-mode-always';
+    const HOVER = 'bookmarks-drawer-mode-hover';
     this.closeBookmarks();
-    this.$root.classList.toggle('bookmarks-drawer-locked-open',
-                                alwaysShowBookmarks);
+    this.$root.classList.remove(ALWAYS, HOVER);
+    switch (mode) {
+      case Settings.enums.BookmarkDrawerModes.ALWAYS:
+        this.$root.classList.add(ALWAYS);
+        break;
+      case Settings.enums.BookmarkDrawerModes.HOVER:
+        this.$root.classList.add(HOVER);
+        break;
+    }
   }
 
   static updateBookmarkDrawerSmall(drawerSmall) {

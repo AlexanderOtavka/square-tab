@@ -7,8 +7,8 @@ class Popup {
   }
 
   static main() {
-    const $alwaysShowBookmarks =
-      document.querySelector('#always-show-bookmarks');
+    const $bookmarksDrawerMode =
+      document.querySelector('#bookmarks-drawer-mode');
     const $bookmarksDrawerSmall =
       document.querySelector('#bookmarks-drawer-small');
     const $boxedInfo = document.querySelector('#boxed-info');
@@ -16,8 +16,9 @@ class Popup {
     const $temperatureUnit = document.querySelector('#temperature-unit');
     const $todImages = document.querySelector('#tod-images');
 
-    this.bindCheckbox($alwaysShowBookmarks,
-                      Settings.keys.ALWAYS_SHOW_BOOKMARKS);
+    this.bindRadioButtons($bookmarksDrawerMode,
+                          Settings.keys.BOOKMARKS_DRAWER_MODE,
+                          Settings.enums.BookmarkDrawerModes);
     this.bindCheckbox($bookmarksDrawerSmall,
                       Settings.keys.BOOKMARKS_DRAWER_SMALL);
     this.bindCheckbox($boxedInfo, Settings.keys.BOXED_INFO);
