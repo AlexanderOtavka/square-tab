@@ -10,17 +10,17 @@ class Popup {
     const BOOKMARKS_DRAWER_MODE = 'BOOKMARKS_DRAWER_MODE';
     const BOOKMARKS_DRAWER_SMALL = 'BOOKMARKS_DRAWER_SMALL';
     const BOXED_INFO = 'BOXED_INFO';
-    const SHOW_WEATHER = 'SHOW_WEATHER';
-    const TEMPERATURE_UNIT = 'TEMPERATURE_UNIT';
+    // const SHOW_WEATHER = 'SHOW_WEATHER';
+    // const TEMPERATURE_UNIT = 'TEMPERATURE_UNIT';
     const USE_TIME_OF_DAY_IMAGES = 'USE_TIME_OF_DAY_IMAGES';
 
     this.bindRadioButtons(BOOKMARKS_DRAWER_MODE,
                           Settings.enums.BookmarkDrawerModes);
     this.bindCheckbox(BOOKMARKS_DRAWER_SMALL);
     this.bindCheckbox(BOXED_INFO);
-    this.bindCheckbox(SHOW_WEATHER);
-    this.bindRadioButtons(TEMPERATURE_UNIT,
-                          Settings.enums.TemperatureUnits);
+    // this.bindCheckbox(SHOW_WEATHER);
+    // this.bindRadioButtons(TEMPERATURE_UNIT,
+    //                       Settings.enums.TemperatureUnits);
     this.bindCheckbox(USE_TIME_OF_DAY_IMAGES);
   }
 
