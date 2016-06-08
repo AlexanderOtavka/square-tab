@@ -32,7 +32,7 @@ input[type=radio] {
   margin: var(--small-input-margin);
 }
 
-input[disabled] + .label {
+input[disabled] + label {
   color: #545454;
 }
 
@@ -42,9 +42,13 @@ input[disabled] + .label {
   align-items: flex-start;
 }
 
-.small-input-container .label {
-  padding: 4px;
+.small-input-container.inline {
+  display: inline-flex;
+}
+
+.small-input-container label {
   line-height: 14px;
+  padding: 4px;
 }
 
 .child-1 {
