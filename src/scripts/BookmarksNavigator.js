@@ -91,7 +91,7 @@ class BookmarksNavigator {
 
     chrome.bookmarks.get(id, ([node]) => {
       if (!node.url) {
-        this.$bookmarksTitle.textContent = node.title || 'BookmarksNavigator';
+        this.$bookmarksTitle.textContent = node.title || 'Bookmarks';
 
         chrome.bookmarks.getChildren(id, children => {
           let elements = this.$bookmarksDrawerItems.childNodes;
