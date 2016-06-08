@@ -2,7 +2,6 @@
 
 :root {
   --drawer-width: 300px;
-  --drawer-header-height: 68px;
   --drawer-transition-timing: 200ms cubic-bezier(0, 0, .3, 1);
   --main-right-margin: 0;
 }
@@ -34,14 +33,14 @@ header {
 }
 
 .drawer-header {
-  height: calc(var(--drawer-header-height) - 1px);
+  height: var(--toolbar-height);
   border-bottom: 1px solid rgba(0, 0, 0, .2);;
 }
 
 .drawer-content {
   display: block;
   position: absolute;
-  top: var(--drawer-header-height);
+  top: var(--toolbar-height);
   right: 0;
   bottom: 0;
   left: 0;
@@ -160,7 +159,7 @@ header {
 }
 
 #bookmarks-up-button {
-  transition: transform var(--drag-drop-animation-timing);
+  transition: transform var(--drag-drop-transition-timing);
 }
 
 #bookmarks-up-button.expand {
