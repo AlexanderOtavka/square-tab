@@ -3,7 +3,6 @@
 :root {
   --small-input-size: 14px;
   --small-input-margin: 4px;
-  --indent-size: calc(var(--small-input-size) + var(--small-input-margin) * 2)
 }
 
 body {
@@ -51,12 +50,8 @@ input[disabled] + label {
   padding: 4px;
 }
 
-.child-1 {
-  margin-left: var(--indent-size);
-}
-
-.child-2 {
-  margin-left: calc(var(--indent-size) * 2);
+.child {
+  margin-left: calc(var(--small-input-size) + var(--small-input-margin) * 2);
 }
 
 #settings {
