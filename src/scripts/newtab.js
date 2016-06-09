@@ -18,9 +18,11 @@ class NewTab {
     this.$root = document.documentElement;
     this.$body = document.body;
     this.$backgroundImage = document.querySelector('#background-image');
+    this.$sourceLink = document.querySelector('#source-link');
     this.$time = document.querySelector('#time');
     this.$greeting = document.querySelector('#greeting');
     this.$weatherWrapper = document.querySelector('#weather-wrapper');
+    this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
     this.$bookmarksOpenButton =
       document.querySelector('#bookmarks-open-button');
     this.$bookmarksCloseButton =
@@ -28,8 +30,8 @@ class NewTab {
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
-    this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
-    this.$sourceLink = document.querySelector('#source-link');
+    this.$bookmarksDrawerTooltip =
+      document.querySelector('#bookmarks-drawer-tooltip');
 
     let backgroundImageReady = this.loadImage()
       .then(({ dataUrl, sourceUrl }) => this.updateImage(dataUrl, sourceUrl));
@@ -49,6 +51,7 @@ class NewTab {
     this.addBookmarksNavigationListeners();
     this.addBookmarksRightClickListeners();
     this.addBookmarksDrawerListeners();
+    this.addBookmarksTooltipListeners();
   }
 
   static loadImage() {
@@ -296,6 +299,29 @@ class NewTab {
 
   static closeBookmarks() {
     this.$root.classList.remove('bookmarks-drawer-open');
+  }
+
+  static addBookmarksTooltipListeners() {
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-mouseover',
+      ev => this.onBookmarkMouseOver(ev),
+      true
+    );
+
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-mouseleave',
+      () => this.$bookmarksDrawerTooltip.hide(),
+      true
+    );
+  }
+
+  static onBookmarkMouseOver(ev) {
+    if (ev.target.small) {
+      this.$bookmarksDrawerTooltip.show(
+        ev.target.getBoundingClientRect(),
+        ev.target.name
+      );
+    }
   }
 }
 

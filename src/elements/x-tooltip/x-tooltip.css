@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  position: fixed;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--mouse-effect-transition-timing);
+}
+
+:host(.show) {
+  opacity: 1;
+}
+
+#tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  will-change: transform;
+  padding: 8px;
+  background: #333;
+  color: #fff;
+  border-radius: 2px;
+  box-shadow: var(--shadow-1);
+}
