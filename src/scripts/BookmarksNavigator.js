@@ -20,6 +20,8 @@ class BookmarksNavigator {
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
+    this.$bookmarksDrawerTooltip =
+      document.querySelector('#bookmarks-drawer-tooltip');
 
     const ROOT_ID = '0';
     const BOOKMARKS_BAR_ID = '1';
@@ -110,6 +112,12 @@ class BookmarksNavigator {
               bookmark.node = child;
             }
           });
+
+          let $hovered =
+            this.$bookmarksDrawerItems.querySelector('x-bookmark:hover');
+          if ($hovered) {
+            this.$bookmarksDrawerTooltip.name = $hovered.name;
+          }
         });
       }
     });

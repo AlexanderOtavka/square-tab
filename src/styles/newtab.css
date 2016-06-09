@@ -20,6 +20,10 @@ header {
   z-index: 1;
 }
 
+x-tooltip {
+  z-index: 30;
+}
+
 .source-link {
   display: none;
 }
