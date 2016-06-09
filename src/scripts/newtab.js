@@ -30,8 +30,6 @@ class NewTab {
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
-    this.$bookmarksDrawerTooltip =
-      document.querySelector('#bookmarks-drawer-tooltip');
 
     let backgroundImageReady = this.loadImage()
       .then(({ dataUrl, sourceUrl }) => this.updateImage(dataUrl, sourceUrl));
@@ -282,14 +280,17 @@ class NewTab {
   }
 
   static addBookmarksDrawerListeners() {
-    this.$bookmarksOpenButton.addEventListener('click', () =>
-      this.openBookmarks()
+    this.$bookmarksOpenButton.addEventListener(
+      'click',
+      () => this.openBookmarks()
     );
-    this.$bookmarksCloseButton.addEventListener('click', () =>
-      this.closeBookmarks()
+    this.$bookmarksCloseButton.addEventListener(
+      'click',
+      () => this.closeBookmarks()
     );
-    this.$drawerBackdrop.addEventListener('click', () =>
-      this.closeBookmarks()
+    this.$drawerBackdrop.addEventListener(
+      'click',
+      () => this.closeBookmarks()
     );
   }
 
@@ -304,24 +305,23 @@ class NewTab {
   static addBookmarksTooltipListeners() {
     this.$bookmarksDrawerItems.addEventListener(
       'x-bookmark-mouseover',
-      ev => this.onBookmarkMouseOver(ev),
+      ev => BookmarksNavigator.onBookmarkMouseOver(ev),
       true
     );
-
     this.$bookmarksDrawerItems.addEventListener(
       'x-bookmark-mouseleave',
-      () => this.$bookmarksDrawerTooltip.hide(),
+      () => BookmarksNavigator.hideTooltip(),
       true
     );
-  }
 
-  static onBookmarkMouseOver(ev) {
-    if (ev.target.small) {
-      this.$bookmarksDrawerTooltip.show(
-        ev.target.getBoundingClientRect(),
-        ev.target.name
-      );
-    }
+    this.$bookmarksUpButton.addEventListener(
+      'mouseover',
+      () => BookmarksNavigator.onUpButtonMouseOver()
+    );
+    this.$bookmarksUpButton.addEventListener(
+      'mouseleave',
+      () => BookmarksNavigator.hideTooltip()
+    );
   }
 }
 
