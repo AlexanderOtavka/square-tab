@@ -117,9 +117,6 @@ class BookmarksNavigator {
         let title = node.title || 'Bookmarks';
         this.$title.textContent = title;
         this.$title.title = title;
-        if (document.querySelector('#bookmarks-up-button:hover')) {
-          this.$drawerTooltip.name = title;
-        }
 
         chrome.bookmarks.getChildren(id, children => {
           let elements = this.$drawerItems.childNodes;
@@ -139,10 +136,14 @@ class BookmarksNavigator {
             }
           });
 
-          let $hovered =
+          let $hoveredBookmark =
             this.$drawerItems.querySelector('x-bookmark:hover');
-          if ($hovered) {
-            this.$drawerTooltip.name = $hovered.name;
+          if ($hoveredBookmark) {
+            this.$drawerTooltip.name = $hoveredBookmark.name;
+          } else if (document.querySelector('#bookmarks-up-button:hover')) {
+            this.$drawerTooltip.name = title;
+          } else {
+            this.hideTooltip();
           }
         });
       }
