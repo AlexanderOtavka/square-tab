@@ -20,6 +20,14 @@ header {
   z-index: 1;
 }
 
+.source-link {
+  display: none;
+}
+
+.show-photo-source .source-link {
+  display: block;
+}
+
 .drawer {
   position: fixed;
   z-index: 20;

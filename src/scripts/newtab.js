@@ -146,6 +146,11 @@ class NewTab {
         BookmarksNavigator.updateSize(value);
       });
 
+    Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE)
+      .addListener(value =>
+        this.updateShowPhotoSource(value)
+      );
+
     Settings.onChanged(Settings.keys.BOXED_INFO)
       .addListener(value =>
         this.updateBoxedInfo(value)
@@ -177,6 +182,10 @@ class NewTab {
 
   static updateBookmarkDrawerSmall(drawerSmall) {
     this.$root.classList.toggle('bookmarks-drawer-small', drawerSmall);
+  }
+
+  static updateShowPhotoSource(show) {
+    this.$root.classList.toggle('show-photo-source', show);
   }
 
   static updateBoxedInfo(boxedInfo) {
