@@ -25,6 +25,7 @@ class EventPage {
             let dataUrl = `data:${contentType};base64,${data}`;
             chrome.storage.local.set({
               [StorageKeys.IMAGE_DATA_URL]: dataUrl,
+              [StorageKeys.IMAGE_SOURCE_URL]: resp.url,
             });
           })
       );

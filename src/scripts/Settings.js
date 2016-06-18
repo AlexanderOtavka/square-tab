@@ -11,13 +11,19 @@ class Settings {
         CELCIUS: 'c',
         FAHRENHEIT: 'f',
       },
+      BookmarkDrawerModes: {
+        TOGGLE: 'toggle',
+        HOVER: 'hover',
+        ALWAYS: 'always',
+      },
     };
   }
 
   static get keys() {
     return {
-      ALWAYS_SHOW_BOOKMARKS: 'alwaysShowBookmarks',
+      BOOKMARKS_DRAWER_MODE: 'bookmarkDrawerMode',
       BOOKMARKS_DRAWER_SMALL: 'bookmarksDrawerSmall',
+      SHOW_PHOTO_SOURCE: 'showPhotoSource',
       BOXED_INFO: 'boxedInfo',
       SHOW_WEATHER: 'showWeather',
       TEMPERATURE_UNIT: 'temperatureUnit',
@@ -30,8 +36,9 @@ class Settings {
    */
   static get _defaults() {
     return {
-      [this.keys.ALWAYS_SHOW_BOOKMARKS]: false,
+      [this.keys.BOOKMARKS_DRAWER_MODE]: this.enums.BookmarkDrawerModes.TOGGLE,
       [this.keys.BOOKMARKS_DRAWER_SMALL]: true,
+      [this.keys.SHOW_PHOTO_SOURCE]: true,
       [this.keys.BOXED_INFO]: true,
       [this.keys.SHOW_WEATHER]: true,
       [this.keys.TEMPERATURE_UNIT]: this.enums.TemperatureUnits.FAHRENHEIT,
@@ -44,15 +51,15 @@ class Settings {
    */
   static get _overrides() {
     return {
-      _startup: (chromeVersion) => {
+      _startup: chromeVersion => {
         if (chromeVersion < 49) {
           // CSS variables don't work right
           this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 0, false);
         }
       },
 
-      [this.keys.ALWAYS_SHOW_BOOKMARKS]: value => {
-        if (!value) {
+      [this.keys.BOOKMARKS_DRAWER_MODE]: value => {
+        if (value === this.enums.BookmarkDrawerModes.TOGGLE) {
           this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1, false);
         } else {
           this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1);

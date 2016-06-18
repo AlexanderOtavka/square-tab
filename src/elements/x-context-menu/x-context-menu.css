@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+:host([visible]) {
+  pointer-events: auto;
+}
+
+#wrapper {
+  position: absolute;
+  display: block;
+  min-width: 150px;
+  box-shadow: var(--shadow-2);
+  background: #fff;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+:host([visible]) #wrapper {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 100ms cubic-bezier(0, 0, 0.3, 1),
+              transform 100ms cubic-bezier(0, 0, 0.3, 1);
+}
+
+::content .menu-item {
+  display: block;
+  padding: 8px;
+  font-size: .9rem;
+  color: #000;
+  background: rgba(0, 0, 0, 0);
+  transition: background 200ms;
+}
+
+::content .menu-item:not(.disabled):active {
+  background: rgba(0, 0, 0, .2);
+}
+
+::content .menu-item.disabled {
+  color: #bbb;
+  cursor: default;
+}
+
+::content hr {
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}

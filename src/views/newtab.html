@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="en" class="bookmarks-drawer-hide-unhovered">
 
 <head>
   <meta charset="utf-8" />
@@ -10,19 +10,32 @@
   <script src="babel-es6-polyfill/browser-polyfill.min.js"></script>
   <!-- endbuild -->
 
+  <link rel="stylesheet" href="../styles/shared-styles.css" />
   <link rel="stylesheet" href="../styles/newtab.css" />
 
   <link rel="import" href="../elements/x-bookmark/x-bookmark.html" />
   <link rel="import" href="../elements/x-icon/x-icon.html" />
   <link rel="import" href="../elements/x-context-menu/x-context-menu.html" />
   <link rel="import" href="../elements/x-dialog/x-dialog.html" />
+  <link rel="import" href="../elements/x-tooltip/x-tooltip.html" />
 </head>
 
 <body unresolved>
   <img id="background-image" class="fullbleed" />
 
   <header id="main-toolbar" class="toolbar">
+    <a
+      id="unsplash-link"
+      class="source-link"
+      target="_blank"
+      href="https://unsplash.com/">
+
+      Unsplash
+    </a>
+    <a id="source-link" class="source-link" target="_blank">Photo</a>
+
     <span class="title"></span>
+
     <x-icon
       id="bookmarks-open-button"
       class="radial-shadow"
@@ -43,33 +56,17 @@
     </div>
   </main>
 
-  <div id="source">
-    <a id="source-link" target="_blank" href="#">Source</a>
-  </div>
+  <div id="drawer-backdrop" class="fullbleed backdrop"></div>
 
   <aside id="bookmarks-drawer" class="drawer">
-    <header class="drawer-header">
-      <div class="toolbar">
-        <x-icon id="bookmarks-up-button" large></x-icon>
-
-        <span id="bookmarks-drawer-title" class="title"></span>
-
-        <x-icon id="bookmarks-close-button" icon="close" large button></x-icon>
-      </div>
+    <header class="drawer-header toolbar">
+      <x-icon id="bookmarks-up-button" large></x-icon>
+      <span id="bookmarks-drawer-title" class="title"></span>
+      <x-icon id="bookmarks-close-button" icon="close" large button></x-icon>
     </header>
 
     <nav id="bookmarks-drawer-items" class="drawer-content"></nav>
   </aside>
-
-  <div id="drawer-backdrop" class="fullbleed backdrop"></div>
-
-  <x-context-menu id="bookmarks-ctx-menu">
-    <div id="bookmarks-ctx-menu-edit" class="menu-item">Edit</div>
-    <div id="bookmarks-ctx-menu-delete" class="menu-item">Delete</div>
-    <hr />
-    <div id="bookmarks-ctx-menu-add-page" class="menu-item">Add Page</div>
-    <div id="bookmarks-ctx-menu-add-folder" class="menu-item">Add Folder</div>
-  </x-context-menu>
 
   <x-dialog id="bookmarks-edit-dialog">
     <img id="bookmarks-edit-dialog-favicon" class="dialog-title" />
@@ -83,6 +80,16 @@
     <button class="dialog-cancel">Cancel</button>
     <button class="dialog-confirm">Done</button>
   </x-dialog>
+
+  <x-tooltip id="bookmarks-drawer-tooltip"></x-tooltip>
+
+  <x-context-menu id="bookmarks-ctx-menu">
+    <div id="bookmarks-ctx-menu-edit" class="menu-item">Edit</div>
+    <div id="bookmarks-ctx-menu-delete" class="menu-item">Delete</div>
+    <hr />
+    <div id="bookmarks-ctx-menu-add-page" class="menu-item">Add Page</div>
+    <div id="bookmarks-ctx-menu-add-folder" class="menu-item">Add Folder</div>
+  </x-context-menu>
 
   <script src="../scripts/StorageKeys.js"></script>
   <script src="../scripts/Settings.js"></script>

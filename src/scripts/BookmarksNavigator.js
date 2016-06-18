@@ -16,10 +16,11 @@ class BookmarksNavigator {
   }
 
   static main() {
-    this.$bookmarksTitle = document.querySelector('#bookmarks-drawer .title');
-    this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
-    this.$bookmarksDrawerItems =
-      document.querySelector('#bookmarks-drawer-items');
+    this.$header = document.querySelector('#bookmarks-drawer .drawer-header');
+    this.$upButton = document.querySelector('#bookmarks-up-button');
+    this.$title = document.querySelector('#bookmarks-drawer .title');
+    this.$drawerItems = document.querySelector('#bookmarks-drawer-items');
+    this.$drawerTooltip = document.querySelector('#bookmarks-drawer-tooltip');
 
     const ROOT_ID = '0';
     const BOOKMARKS_BAR_ID = '1';
@@ -45,14 +46,14 @@ class BookmarksNavigator {
     chrome.bookmarks.onMoved.addListener((id, moveInfo) => {
       if (moveInfo.parentId === this.currentFolder &&
           moveInfo.oldParentId === this.currentFolder) {
-        let element = this.$bookmarksDrawerItems.childNodes[moveInfo.oldIndex];
+        let element = this.$drawerItems.childNodes[moveInfo.oldIndex];
         if (element.node.id === id) {
-          this.$bookmarksDrawerItems.removeChild(element);
+          this.$drawerItems.removeChild(element);
 
           let beforeElement =
-            this.$bookmarksDrawerItems.childNodes[moveInfo.index];
+            this.$drawerItems.childNodes[moveInfo.index];
           console.assert(beforeElement ? (beforeElement.node.id !== id) : true);
-          this.$bookmarksDrawerItems.insertBefore(element, beforeElement);
+          this.$drawerItems.insertBefore(element, beforeElement);
         }
       } else if (moveInfo.parentId === this.currentFolder) {
         chrome.bookmarks.get(id, ([node]) => {
@@ -82,6 +83,28 @@ class BookmarksNavigator {
     });
   }
 
+  static onBookmarkMouseOver(ev) {
+    if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL)) {
+      this.$drawerTooltip.show(
+        ev.target.getBoundingClientRect(),
+        ev.target.name
+      );
+    }
+  }
+
+  static onUpButtonMouseOver() {
+    if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL)) {
+      this.$drawerTooltip.show(
+        this.$header.getBoundingClientRect(),
+        this.$title.title
+      );
+    }
+  }
+
+  static hideTooltip() {
+    this.$drawerTooltip.hide();
+  }
+
   static openBookmark(id) {
     if (id !== this.currentFolder) {
       this._stack.push(id);
@@ -91,14 +114,16 @@ class BookmarksNavigator {
 
     chrome.bookmarks.get(id, ([node]) => {
       if (!node.url) {
-        this.$bookmarksTitle.textContent = node.title || 'BookmarksNavigator';
+        let title = node.title || 'Bookmarks';
+        this.$title.textContent = title;
+        this.$title.title = title;
 
         chrome.bookmarks.getChildren(id, children => {
-          let elements = this.$bookmarksDrawerItems.childNodes;
+          let elements = this.$drawerItems.childNodes;
 
           while (children.length < elements.length) {
-            this.$bookmarksDrawerItems.removeChild(
-              this.$bookmarksDrawerItems.lastChild
+            this.$drawerItems.removeChild(
+              this.$drawerItems.lastChild
             );
           }
 
@@ -110,6 +135,16 @@ class BookmarksNavigator {
               bookmark.node = child;
             }
           });
+
+          let $hoveredBookmark =
+            this.$drawerItems.querySelector('x-bookmark:hover');
+          if ($hoveredBookmark) {
+            this.$drawerTooltip.name = $hoveredBookmark.name;
+          } else if (document.querySelector('#bookmarks-up-button:hover')) {
+            this.$drawerTooltip.name = title;
+          } else {
+            this.hideTooltip();
+          }
         });
       }
     });
@@ -131,18 +166,18 @@ class BookmarksNavigator {
   }
 
   static get _elements() {
-    return Array.prototype.slice.call(this.$bookmarksDrawerItems.childNodes);
+    return Array.prototype.slice.call(this.$drawerItems.childNodes);
   }
 
   static _createOrUpdateElement(node) {
-    let beforeElement = this.$bookmarksDrawerItems.childNodes[node.index];
+    let beforeElement = this.$drawerItems.childNodes[node.index];
     let bookmark;
     if (beforeElement &&
         (!beforeElement.node || beforeElement.node.id === node.id)) {
       bookmark = beforeElement;
     } else {
       bookmark = document.createElement('x-bookmark');
-      this.$bookmarksDrawerItems.insertBefore(bookmark, beforeElement);
+      this.$drawerItems.insertBefore(bookmark, beforeElement);
     }
 
     bookmark.small = Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL);
@@ -150,8 +185,8 @@ class BookmarksNavigator {
   }
 
   static _deleteElementByIndex(index) {
-    let element = this.$bookmarksDrawerItems.childNodes[index];
-    this.$bookmarksDrawerItems.removeChild(element);
+    let element = this.$drawerItems.childNodes[index];
+    this.$drawerItems.removeChild(element);
   }
 
   static _generateStackFrom(id, stack = []) {
@@ -169,11 +204,11 @@ class BookmarksNavigator {
 
   static _updateUpButton() {
     if (this._isTop) {
-      this.$bookmarksUpButton.icon = 'folder';
-      this.$bookmarksUpButton.button = false;
+      this.$upButton.icon = 'folder';
+      this.$upButton.button = false;
     } else {
-      this.$bookmarksUpButton.icon = 'folder-up';
-      this.$bookmarksUpButton.button = true;
+      this.$upButton.icon = 'folder-up';
+      this.$upButton.button = true;
     }
   }
 }

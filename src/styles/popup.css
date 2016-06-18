@@ -1,15 +1,13 @@
-@import "shared-styles.css";
-
 :root {
-  --input-size: 14px;
-  --input-margin: 4px;
-  --indent-size: calc(var(--input-size) + var(--input-margin) * 2)
+  --small-input-size: 14px;
+  --small-input-margin: 4px;
 }
 
 body {
   width: 220px;
-  -webkit-user-select: none;
   user-select: none;
+  font-size: .8rem;
+  font-weight: 400;
 }
 
 h1 {
@@ -17,34 +15,41 @@ h1 {
   cursor: default;
 }
 
-input[type=checkbox],
-input[type=radio] {
-  width: var(--input-size);
-  height: var(--input-size);
-  margin: var(--input-margin);
+h2 {
+  font-size: inherit;
+  cursor: default;
+  font-weight: inherit;
+  margin: 4px 0;
 }
 
-input[disabled] + .label {
+input[type=checkbox],
+input[type=radio] {
+  width: var(--small-input-size);
+  height: var(--small-input-size);
+  margin: var(--small-input-margin);
+}
+
+input[disabled] + label {
   color: #545454;
 }
 
-label.checkbox-container {
+.small-input-container {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
 }
 
-label.checkbox-container .label {
-  padding: 4px;
+.small-input-container.inline {
+  display: inline-flex;
+}
+
+.small-input-container label {
   line-height: 14px;
+  padding: 4px;
 }
 
-.child-1 {
-  margin-left: var(--indent-size);
-}
-
-.child-2 {
-  margin-left: calc(var(--indent-size) * 2);
+.child {
+  margin-left: calc(var(--small-input-size) + var(--small-input-margin) * 2);
 }
 
 #settings {
@@ -55,12 +60,7 @@ label.checkbox-container .label {
   display: block;
   font-weight: bold;
   text-align: center;
-  text-decoration: none;
   color: #333;
   background-color: #f0f0f0;
   padding: 8px;
-}
-
-#github:hover {
-  text-decoration: underline;
 }

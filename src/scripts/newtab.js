@@ -18,9 +18,11 @@ class NewTab {
     this.$root = document.documentElement;
     this.$body = document.body;
     this.$backgroundImage = document.querySelector('#background-image');
+    this.$sourceLink = document.querySelector('#source-link');
     this.$time = document.querySelector('#time');
     this.$greeting = document.querySelector('#greeting');
     this.$weatherWrapper = document.querySelector('#weather-wrapper');
+    this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
     this.$bookmarksOpenButton =
       document.querySelector('#bookmarks-open-button');
     this.$bookmarksCloseButton =
@@ -28,11 +30,9 @@ class NewTab {
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
-    this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
-    this.$sourceLink = document.querySelector('#source-link');
 
     let backgroundImageReady = this.loadImage()
-      .then(uri => this.updateImage(uri));
+      .then(({ dataUrl, sourceUrl }) => this.updateImage(dataUrl, sourceUrl));
     Settings.loaded.then(() => this.fetchAndCacheImage());
 
     Promise.all([Settings.loaded, backgroundImageReady]).then(() =>
@@ -49,20 +49,24 @@ class NewTab {
     this.addBookmarksNavigationListeners();
     this.addBookmarksRightClickListeners();
     this.addBookmarksDrawerListeners();
+    this.addBookmarksTooltipListeners();
   }
 
   static loadImage() {
     return new Promise(resolve => {
-      chrome.storage.local.get(
-        StorageKeys.IMAGE_DATA_URL,
-        ({ [StorageKeys.IMAGE_DATA_URL]: uri }) => resolve(uri)
-      );
+      const KEYS = [StorageKeys.IMAGE_DATA_URL, StorageKeys.IMAGE_SOURCE_URL];
+      chrome.storage.local.get(KEYS, data => {
+        resolve({
+          dataUrl: data[StorageKeys.IMAGE_DATA_URL],
+          sourceUrl: data[StorageKeys.IMAGE_SOURCE_URL],
+        });
+      });
     });
   }
 
-  static updateImage(uri = this.defaultImageUrl) {
-    this.$backgroundImage.src = uri;
-    this.$sourceLink.href = uri;
+  static updateImage(dataUrl = this.defaultImageUrl, sourceUrl = dataUrl) {
+    this.$backgroundImage.src = dataUrl;
+    this.$sourceLink.href = sourceUrl;
   }
 
   static fetchAndCacheImage() {
@@ -134,37 +138,55 @@ class NewTab {
   }
 
   static addSettingsChangeListeners() {
-    Settings.onChanged(Settings.keys.ALWAYS_SHOW_BOOKMARKS)
-      .addListener(show => this.updateBookmarkDrawerLock(show));
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE)
+      .addListener(value => this.updateBookmarkDrawerMode(value));
 
     Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL)
-      .addListener(small => {
-        this.updateBookmarkDrawerSmall(small);
-        BookmarksNavigator.updateSize(small);
+      .addListener(value => {
+        this.updateBookmarkDrawerSmall(value);
+        BookmarksNavigator.updateSize(value);
       });
 
+    Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE)
+      .addListener(value =>
+        this.updateShowPhotoSource(value)
+      );
+
     Settings.onChanged(Settings.keys.BOXED_INFO)
-      .addListener(boxed =>
-        this.updateBoxedInfo(boxed)
+      .addListener(value =>
+        this.updateBoxedInfo(value)
       );
 
     Settings.onChanged(Settings.keys.SHOW_WEATHER)
-      .addListener(show =>
-        this.updateWeather(show)
+      .addListener(value =>
+        this.updateWeather(value)
       );
 
     Settings.onChanged(Settings.keys.TEMPERATURE_UNIT)
-      .addListener(unit => Weather.updateTemperatureUnit(unit));
+      .addListener(value => Weather.updateTemperatureUnit(value));
   }
 
-  static updateBookmarkDrawerLock(alwaysShowBookmarks) {
+  static updateBookmarkDrawerMode(mode) {
+    const ALWAYS = 'bookmarks-drawer-mode-always';
+    const HOVER = 'bookmarks-drawer-mode-hover';
     this.closeBookmarks();
-    this.$root.classList.toggle('bookmarks-drawer-locked-open',
-                                alwaysShowBookmarks);
+    this.$root.classList.remove(ALWAYS, HOVER);
+    switch (mode) {
+      case Settings.enums.BookmarkDrawerModes.ALWAYS:
+        this.$root.classList.add(ALWAYS);
+        break;
+      case Settings.enums.BookmarkDrawerModes.HOVER:
+        this.$root.classList.add(HOVER);
+        break;
+    }
   }
 
   static updateBookmarkDrawerSmall(drawerSmall) {
     this.$root.classList.toggle('bookmarks-drawer-small', drawerSmall);
+  }
+
+  static updateShowPhotoSource(show) {
+    this.$root.classList.toggle('show-photo-source', show);
   }
 
   static updateBoxedInfo(boxedInfo) {
@@ -258,14 +280,17 @@ class NewTab {
   }
 
   static addBookmarksDrawerListeners() {
-    this.$bookmarksOpenButton.addEventListener('click', () =>
-      this.openBookmarks()
+    this.$bookmarksOpenButton.addEventListener(
+      'click',
+      () => this.openBookmarks()
     );
-    this.$bookmarksCloseButton.addEventListener('click', () =>
-      this.closeBookmarks()
+    this.$bookmarksCloseButton.addEventListener(
+      'click',
+      () => this.closeBookmarks()
     );
-    this.$drawerBackdrop.addEventListener('click', () =>
-      this.closeBookmarks()
+    this.$drawerBackdrop.addEventListener(
+      'click',
+      () => this.closeBookmarks()
     );
   }
 
@@ -275,6 +300,28 @@ class NewTab {
 
   static closeBookmarks() {
     this.$root.classList.remove('bookmarks-drawer-open');
+  }
+
+  static addBookmarksTooltipListeners() {
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-mouseover',
+      ev => BookmarksNavigator.onBookmarkMouseOver(ev),
+      true
+    );
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-mouseleave',
+      () => BookmarksNavigator.hideTooltip(),
+      true
+    );
+
+    this.$bookmarksUpButton.addEventListener(
+      'mouseover',
+      () => BookmarksNavigator.onUpButtonMouseOver()
+    );
+    this.$bookmarksUpButton.addEventListener(
+      'mouseleave',
+      () => BookmarksNavigator.hideTooltip()
+    );
   }
 }
 

@@ -6,58 +6,114 @@
   <meta charset="utf-8" />
   <title>Square Tab</title>
 
+  <link rel="stylesheet" href="../styles/shared-styles.css" />
   <link rel="stylesheet" href="../styles/popup.css" />
 </head>
 
 <body>
-
   <div id="settings">
     <h1>Square Tab Settings</h1>
 
-    <label id="always-show-bookmarks" class="checkbox-container">
-      <input type="checkbox" tabindex="-1" />
-      <span class="label">Always Show Bookmarks</span>
-    </label>
+    <h2>Bookmarks Drawer Style</h2>
 
-    <label id="bookmarks-drawer-small" class="child-1 checkbox-container">
-      <input type="checkbox" tabindex="-1" />
-      <span class="label">Small Bookmarks Drawer</span>
-    </label>
-
-    <label id="boxed-info" class="checkbox-container">
-      <input type="checkbox" tabindex="-1" />
-      <span class="label">Show Box Around Info</span>
-    </label>
-
-    <label id="show-weather" class="checkbox-container">
-      <input type="checkbox" tabindex="-1" />
-      <span class="label">Show Weather</span>
-    </label>
-
-    <div id="temperature-unit" class="child-1">
-      <label>
+    <div class="child">
+      <div class="small-input-container">
         <input
+          id="drawer-mode-toggle"
+          type="radio"
+          name="BOOKMARKS_DRAWER_MODE"
+          value="TOGGLE"
+          tabindex="-1" />
+        <label for="drawer-mode-toggle">Sliding Drawer</label>
+      </div>
+
+      <div class="small-input-container">
+        <input
+          id="drawer-mode-hover"
+          type="radio"
+          name="BOOKMARKS_DRAWER_MODE"
+          value="HOVER"
+          tabindex="-1" />
+        <label for="drawer-mode-hover">Show When Hovered</label>
+      </div>
+
+      <div class="small-input-container">
+        <input
+          id="drawer-mode-always"
+          type="radio"
+          name="BOOKMARKS_DRAWER_MODE"
+          value="ALWAYS"
+          tabindex="-1" />
+        <label for="drawer-mode-always">Always Show</label>
+      </div>
+
+      <div class="small-input-container">
+        <input
+          id="bookmarks-drawer-small"
+          type="checkbox"
+          name="BOOKMARKS_DRAWER_SMALL"
+          tabindex="-1" />
+        <label for="bookmarks-drawer-small">Small</label>
+      </div>
+    </div>
+
+    <div class="small-input-container">
+      <input
+        id="show-photo-source"
+        type="checkbox"
+        name="SHOW_PHOTO_SOURCE"
+        tabindex="-1" />
+      <label for="show-photo-source">Show Photo Source</label>
+    </div>
+
+    <div class="small-input-container">
+      <input
+        id="boxed-info"
+        type="checkbox"
+        name="BOXED_INFO"
+        tabindex="-1" />
+      <label for="boxed-info">Show Box Around Info</label>
+    </div>
+
+    <!-- <div class="small-input-container">
+      <input
+        id="show-weather"
+        type="checkbox"
+        name="SHOW_WEATHER"
+        tabindex="-1" />
+      <label for="show-weather">Show Weather</label>
+    </div>
+
+    <div class="child">
+      <div class="small-input-container inline">
+        <input
+          id="temp-unit-f"
           type="radio"
           name="TEMPERATURE_UNIT"
           value="FAHRENHEIT"
           tabindex="-1" />
-        <span class="label">&deg;F</span>
-      </label>
+        <label for="temp-unit-f">&deg;F</label>
+      </div>
 
-      <label>
+      <div class="small-input-container inline">
         <input
+          id="temp-unit-c"
           type="radio"
           name="TEMPERATURE_UNIT"
           value="CELCIUS"
           tabindex="-1" />
-        <span class="label">&deg;C</span>
-      </label>
-    </div>
+        <label for="temp-unit-c">&deg;C</label>
+      </div>
+    </div> -->
 
-    <label id="tod-images" class="checkbox-container">
-      <input type="checkbox" tabindex="-1" />
-      <span class="label">Filter Images Based on Time</span>
-    </label>
+    <div class="small-input-container">
+      <input
+        id="tod-images"
+        type="checkbox"
+        value="USE_TIME_OF_DAY_IMAGES"
+        tabindex="-1" />
+      <label for="tod-images">Filter Images Based on Time</label>
+    </div>
   </div>
 
   <a
@@ -71,7 +127,6 @@
 
   <script src="../scripts/Settings.js"></script>
   <script src="../scripts/popup.js"></script>
-
 </body>
 
 </html>

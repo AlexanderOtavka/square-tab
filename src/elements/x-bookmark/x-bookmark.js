@@ -27,6 +27,8 @@ class XBookmarkElement extends HTMLElement {
     this.addEventListener('dragleave', ev => this.onDragLeave(ev));
     this.addEventListener('dragend', ev => this.onDragEnd(ev));
     this.addEventListener('drop', ev => this.onDrop(ev));
+    this.addEventListener('mouseover', ev => this.onMouseOver(ev));
+    this.addEventListener('mouseleave', ev => this.onMouseLeave(ev));
   }
 
   attributeChangedCallback(attrName) {
@@ -137,6 +139,16 @@ class XBookmarkElement extends HTMLElement {
     this.dispatchEvent(customEvent);
   }
 
+  onMouseOver() {
+    let customEvent = new CustomEvent('x-bookmark-mouseover');
+    this.dispatchEvent(customEvent);
+  }
+
+  onMouseLeave() {
+    let customEvent = new CustomEvent('x-bookmark-mouseleave');
+    this.dispatchEvent(customEvent);
+  }
+
   _updateImage() {
     if (this.node && !this.node.url) {
       this.$image.src = '/images/folder-outline.svg';
@@ -147,9 +159,9 @@ class XBookmarkElement extends HTMLElement {
 
   _updateTooltip() {
     if (this.small) {
-      this.title = this.name;
-    } else {
       this.title = '';
+    } else {
+      this.title = this.name;
     }
   }
 }

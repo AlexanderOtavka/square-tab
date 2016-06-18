@@ -1,43 +1,10 @@
 <template>
   <style>
     @import "../../styles/shared-styles.css";
-
-    :host {
-      position: relative;
-      display: inline-block;
-      z-index: inherit;
-    }
-
-    :host::after {
-      content: "";
-      display: block;
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      bottom: -4px;
-      left: -4px;
-      z-index: -1;
-      pointer-events: none;
-      border-radius: 50%;
-      background-color: rgba(0, 0, 0, .1);
-      opacity: 0;
-      transition: opacity 200ms;
-    }
-
-    :host([large]) {
-      width: 28px;
-      height: 28px;
-      padding: 4px;
-    }
-
-    :host([button]) {
-      cursor: pointer;
-    }
-
-    :host([button]:active)::after {
-      opacity: 1;
-    }
+    @import "x-icon.css";
   </style>
+
+  <div id="button-click-circle"></div>
 
   <template id="icons">
     <svg id="bookmarks" viewBox="0 0 24 24">
