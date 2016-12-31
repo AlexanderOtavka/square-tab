@@ -38,7 +38,7 @@ class EventPage {
       .then(position => {
         const WEATHER_RESOURCE =
           'http://api.openweathermap.org/data/2.5/weather';
-        const API_KEY = '55c2586d12873c5d39e99b0dea411dc2';
+        const API_KEY = '822795ff3e00fd43e5d4596cc0849649';
         let lat = position.coords.latitude;
         let long = position.coords.longitude;
         let qry = `lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
