@@ -1,9 +1,0 @@
-{
-  "preset": "airbnb",
-  "maximumLineLength": 80,
-  "requireCamelCaseOrUpperCaseIdentifiers": false,
-  "requirePaddingNewLinesBeforeLineComments": false,
-  "validateLineBreaks": false,
-  "disallowMultipleVarDecl": false,
-  "excludeFiles": ["node_modules/**"]
-}
