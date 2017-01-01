@@ -35,6 +35,7 @@ rules:
     - warn
     - allow:
       - assert
+      - error
   no-underscore-dangle:
     - error
     - allowAfterThis: true

@@ -182,7 +182,7 @@ class NewTab {
       this.$root.classList.add(HOVER);
       break;
     default:
-      throw new TypeError('Invalid bookmark drawer mode.');
+      console.error('Invalid bookmark drawer mode.');
     }
   }
 
