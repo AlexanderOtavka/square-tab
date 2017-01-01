@@ -172,14 +172,14 @@ class NewTab {
     this.closeBookmarks();
     this.$root.classList.remove(TOGGLE, ALWAYS, HOVER);
     switch (mode) {
+    case Settings.enums.BookmarkDrawerModes.TOGGLE:
+      this.$root.classList.add(TOGGLE);
+      break;
     case Settings.enums.BookmarkDrawerModes.ALWAYS:
       this.$root.classList.add(ALWAYS);
       break;
     case Settings.enums.BookmarkDrawerModes.HOVER:
       this.$root.classList.add(HOVER);
-      break;
-    case Settings.enums.BookmarkDrawerModes.TOGGLE:
-      this.$root.classList.add(TOGGLE);
       break;
     default:
       throw new TypeError('Invalid bookmark drawer mode.');
