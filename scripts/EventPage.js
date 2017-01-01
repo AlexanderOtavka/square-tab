@@ -41,7 +41,9 @@ class EventPage {
         const API_KEY = '822795ff3e00fd43e5d4596cc0849649';
         let lat = position.coords.latitude;
         let long = position.coords.longitude;
-        let qry = `lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
+
+        // For some reason, the leading & needs to be there
+        let qry = `&lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
 
         return fetch(`${WEATHER_RESOURCE}?${qry}`, {
           method: 'GET',
