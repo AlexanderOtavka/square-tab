@@ -84,64 +84,24 @@ class Weather {
   }
 
   static _updateWeather(weatherData) {
-    const S_CLOUDS = 'SCATTERED CLOUDS';
-    const B_CLOUDS = 'BROKEN CLOUDS';
-    const L_RAIN = 'LIGHT RAIN';
-    const RAIN = 'RAIN';
-    const CLEAR = 'CLEAR';
-    const MIST = 'MIST';
-    const STORM = 'STORM';
-    const EXTREME = 'EXTREME';
-    const CLOUDS = 'CLOUDS';
-    const SNOW = 'SNOW';
-
-    const main = weatherData.weather[0].main.toUpperCase();
-    const description = weatherData.weather[0].description.toUpperCase();
+    const iconCode = weatherData.weather[0].id;
+    const description = weatherData.weather[0].description
+      // convert description to Title Case
+      .replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() +
+                                txt.substr(1).toLowerCase());
 
     const DAY_MS = 1000 * 60 * 60 * 24;
     const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
     const now = (Date.now() - tzOffset) % DAY_MS;
     const sunset = ((weatherData.sys.sunset * 1000) - tzOffset) % DAY_MS;
     const sunrise = ((weatherData.sys.sunrise * 1000) - tzOffset) % DAY_MS;
+    const isDay = (sunrise < now && now < sunset);
+    const dayNightSuffix = isDay ? 'day' : 'night';
 
-    const isNight = (now < sunrise || sunset < now);
-
-    if (main === CLOUDS)
-      if (description === S_CLOUDS || description === B_CLOUDS) {
-        if (isNight)
-          this.$weatherIcon.src = '../images/weather/partly-cloudy-night.png';
-        else
-          this.$weatherIcon.src = '../images/weather/partly-cloudy.png';
-      } else {
-        this.$weatherIcon.src = '../images/weather/cloudy.png';
-      }
-    else if (main === RAIN)
-      if (description === L_RAIN) {
-        this.$weatherIcon.src = '../images/weather/little-rain.png';
-      } else {
-        this.$weatherIcon.src = '../images/weather/rain.png';
-      }
-    else if (main === CLEAR)
-      if (isNight) {
-        this.$weatherIcon.src = '../images/weather/clear-night.png';
-      } else {
-        this.$weatherIcon.src = '../images/weather/clear.png';
-      }
-    else if (main === MIST)
-      if (isNight) {
-        this.$weatherIcon.src = '../images/weather/fog-night.png';
-      } else {
-        this.$weatherIcon.src = '../images/weather/fog-day.png';
-      }
-    else if (main === STORM)
-      this.$weatherIcon.src = '../images/weather/storm.png';
-    else if (main === EXTREME)
-      this.$weatherIcon.src = '../images/weather/warning.png';
-    else if (main === SNOW)
-      this.$weatherIcon.src = '../images/weather/snow.png';
-    else
-      this.$weatherIcon.src = '';
-
+    const imageName = this._getImageName(iconCode, dayNightSuffix);
+    this.$weatherIcon.src = `/images/weather/${imageName}.png`;
+    this.$weatherIcon.alt = description;
+    this.$weatherIcon.title = description;
 
     this.updateTemperatureUnit(Settings.get(Settings.keys.TEMPERATURE_UNIT));
   }
@@ -150,6 +110,45 @@ class Weather {
     chrome.runtime.getBackgroundPage(({ EventPage }) => {
       EventPage.fetchAndCacheWeatherData();
     });
+  }
+
+  static _getImageName(iconCode, dayNightSuffix) {
+    const major = Math.floor(iconCode / 100);
+    const minor = iconCode % 100;
+    const middleDigit = Math.floor(minor / 10);
+
+    // codes listed at: http://openweathermap.org/weather-conditions
+    switch (major) {
+    case 2:
+      if (minor === 12)
+        return 'thunderstorm-heavy';
+      else
+        return 'thunderstorm';
+    case 3:
+      return 'rain-light';
+    case 5:
+      return 'rain';
+    case 6:
+      return 'snow';
+    case 7:
+      return `atmosphere-${dayNightSuffix}`;
+    case 8:
+      if (minor === 0)
+        return `clear-${dayNightSuffix}`;
+      else if (minor === 1)
+        return `partly-cloudy-${dayNightSuffix}`;
+      else
+        return 'cloudy';
+    case 9:
+      if (middleDigit === 0)
+        return 'extreme';
+      else
+        // todo: change to windy icon
+        return `clear-${dayNightSuffix}`;
+    default:
+      console.error('Invalid weather icon code.');
+      return `clear-${dayNightSuffix}`;
+    }
   }
 }
 
