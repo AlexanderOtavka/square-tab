@@ -1,12 +1,17 @@
 # Square Tab
 
 > A minimalistic but functional new tab page inspired by Mac Square's
-[Splash Tab](https://chrome.google.com/webstore/detail/splash-tab/ggljjfbnnofkajgcnleiglffhhbbommh?hl=en).
+> [Splash Tab][1].
 
-*Supports Chrome >= 36 (the first version with full webcomponents support).*
+*Supports Chrome >= 49 (the first version with css variable support).*
 
-## Setup
-Run `npm install` to pull in dependencies.  Install gulp if necessary with `npm
-install -g gulp`.  Run `gulp` to build to `dist/` for production, or `gulp
-watch` to build to `dev/` and automatically rebuild when files are changed.
-Run `gulp pack` to make a zip file suitable for upload to the chrome web store.
+## Developing
+Go to [chrome://extensions](chrome://extensions).  Ensure you are in developer
+mode, then click `Load Unpacked Extension` and select the root folder of this
+project.
+
+## Deploying
+Run `yarn zip` or, if you're still using npm, `npm run zip` to create or
+update the zip file.  Deploy from the chrome web store developers console.
+
+  [1]: https://chrome.google.com/webstore/detail/splash-tab/ggljjfbnnofkajgcnleiglffhhbbommh

@@ -1,0 +1,87 @@
+##
+# .eslintrc.yml
+#
+# Created by Zander Otavka on 12/21/16.
+# Copyright (C) 2016 Zander Otavka.  All rights reserved.
+#
+# Distributed under the GNU General Public License, Version 3.
+# See the accompanying file LICENSE or http://www.gnu.org/licenses/gpl-3.0.txt
+##
+
+extends: airbnb
+installedESLint: true
+env:
+  es6: true
+  browser: true
+globals:
+  chrome: true
+
+rules:
+  # Code Quality
+  eqeqeq:
+    - error
+    - always
+  no-confusing-arrow:
+    - error
+    - allowParens: true
+  no-constant-condition:
+    - error
+    - checkLoops: false
+  no-undef:
+    - error
+  no-lonely-if:
+    - error
+  no-console:
+    - warn
+    - allow:
+      - assert
+      - error
+  no-underscore-dangle:
+    - error
+    - allowAfterThis: true
+      allowAfterSuper: true
+  no-param-reassign:
+    - off
+  no-plusplus:
+    - off
+  no-else-return:
+    - off
+
+  # Code Style
+  max-len:
+    - error
+    - code: 80
+      ignoreUrls: true
+  indent:
+    - error
+    - 2
+    - ArrayExpression: first
+      ObjectExpression: first
+      MemberExpression: 1
+      FunctionDeclaration:
+        parameters: first
+      FunctionExpression:
+        parameters: first
+      CallExpression:
+        arguments: first
+  camelcase:
+    - error
+    - properties: always
+  curly:
+    - error
+    - multi
+    - consistent
+  space-in-parens:
+    - error
+    - never
+  arrow-parens:
+    - error
+    - as-needed
+  arrow-body-style:
+    - error
+    - as-needed
+  comma-dangle:
+    - error
+    - arrays: always-multiline
+      objects: always-multiline
+      functions: never
