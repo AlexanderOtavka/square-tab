@@ -61,7 +61,7 @@ class EventPage {
         }
       })
       .then(data => {
-        const DATA_LIFETIME_MS = 60 * (1000 * 60);  // 60 Minutes
+        const DATA_LIFETIME_MS = 2 * 60 * 60 * 1000;  // 2 hours
         data.expiration = Date.now() + DATA_LIFETIME_MS;
         chrome.storage.local.set({
           [StorageKeys.WEATHER_DATA]: JSON.stringify(data),
@@ -93,8 +93,7 @@ class EventPage {
    */
   static _encodeUint8Array(input) {
     // I don't know how this works; taken from:
-    // https://stackoverflow.com/questions/11089732/display-image-from-blob-
-    // using-javascript-and-websockets/11092371#11092371
+    // https://stackoverflow.com/questions/11089732/display-image-from-blob-using-javascript-and-websockets/11092371#11092371
 
     const KEY_STR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' +
                     '0123456789+/=';

@@ -74,10 +74,10 @@ class Weather {
       this._onInitialLoad();
       this.onDataLoad.dispatch(data);
 
-      // Don't fetch new data if we have refreshed within the safezone
-      const EXPIRATION_SAFEZONE = 10 * 60 * 1000;  // 10 Minutes
-      if (data.expiration - Date.now() < EXPIRATION_SAFEZONE) {
-        return;
+      const PRECACHE_THRESHOLD = 60 * 60 * 1000;  // 1 hour
+      let timeUntilDataExpires = data.expiration - Date.now();
+      if (timeUntilDataExpires > PRECACHE_THRESHOLD) {
+        return;  // don't fetch new data in background
       }
     }
 
