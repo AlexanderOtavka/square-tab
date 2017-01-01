@@ -1,0 +1,16 @@
+{
+  "name": "square-tab",
+  "version": "0.0.0",
+  "scripts": {
+    "pack": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
+    "lint": "eslint scripts",
+    "fix": "eslint --fix scripts"
+  },
+  "devDependencies": {
+    "eslint": "^3.9.1",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.1.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.6.0"
+  }
+}

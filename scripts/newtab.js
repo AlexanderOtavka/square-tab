@@ -1,6 +1,5 @@
 /* globals BookmarksNavigator, BookmarksEditor, Settings, Weather,
            StorageKeys */
-'use strict';
 
 class NewTab {
   constructor() {
@@ -8,8 +7,8 @@ class NewTab {
   }
 
   static get defaultImageUrl() {
-    let screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
-    let screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
+    const screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
+    const screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
     return 'https://source.unsplash.com/category/nature/' +
            `${screenPxWidth}x${screenPxHeight}/`;
   }
@@ -31,7 +30,7 @@ class NewTab {
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
 
-    let backgroundImageReady = this.loadImage()
+    const backgroundImageReady = this.loadImage()
       .then(({ dataUrl, sourceUrl }) => this.updateImage(dataUrl, sourceUrl));
     Settings.loaded.then(() => this.fetchAndCacheImage());
 
@@ -73,10 +72,9 @@ class NewTab {
     let imageResourceURI = this.defaultImageUrl;
 
     if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-      let timeOfDay = this.getImageTimeOfDay();
-      if (timeOfDay) {
+      const timeOfDay = this.getImageTimeOfDay();
+      if (timeOfDay)
         imageResourceURI += `?${timeOfDay}`;
-      }
     }
 
     chrome.runtime.getBackgroundPage(({ EventPage }) => {
@@ -85,17 +83,18 @@ class NewTab {
   }
 
   static getImageTimeOfDay() {
-    let hour = new Date().getHours();
-    if (hour < 5 || 22 <= hour) {
+    const hour = new Date().getHours();
+    if (hour < 5 || hour >= 22)
       // 10pm - 5am
       return 'night';
-    } else if (5 <= hour && hour < 10) {
+    else if (hour >= 5 && hour < 10)
       // 5am - 10am
       return 'morning';
-    } else if (18 <= hour && hour < 22) {
+    else if (hour >= 18 && hour < 22)
       // 6pm - 10pm
       return 'evening';
-    }
+    else
+      return '';
   }
 
   static resolveBody() {
@@ -103,32 +102,32 @@ class NewTab {
     this.$body.animate([
         { opacity: 0 },
         { opacity: 1 },
-      ], {
+    ], {
         duration: 200,
         easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-      });
+    });
   }
 
   static updateTime() {
-    let date = new Date();
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
 
     let minutesStr = String(minutes);
-    if (minutesStr.length < 2) {
+    if (minutesStr.length < 2)
       minutesStr = `0${minutesStr}`;
-    }
+
 
     this.$time.textContent = `${hours % 12 || 12}:${minutesStr}`;
 
     let greeting;
-    if (hours >= 0 && hours < 12) {
+    if (hours >= 0 && hours < 12)
       greeting = 'Good Morning';
-    } else if (hours >= 12 && hours < 18) {
+    else if (hours >= 12 && hours < 18)
       greeting = 'Good Afternoon';
-    } else {
+    else
       greeting = 'Good Evening';
-    }
+
 
     this.$greeting.textContent = greeting;
   }
@@ -172,12 +171,14 @@ class NewTab {
     this.closeBookmarks();
     this.$root.classList.remove(ALWAYS, HOVER);
     switch (mode) {
-      case Settings.enums.BookmarkDrawerModes.ALWAYS:
-        this.$root.classList.add(ALWAYS);
-        break;
-      case Settings.enums.BookmarkDrawerModes.HOVER:
-        this.$root.classList.add(HOVER);
-        break;
+    case Settings.enums.BookmarkDrawerModes.ALWAYS:
+      this.$root.classList.add(ALWAYS);
+      break;
+    case Settings.enums.BookmarkDrawerModes.HOVER:
+      this.$root.classList.add(HOVER);
+      break;
+    default:
+      throw new TypeError('Invalid bookmark drawer mode.');
     }
   }
 
@@ -195,14 +196,16 @@ class NewTab {
 
   static addWeatherChangeListeners() {
     Weather.onDataLoad.addListener(() => {
-      let showWeather = Settings.get(Settings.keys.SHOW_WEATHER);
+      const showWeather = Settings.get(Settings.keys.SHOW_WEATHER);
       this.updateWeather(showWeather);
     });
   }
 
   static updateWeather(showWeather) {
     if (showWeather) {
-      return Weather.load().then(() => this.$weatherWrapper.hidden = false);
+      return Weather.load().then(() => {
+        this.$weatherWrapper.hidden = false;
+      });
     } else {
       this.$weatherWrapper.hidden = true;
       return Promise.resolve();

@@ -1,5 +1,4 @@
 /* globals StorageKeys */
-'use strict';
 
 class EventPage {
   constructor() {
@@ -20,9 +19,9 @@ class EventPage {
       .then(resp =>
         this._readBlob(resp.body.getReader())
           .then(blob => {
-            let contentType = resp.headers.get('content-type');
-            let data = this._encodeUint8Array(blob);
-            let dataUrl = `data:${contentType};base64,${data}`;
+            const contentType = resp.headers.get('content-type');
+            const data = this._encodeUint8Array(blob);
+            const dataUrl = `data:${contentType};base64,${data}`;
             chrome.storage.local.set({
               [StorageKeys.IMAGE_DATA_URL]: dataUrl,
               [StorageKeys.IMAGE_SOURCE_URL]: resp.url,
@@ -39,11 +38,11 @@ class EventPage {
         const WEATHER_RESOURCE =
           'http://api.openweathermap.org/data/2.5/weather';
         const API_KEY = '822795ff3e00fd43e5d4596cc0849649';
-        let lat = position.coords.latitude;
-        let long = position.coords.longitude;
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
 
         // For some reason, the leading & needs to be there
-        let qry = `&lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
+        const qry = `&lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
 
         return fetch(`${WEATHER_RESOURCE}?${qry}`, {
           method: 'GET',
@@ -52,13 +51,12 @@ class EventPage {
         });
       })
       .then(response => {
-        if (response.ok) {
+        if (response.ok)
           return response.json();
-        } else {
+        else
           throw new TypeError(
             `Weather request failed with status: ${response.status}`
           );
-        }
       })
       .then(data => {
         const DATA_LIFETIME_MS = 2 * 60 * 60 * 1000;  // 2 hours
@@ -75,8 +73,8 @@ class EventPage {
         blobs.push(value);
         return this._readBlob(reader, blobs);
       } else {
-        let size = blobs.reduce((sum, blob) => sum + blob.length, 0);
-        let fullBlob = new Uint8Array(size);
+        const size = blobs.reduce((sum, blob) => sum + blob.length, 0);
+        const fullBlob = new Uint8Array(size);
         let lastIndex = 0;
         blobs.forEach(blob => {
           fullBlob.set(blob, lastIndex);
@@ -98,7 +96,13 @@ class EventPage {
     const KEY_STR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' +
                     '0123456789+/=';
     let output = '';
-    let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+    let chr1;
+    let chr2;
+    let chr3;
+    let enc1;
+    let enc2;
+    let enc3;
+    let enc4;
     let i = 0;
 
     while (i < input.length) {
@@ -106,18 +110,18 @@ class EventPage {
       chr2 = i < input.length ? input[i++] : Number.NaN;
       chr3 = i < input.length ? input[i++] : Number.NaN;
 
-      /* jshint -W016 */
+      /* eslint-disable no-bitwise */
       enc1 = chr1 >> 2;
       enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
       enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
       enc4 = chr3 & 63;
-      /* jshint +W016 */
+      /* eslint-enable no-bitwise */
 
-      if (isNaN(chr2)) {
+      if (isNaN(chr2))
         enc3 = enc4 = 64;
-      } else if (isNaN(chr3)) {
+      else if (isNaN(chr3))
         enc4 = 64;
-      }
+
 
       output += KEY_STR.charAt(enc1) + KEY_STR.charAt(enc2) +
                 KEY_STR.charAt(enc3) + KEY_STR.charAt(enc4);

@@ -1,5 +1,5 @@
 /* globals Settings */
-'use strict';
+
 
 class Popup {
   constructor() {
@@ -27,12 +27,12 @@ class Popup {
   }
 
   static bindCheckbox(settingKeyName) {
-    let $checkbox =
+    const $checkbox =
       document.querySelector(`input[type=checkbox][name=${settingKeyName}]`);
-    let settingKey = Settings.keys[settingKeyName];
+    const settingKey = Settings.keys[settingKeyName];
 
     $checkbox.addEventListener('click', () => {
-      let value = $checkbox.checked;
+      const value = $checkbox.checked;
       Settings.set(settingKey, value);
     });
 
@@ -43,36 +43,37 @@ class Popup {
   }
 
   static bindRadioButtons(settingKeyName, values) {
-    let buttonsNodelist =
+    const buttonsNodelist =
       document.querySelectorAll(`input[type=radio][name=${settingKeyName}]`);
-    let buttons = Array.prototype.slice.call(buttonsNodelist);
-    let settingKey = Settings.keys[settingKeyName];
+    const buttons = Array.prototype.slice.call(buttonsNodelist);
+    const settingKey = Settings.keys[settingKeyName];
 
     buttons.forEach($button => {
       $button.addEventListener('click', () => {
-        if ($button.checked) {
+        if ($button.checked)
           Settings.set(settingKey, values[$button.value]);
-        }
       });
     });
 
     Settings.onDataChanged(settingKey).addListener(data => {
-      let valueName = Object.keys(values).find(key =>
+      const valueName = Object.keys(values).find(key =>
         values[key] === data.value
       );
-      let $targetButton = buttons.find($button => $button.value === valueName);
+      const $targetButton =
+        buttons.find($button => $button.value === valueName);
 
       if ($targetButton) {
         $targetButton.checked = true;
       } else {
-        let $selectedButton = buttons.find($button => $button.checked);
-        if ($selectedButton) {
+        const $selectedButton = buttons.find($button => $button.checked);
+        if ($selectedButton)
           $selectedButton.checked = false;
-        }
       }
 
-      let disabled = data.activeOverride !== undefined;
-      buttons.forEach($button => $button.disabled = disabled);
+      const disabled = data.activeOverride !== undefined;
+      buttons.forEach($button => {
+        $button.disabled = disabled;
+      });
     });
   }
 }

@@ -1,5 +1,5 @@
 /* globals Settings, StorageKeys */
-'use strict';
+
 
 class Weather {
   constructor() {
@@ -20,9 +20,8 @@ class Weather {
 
     chrome.storage.onChanged.addListener(
       ({ [StorageKeys.WEATHER_DATA]: change }, area) => {
-        if (area === 'local' && change) {
+        if (area === 'local' && change)
           this._handleWeatherDataLoad(change.newValue);
-        }
       }
     );
 
@@ -36,15 +35,14 @@ class Weather {
     if (!this._loadCalled) {
       this._loadCalled = true;
 
-      if (navigator.geolocation) {
+      if (navigator.geolocation)
         chrome.storage.local.get(
           StorageKeys.WEATHER_DATA,
           ({ [StorageKeys.WEATHER_DATA]: data }) =>
             this._handleWeatherDataLoad(data)
         );
-      } else {
+      else
         return Promise.reject(new Error('Geolocation is not supported.'));
-      }
     }
 
     return this._initialLoad;
@@ -53,32 +51,33 @@ class Weather {
   static updateTemperatureUnit(unit) {
     if (this._data) {
       // Ensure against XSS with the cast to Number
-      let temperatureC = Number(this._data.main.temp);
+      const temperatureC = Number(this._data.main.temp);
       switch (unit) {
-        case Settings.enums.TemperatureUnits.CELCIUS:
-          this.$temperature.innerHTML = `${Math.round(temperatureC)} &deg;C`;
-          break;
-        case Settings.enums.TemperatureUnits.FAHRENHEIT:
-          let temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
+      case Settings.enums.TemperatureUnits.CELCIUS:
+        this.$temperature.innerHTML = `${Math.round(temperatureC)} &deg;C`;
+        break;
+      case Settings.enums.TemperatureUnits.FAHRENHEIT:
+        {
+          const temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
           this.$temperature.innerHTML = `${temperatureF} &deg;F`;
-          break;
-        default:
-          this.$temperature.innerHTML = '';
+        }
+        break;
+      default:
+        this.$temperature.innerHTML = '';
       }
     }
   }
 
   static _handleWeatherDataLoad(dataString) {
-    let data = JSON.parse(dataString || 'null');
+    const data = JSON.parse(dataString || 'null');
     if (data && Date.now() < data.expiration) {
       this._onInitialLoad();
       this.onDataLoad.dispatch(data);
 
       const PRECACHE_THRESHOLD = 60 * 60 * 1000;  // 1 hour
-      let timeUntilDataExpires = data.expiration - Date.now();
-      if (timeUntilDataExpires > PRECACHE_THRESHOLD) {
+      const timeUntilDataExpires = data.expiration - Date.now();
+      if (timeUntilDataExpires > PRECACHE_THRESHOLD)
         return;  // don't fetch new data in background
-      }
     }
 
     this._fetchAndCacheWeatherData();
@@ -96,54 +95,53 @@ class Weather {
     const CLOUDS = 'CLOUDS';
     const SNOW = 'SNOW';
 
-    let main = weatherData.weather[0].main.toUpperCase();
-    let description = weatherData.weather[0].description.toUpperCase();
+    const main = weatherData.weather[0].main.toUpperCase();
+    const description = weatherData.weather[0].description.toUpperCase();
 
     const DAY_MS = 1000 * 60 * 60 * 24;
-    let tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
-    let now = (Date.now() - tzOffset) % DAY_MS;
-    let sunset = (weatherData.sys.sunset * 1000 - tzOffset) % DAY_MS;
-    let sunrise = (weatherData.sys.sunrise * 1000 - tzOffset) % DAY_MS;
+    const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
+    const now = (Date.now() - tzOffset) % DAY_MS;
+    const sunset = ((weatherData.sys.sunset * 1000) - tzOffset) % DAY_MS;
+    const sunrise = ((weatherData.sys.sunrise * 1000) - tzOffset) % DAY_MS;
 
-    let isNight = (now < sunrise || sunset < now);
+    const isNight = (now < sunrise || sunset < now);
 
-    if (main === CLOUDS) {
+    if (main === CLOUDS)
       if (description === S_CLOUDS || description === B_CLOUDS) {
-        if (isNight) {
+        if (isNight)
           this.$weatherIcon.src = '../images/weather/partly-cloudy-night.png';
-        } else {
+        else
           this.$weatherIcon.src = '../images/weather/partly-cloudy.png';
-        }
       } else {
         this.$weatherIcon.src = '../images/weather/cloudy.png';
       }
-    } else if (main === RAIN) {
+    else if (main === RAIN)
       if (description === L_RAIN) {
         this.$weatherIcon.src = '../images/weather/little-rain.png';
       } else {
         this.$weatherIcon.src = '../images/weather/rain.png';
       }
-    } else if (main === CLEAR) {
+    else if (main === CLEAR)
       if (isNight) {
         this.$weatherIcon.src = '../images/weather/clear-night.png';
       } else {
         this.$weatherIcon.src = '../images/weather/clear.png';
       }
-    } else if (main === MIST) {
+    else if (main === MIST)
       if (isNight) {
         this.$weatherIcon.src = '../images/weather/fog-night.png';
       } else {
         this.$weatherIcon.src = '../images/weather/fog-day.png';
       }
-    } else if (main === STORM) {
+    else if (main === STORM)
       this.$weatherIcon.src = '../images/weather/storm.png';
-    } else if (main === EXTREME) {
+    else if (main === EXTREME)
       this.$weatherIcon.src = '../images/weather/warning.png';
-    } else if (main === SNOW) {
+    else if (main === SNOW)
       this.$weatherIcon.src = '../images/weather/snow.png';
-    } else {
+    else
       this.$weatherIcon.src = '';
-    }
+
 
     this.updateTemperatureUnit(Settings.get(Settings.keys.TEMPERATURE_UNIT));
   }
