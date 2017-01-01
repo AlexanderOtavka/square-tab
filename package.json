@@ -2,7 +2,7 @@
   "name": "square-tab",
   "version": "0.0.0",
   "scripts": {
-    "pack": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
+    "zip": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
     "lint": "eslint scripts",
     "fix": "eslint --fix scripts"
   },
