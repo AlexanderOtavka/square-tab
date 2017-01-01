@@ -15,6 +15,7 @@ class EventPage {
   }
 
   static fetchAndCacheImage(resourceURI) {
+    console.log('fetching image');
     return fetch(resourceURI)
       .then(resp =>
         this._readBlob(resp.body.getReader())
@@ -37,13 +38,14 @@ class EventPage {
       .then(position => {
         const WEATHER_RESOURCE =
           'http://api.openweathermap.org/data/2.5/weather';
-        const API_KEY = '822795ff3e00fd43e5d4596cc0849649';
+        const API_KEY = '4b01c1eb7285f479b7352292b26d38ce';
         const lat = position.coords.latitude;
         const long = position.coords.longitude;
 
         // For some reason, the leading & needs to be there
         const qry = `&lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
 
+        console.log('fetching weather data');
         return fetch(`${WEATHER_RESOURCE}?${qry}`, {
           method: 'GET',
           mode: 'cors',
