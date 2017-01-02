@@ -96,12 +96,10 @@ class Weather {
     const sunset = ((weatherData.sys.sunset * 1000) - tzOffset) % DAY_MS;
     const sunrise = ((weatherData.sys.sunrise * 1000) - tzOffset) % DAY_MS;
     const isDay = (sunrise < now && now < sunset);
-    const dayNightSuffix = isDay ? 'day' : 'night';
 
-    const imageName = this._getImageName(iconCode, dayNightSuffix);
-    this.$weatherIcon.src = `/images/weather/${imageName}.png`;
-    this.$weatherIcon.alt = description;
-    this.$weatherIcon.title = description;
+    const iconName = this._getIconName(iconCode, isDay);
+    this.$weatherIcon.className = iconName ? `wi wi-${iconName}` : '';
+    this.$weatherIcon.setAttribute('tooltip', description);
 
     this.updateTemperatureUnit(Settings.get(Settings.keys.TEMPERATURE_UNIT));
   }
@@ -112,42 +110,114 @@ class Weather {
     });
   }
 
-  static _getImageName(iconCode, dayNightSuffix) {
-    const major = Math.floor(iconCode / 100);
-    const minor = iconCode % 100;
-    const middleDigit = Math.floor(minor / 10);
+  static _getIconName(iconCode, isDay) {
+    const dayNight = isDay ? 'day' : 'night-alt';
 
     // codes listed at: http://openweathermap.org/weather-conditions
-    switch (major) {
-    case 2:
-      if (minor === 12)
-        return 'thunderstorm-heavy';
-      else
-        return 'thunderstorm';
-    case 3:
-      return 'rain-light';
-    case 5:
-      return 'rain';
-    case 6:
-      return 'snow';
-    case 7:
-      return `atmosphere-${dayNightSuffix}`;
-    case 8:
-      if (minor === 0)
-        return `clear-${dayNightSuffix}`;
-      else if (minor === 1)
-        return `partly-cloudy-${dayNightSuffix}`;
-      else
-        return 'cloudy';
-    case 9:
-      if (middleDigit === 0)
-        return 'extreme';
-      else
-        // todo: change to windy icon
-        return `clear-${dayNightSuffix}`;
+    switch (iconCode) {
+    case 200:
+    case 201:
+    case 202:
+      return `${dayNight}-thunderstorm`;
+    case 210:
+    case 211:
+    case 212:
+    case 221:
+      return `${dayNight}-lightning`;
+    case 230:
+    case 231:
+    case 232:
+      return `${dayNight}-storm-showers`;
+    case 300:
+    case 301:
+    case 302:
+    case 310:
+    case 311:
+    case 312:
+      return `${dayNight}-sprinkle`;
+    case 313:
+    case 314:
+    case 321:
+      return `${dayNight}-showers`;
+    case 500:
+    case 501:
+    case 502:
+    case 503:
+    case 504:
+    case 511:
+      return `${dayNight}-rain`;
+    case 520:
+    case 521:
+    case 522:
+    case 531:
+      return `${dayNight}-showers`;
+    case 600:
+    case 601:
+    case 602:
+      return `${dayNight}-snow`;
+    case 611:
+    case 612:
+      return `${dayNight}-sleet`;
+    case 615:
+    case 616:
+    case 620:
+    case 621:
+    case 622:
+      return `${dayNight}-rain-mix`;
+    case 701:
+    case 741:
+      return `${dayNight}-fog`;
+    case 711:
+      return 'smoke';
+    case 721:
+      return isDay ? 'day-haze' : 'dust';
+    case 731:
+    case 751:
+      return 'sandstorm';
+    case 761:
+      return 'dust';
+    case 762:
+      return 'volcano';
+    case 771:
+    case 905:
+    case 955:
+    case 956:
+      return 'strong-wind';
+    case 781:
+    case 900:
+      return 'tornado';
+    case 800:
+    case 951:
+    case 952:
+    case 953:
+      return isDay ? 'day-sunny' : 'night-clear';
+    case 801:
+      return isDay ? 'day-sunny-overcast' : 'night-alt-partly-cloudy';
+    case 802:
+    case 803:
+      return `${dayNight}-cloudy`;
+    case 804:
+      return 'cloudy';
+    case 901:
+    case 902:
+    case 962:
+      return 'hurricane';
+    case 903:
+      return 'snowflake-cold';
+    case 904:
+      return 'hot';
+    case 906:
+      return 'hail';
+    case 957:
+    case 958:
+    case 959:
+      return 'gale-warning';
+    case 960:
+    case 961:
+      return 'storm-warning';
     default:
       console.error('Invalid weather icon code.');
-      return `clear-${dayNightSuffix}`;
+      return '';
     }
   }
 }
