@@ -15,6 +15,7 @@ class Settings {
         TOGGLE: 'toggle',
         HOVER: 'hover',
         ALWAYS: 'always',
+        NEVER: 'never',
       },
     };
   }

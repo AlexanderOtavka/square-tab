@@ -167,10 +167,11 @@ class NewTab {
 
   static updateBookmarkDrawerMode(mode) {
     const TOGGLE = 'bookmarks-drawer-mode-toggle';
-    const ALWAYS = 'bookmarks-drawer-mode-always';
     const HOVER = 'bookmarks-drawer-mode-hover';
+    const ALWAYS = 'bookmarks-drawer-mode-always';
+    const NEVER = 'bookmarks-drawer-mode-never';
     this.closeBookmarks();
-    this.$root.classList.remove(TOGGLE, ALWAYS, HOVER);
+    this.$root.classList.remove(TOGGLE, HOVER, ALWAYS, NEVER);
     switch (mode) {
     case Settings.enums.BookmarkDrawerModes.TOGGLE:
       this.$root.classList.add(TOGGLE);
@@ -180,6 +181,9 @@ class NewTab {
       break;
     case Settings.enums.BookmarkDrawerModes.HOVER:
       this.$root.classList.add(HOVER);
+      break;
+    case Settings.enums.BookmarkDrawerModes.NEVER:
+      this.$root.classList.add(NEVER);
       break;
     default:
       console.error('Invalid bookmark drawer mode.');
