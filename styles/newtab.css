@@ -183,6 +183,20 @@ x-tooltip {
   opacity: 0;
 }
 
+#drawer-backdrop {
+  z-index: 19;
+  pointer-events: none;
+  background: var(--backdrop-background);
+  opacity: 0;
+  transition: opacity var(--drawer-transition-timing);
+  will-change: opacity;
+}
+
+.bookmarks-drawer-open #drawer-backdrop {
+  pointer-events: auto;
+  opacity: 1;
+}
+
 #bookmarks-drawer x-icon {
   fill: #333;
 }
@@ -211,20 +225,6 @@ x-tooltip {
   height: 32px;
 }
 
-#drawer-backdrop {
-  z-index: 19;
-  pointer-events: none;
-  background: var(--backdrop-background);
-  opacity: 0;
-  transition: opacity var(--drawer-transition-timing);
-  will-change: opacity;
-}
-
-.bookmarks-drawer-open #drawer-backdrop {
-  pointer-events: auto;
-  opacity: 1;
-}
-
 #bookmarks-edit-dialog {
   --x-dialog-width: 350px;
 }
@@ -237,4 +237,8 @@ x-tooltip {
 #bookmarks-edit-dialog-url {
   flex-grow: 2;
   flex-basis: 1px;
+}
+
+#bookmarks-drawer:not(:hover) ~ #bookmarks-drawer-tooltip {
+  opacity: 0;
 }
