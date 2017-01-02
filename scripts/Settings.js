@@ -59,7 +59,8 @@ class Settings {
       },
 
       [this.keys.BOOKMARKS_DRAWER_MODE]: value => {
-        if (value === this.enums.BookmarkDrawerModes.TOGGLE)
+        if (value === this.enums.BookmarkDrawerModes.TOGGLE ||
+            value === this.enums.BookmarkDrawerModes.NEVER)
           this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1, false);
         else
           this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1);
