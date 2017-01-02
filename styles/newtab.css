@@ -105,7 +105,7 @@ x-tooltip {
   position: relative;
   padding: 8px;
   min-width: 210px;
-  font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
+  font-family: 'Lucida Grande', var(--font-family);
   font-size: 1.5rem;
   font-weight: 300;
   color: #fff;
@@ -127,19 +127,34 @@ x-tooltip {
 }
 
 #weather-wrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  font-size: 2rem;
 }
 
 #weather-icon {
-  width: 40px;
-  height: 40px;
+  position: relative;
 }
 
-#temperature {
-  font-size: 2rem;
-  padding-left: 16px;
+#weather-icon::after {
+  font-family: var(--font-family);
+  content: attr(tooltip);
+  display: inline-block;
+  position: absolute;
+  white-space: nowrap;
+  font-size: 1rem;
+  background: #333;
+  padding: 8px;
+  border-radius: 2px;
+  margin: 0 8px;
+  right: 100%;
+  box-shadow: var(--shadow-1);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--mouse-effect-transition-timing);
+}
+
+#weather-icon:hover::after {
+  opacity: 1;
 }
 
 #bookmarks-drawer {
