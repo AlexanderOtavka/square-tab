@@ -29,6 +29,9 @@ rules:
     - checkLoops: false
   no-undef:
     - error
+  no-unused-vars:
+    - error
+    - args: none
   no-lonely-if:
     - error
   no-console:

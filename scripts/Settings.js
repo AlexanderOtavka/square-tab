@@ -52,18 +52,14 @@ class Settings {
    */
   static get _overrides() {
     return {
-      startup: chromeVersion => {
-        if (chromeVersion < 49)
-          // CSS variables don't work right
-          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 0, false);
-      },
+      startup: chromeVersion => {},
 
       [this.keys.BOOKMARKS_DRAWER_MODE]: value => {
         if (value === this.enums.BookmarkDrawerModes.TOGGLE ||
             value === this.enums.BookmarkDrawerModes.NEVER)
-          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1, false);
+          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 0, false);
         else
-          this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1);
+          this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 0);
       },
 
       [this.keys.SHOW_WEATHER]: value => {
