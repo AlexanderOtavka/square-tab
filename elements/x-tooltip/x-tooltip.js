@@ -1,4 +1,4 @@
-'use strict';
+
 
 class XTooltipElement extends HTMLElement {
   static register() {
@@ -7,8 +7,8 @@ class XTooltipElement extends HTMLElement {
   }
 
   createdCallback() {
-    let tmplRoot = document.importNode(XTooltipElement.$tmpl.content, true);
-    this.createShadowRoot().appendChild(tmplRoot);
+    this.createShadowRoot()
+      .appendChild(document.importNode(XTooltipElement.$tmpl.content, true));
 
     this.$tooltip = this.shadowRoot.querySelector('#tooltip');
 
@@ -24,9 +24,9 @@ class XTooltipElement extends HTMLElement {
     this.$tooltip.textContent = name;
 
     requestAnimationFrame(() => {
-      let clientRect = this.$tooltip.getBoundingClientRect();
-      let x = this._x - clientRect.width + 10;
-      let y = this._y - clientRect.height / 2;
+      const clientRect = this.$tooltip.getBoundingClientRect();
+      const x = this._x - (clientRect.width - 10);
+      const y = this._y - (clientRect.height / 2);
       this.$tooltip.style.transform = `translate(${x}px, ${y}px)`;
       this.classList.add('show');
     });
@@ -34,7 +34,7 @@ class XTooltipElement extends HTMLElement {
 
   show(clientRect, name = this.name) {
     this._x = clientRect.left;
-    this._y = clientRect.top + clientRect.height / 2;
+    this._y = clientRect.top + (clientRect.height / 2);
     this.name = name;
   }
 

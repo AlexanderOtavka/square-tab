@@ -1,5 +1,3 @@
-'use strict';
-
 class XBookmarkElement extends HTMLElement {
   static register() {
     this.$tmpl = document.currentScript.ownerDocument.querySelector('template');
@@ -7,8 +5,8 @@ class XBookmarkElement extends HTMLElement {
   }
 
   createdCallback() {
-    let tmplRoot = document.importNode(XBookmarkElement.$tmpl.content, true);
-    this.createShadowRoot().appendChild(tmplRoot);
+    this.createShadowRoot()
+      .appendChild(document.importNode(XBookmarkElement.$tmpl.content, true));
 
     this.$link = this.shadowRoot.querySelector('#link');
     this.$image = this.shadowRoot.querySelector('#image');
@@ -33,9 +31,11 @@ class XBookmarkElement extends HTMLElement {
 
   attributeChangedCallback(attrName) {
     switch (attrName) {
-      case 'small':
-        this._updateTooltip();
-        break;
+    case 'small':
+      this._updateTooltip();
+      break;
+    default:
+      break;
     }
   }
 
@@ -69,15 +69,14 @@ class XBookmarkElement extends HTMLElement {
   }
 
   set small(small) {
-    if (small) {
+    if (small)
       this.setAttribute('small', '');
-    } else {
+    else
       this.removeAttribute('small');
-    }
   }
 
   onClick() {
-    let customEvent = new CustomEvent('x-bookmark-click', {
+    const customEvent = new CustomEvent('x-bookmark-click', {
       detail: { nodeId: this._node.id },
     });
 
@@ -85,7 +84,7 @@ class XBookmarkElement extends HTMLElement {
   }
 
   onContextMenu(ev) {
-    let customEvent = new CustomEvent('x-bookmark-ctx-open', {
+    const customEvent = new CustomEvent('x-bookmark-ctx-open', {
       detail: {
         nodeId: this._node.id,
         x: ev.x,
@@ -104,7 +103,7 @@ class XBookmarkElement extends HTMLElement {
     ev.dataTransfer.setDragImage(this, ev.offsetX, ev.offsetY);
     ev.dataTransfer.setData('text/x-bookmark-id', this.node.id);
 
-    let customEvent = new CustomEvent('x-bookmark-drag-start');
+    const customEvent = new CustomEvent('x-bookmark-drag-start');
     this.dispatchEvent(customEvent);
   }
 
@@ -112,7 +111,7 @@ class XBookmarkElement extends HTMLElement {
     ev.preventDefault();
     ev.dataTransfer.dropEffect = 'move';
 
-    let customEvent = new CustomEvent('x-bookmark-drag-over', {
+    const customEvent = new CustomEvent('x-bookmark-drag-over', {
       detail: { isFolder: this.isFolder, y: ev.y },
     });
     this.dispatchEvent(customEvent);
@@ -129,10 +128,10 @@ class XBookmarkElement extends HTMLElement {
   onDrop(ev) {
     ev.preventDefault();
 
-    let bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
-    let title = ev.dataTransfer.getData('text/plain');
-    let url = ev.dataTransfer.getData('text/uri-list') || title;
-    let customEvent = new CustomEvent('x-bookmark-drop', {
+    const bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
+    const title = ev.dataTransfer.getData('text/plain');
+    const url = ev.dataTransfer.getData('text/uri-list') || title;
+    const customEvent = new CustomEvent('x-bookmark-drop', {
       detail: { bookmarkId, title, url, y: ev.y },
     });
 
@@ -140,29 +139,27 @@ class XBookmarkElement extends HTMLElement {
   }
 
   onMouseOver() {
-    let customEvent = new CustomEvent('x-bookmark-mouseover');
+    const customEvent = new CustomEvent('x-bookmark-mouseover');
     this.dispatchEvent(customEvent);
   }
 
   onMouseLeave() {
-    let customEvent = new CustomEvent('x-bookmark-mouseleave');
+    const customEvent = new CustomEvent('x-bookmark-mouseleave');
     this.dispatchEvent(customEvent);
   }
 
   _updateImage() {
-    if (this.node && !this.node.url) {
+    if (this.node && !this.node.url)
       this.$image.src = '/images/folder-outline.svg';
-    } else {
+    else
       this.$image.src = `chrome://favicon/size/16@8x/${this.url}`;
-    }
   }
 
   _updateTooltip() {
-    if (this.small) {
+    if (this.small)
       this.title = '';
-    } else {
+    else
       this.title = this.name;
-    }
   }
 }
 

@@ -1,5 +1,3 @@
-'use strict';
-
 class XIconElement extends HTMLElement {
   static register() {
     this.$tmpl = document.currentScript.ownerDocument.querySelector('template');
@@ -7,8 +5,8 @@ class XIconElement extends HTMLElement {
   }
 
   createdCallback() {
-    let tmplRoot = document.importNode(XIconElement.$tmpl.content, true);
-    this.createShadowRoot().appendChild(tmplRoot);
+    this.createShadowRoot()
+      .appendChild(document.importNode(XIconElement.$tmpl.content, true));
 
     this.$icons = this.shadowRoot.querySelector('#icons').content;
 
@@ -17,9 +15,11 @@ class XIconElement extends HTMLElement {
 
   attributeChangedCallback(attrName) {
     switch (attrName) {
-      case 'icon':
-        this._updateIcon();
-        break;
+    case 'icon':
+      this._updateIcon();
+      break;
+    default:
+      break;
     }
   }
 
@@ -37,11 +37,10 @@ class XIconElement extends HTMLElement {
   }
 
   set large(large) {
-    if (large) {
+    if (large)
       this.setAttribute('large', '');
-    } else {
+    else
       this.removeAttribute('large');
-    }
   }
 
   get button() {
@@ -49,26 +48,24 @@ class XIconElement extends HTMLElement {
   }
 
   set button(button) {
-    if (button) {
+    if (button)
       this.setAttribute('button', '');
-    } else {
+    else
       this.removeAttribute('button');
-    }
   }
 
   _updateIcon() {
-    let $currentSVG = this.shadowRoot.querySelector('svg');
+    const $currentSVG = this.shadowRoot.querySelector('svg');
 
     if (!$currentSVG || $currentSVG.id !== this.icon) {
-      if ($currentSVG) {
+      if ($currentSVG)
         this.shadowRoot.removeChild($currentSVG);
-      }
+
 
       if (this.icon) {
-        let $newSVG = this.$icons.querySelector(`svg#${this.icon}`);
-        if ($newSVG) {
+        const $newSVG = this.$icons.querySelector(`svg#${this.icon}`);
+        if ($newSVG)
           this.shadowRoot.appendChild(document.importNode($newSVG, true));
-        }
       }
     }
   }
