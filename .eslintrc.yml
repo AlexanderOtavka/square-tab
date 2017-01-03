@@ -78,6 +78,9 @@ rules:
   space-in-parens:
     - error
     - never
+  object-curly-spacing:
+    - error
+    - never
   arrow-parens:
     - error
     - as-needed

@@ -32,7 +32,7 @@ class BookmarksNavigator {
         this._createOrUpdateElement(node);
     });
 
-    chrome.bookmarks.onRemoved.addListener((id, { parentId, index }) => {
+    chrome.bookmarks.onRemoved.addListener((id, {parentId, index}) => {
       if (parentId === this.currentFolder) {
         this._deleteElementByIndex(index);
       } else if (this._stack.indexOf(id) !== -1) {

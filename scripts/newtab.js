@@ -31,7 +31,7 @@ class NewTab {
       document.querySelector('#bookmarks-drawer-items');
 
     const backgroundImageReady = this.loadImage()
-      .then(({ dataUrl, sourceUrl }) => this.updateImage(dataUrl, sourceUrl));
+      .then(({dataUrl, sourceUrl}) => this.updateImage(dataUrl, sourceUrl));
     Settings.loaded.then(() => this.fetchAndCacheImage());
 
     Promise.all([Settings.loaded, backgroundImageReady]).then(() =>
@@ -77,7 +77,7 @@ class NewTab {
         imageResourceURI += `?${timeOfDay}`;
     }
 
-    chrome.runtime.getBackgroundPage(({ EventPage }) => {
+    chrome.runtime.getBackgroundPage(({EventPage}) => {
       EventPage.fetchAndCacheImage(imageResourceURI);
     });
   }
@@ -100,8 +100,8 @@ class NewTab {
   static resolveBody() {
     this.$body.removeAttribute('unresolved');
     this.$body.animate([
-      { opacity: 0 },
-      { opacity: 1 },
+      {opacity: 0},
+      {opacity: 1},
     ], {
       duration: 200,
       easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',

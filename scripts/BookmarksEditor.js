@@ -90,7 +90,7 @@ class BookmarksEditor {
       const title = ev.dataTransfer.getData('text/plain');
       const url = ev.dataTransfer.getData('text/uri-list') || title;
       const index = this.$drawerItems.childElementCount;
-      this._handleDrop({ bookmarkId, title, url, y: ev.y }, index, null);
+      this._handleDrop({bookmarkId, title, url, y: ev.y}, index, null);
     }
   }
 
@@ -119,11 +119,11 @@ class BookmarksEditor {
     if (parentId) {
       const bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
       if (bookmarkId) {
-        chrome.bookmarks.move(bookmarkId, { parentId });
+        chrome.bookmarks.move(bookmarkId, {parentId});
       } else {
         const title = ev.dataTransfer.getData('text/plain');
         const url = ev.dataTransfer.getData('text/uri-list') || title;
-        chrome.bookmarks.create({ parentId, title, url });
+        chrome.bookmarks.create({parentId, title, url});
       }
     }
   }
@@ -153,7 +153,7 @@ class BookmarksEditor {
     };
 
     if (nodeId) {
-      chrome.bookmarks.get(nodeId, ([{ url }]) => {
+      chrome.bookmarks.get(nodeId, ([{url}]) => {
         if (url) {
           this.$ctxMenuAddPage.classList.add('disabled');
           this.$ctxMenuAddPage.onclick = () => {};
@@ -363,7 +363,7 @@ class BookmarksEditor {
 
     this.$editDialogTitle.textContent = 'Edit';
 
-    chrome.bookmarks.get(nodeId, ([{ title, url }]) => {
+    chrome.bookmarks.get(nodeId, ([{title, url}]) => {
       this.$editDialogName.value = title || '';
       if (url) {
         this.$editDialogURL.hidden = false;

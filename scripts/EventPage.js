@@ -70,7 +70,7 @@ class EventPage {
   }
 
   static _readBlob(reader, blobs = []) {
-    return reader.read().then(({ done, value }) => {
+    return reader.read().then(({done, value}) => {
       if (!done) {
         blobs.push(value);
         return this._readBlob(reader, blobs);

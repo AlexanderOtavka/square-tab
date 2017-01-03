@@ -77,7 +77,7 @@ class XBookmarkElement extends HTMLElement {
 
   onClick() {
     const customEvent = new CustomEvent('x-bookmark-click', {
-      detail: { nodeId: this._node.id },
+      detail: {nodeId: this._node.id},
     });
 
     requestAnimationFrame(() => this.dispatchEvent(customEvent));
@@ -112,7 +112,7 @@ class XBookmarkElement extends HTMLElement {
     ev.dataTransfer.dropEffect = 'move';
 
     const customEvent = new CustomEvent('x-bookmark-drag-over', {
-      detail: { isFolder: this.isFolder, y: ev.y },
+      detail: {isFolder: this.isFolder, y: ev.y},
     });
     this.dispatchEvent(customEvent);
   }
@@ -132,7 +132,7 @@ class XBookmarkElement extends HTMLElement {
     const title = ev.dataTransfer.getData('text/plain');
     const url = ev.dataTransfer.getData('text/uri-list') || title;
     const customEvent = new CustomEvent('x-bookmark-drop', {
-      detail: { bookmarkId, title, url, y: ev.y },
+      detail: {bookmarkId, title, url, y: ev.y},
     });
 
     this.dispatchEvent(customEvent);

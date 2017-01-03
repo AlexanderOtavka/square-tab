@@ -19,7 +19,7 @@ class Weather {
     });
 
     chrome.storage.onChanged.addListener(
-      ({ [StorageKeys.WEATHER_DATA]: change }, area) => {
+      ({[StorageKeys.WEATHER_DATA]: change}, area) => {
         if (area === 'local' && change)
           this._handleWeatherDataLoad(change.newValue);
       }
@@ -38,7 +38,7 @@ class Weather {
       if (navigator.geolocation)
         chrome.storage.local.get(
           StorageKeys.WEATHER_DATA,
-          ({ [StorageKeys.WEATHER_DATA]: data }) =>
+          ({[StorageKeys.WEATHER_DATA]: data}) =>
             this._handleWeatherDataLoad(data)
         );
       else
@@ -105,7 +105,7 @@ class Weather {
   }
 
   static _fetchAndCacheWeatherData() {
-    chrome.runtime.getBackgroundPage(({ EventPage }) => {
+    chrome.runtime.getBackgroundPage(({EventPage}) => {
       EventPage.fetchAndCacheWeatherData();
     });
   }

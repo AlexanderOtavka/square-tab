@@ -131,12 +131,12 @@ class Settings {
 
     const activeOverride = this._getActiveOverride(storageKey);
 
-    return { value, overrides: d.overrides.slice(), activeOverride };
+    return {value, overrides: d.overrides.slice(), activeOverride};
   }
 
   static set(storageKey, value) {
     console.assert(this._storageKeysArray.indexOf(storageKey) !== -1);
-    chrome.storage.sync.set({ [storageKey]: value });
+    chrome.storage.sync.set({[storageKey]: value});
   }
 
   static onChanged(storageKey) {
@@ -173,7 +173,7 @@ class Settings {
     let oldData;
     let oldOverriddenValue;
     if (forceNotify) {
-      oldData = { value: undefined, overrides: [] };
+      oldData = {value: undefined, overrides: []};
       oldOverriddenValue = undefined;
     } else {
       oldData = this.getData(storageKey);
