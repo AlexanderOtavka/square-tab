@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "zip": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
-    "lint": "eslint scripts elements",
-    "fix": "eslint --fix scripts elements"
+    "lint": "./node_modules/.bin/eslint scripts elements",
+    "fix": "./node_modules/.bin/eslint --fix scripts elements"
   },
   "devDependencies": {
     "eslint": "^3.9.1",
