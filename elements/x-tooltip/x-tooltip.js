@@ -73,7 +73,7 @@ class XTooltipElement extends HTMLElement {
 
     const CLOSE_ENOUGH_PX = 0.5;
     if (Math.abs(this._y - targetY) > CLOSE_ENOUGH_PX) {
-      const yEasingStrength = isEased ? 0.25 : 1;
+      const yEasingStrength = isEased ? 0.5 : 1;
       this._y += (targetY - this._y) * yEasingStrength;
 
       this._updateXTransform(elementClientRect);
