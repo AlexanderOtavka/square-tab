@@ -15,7 +15,7 @@ class EventPage {
   }
 
   static fetchAndCacheImage(resourceURI) {
-    console.log('fetching image');
+    console.log(new Date(), 'fetching image');
     return fetch(resourceURI)
       .then(resp =>
         this._readBlob(resp.body.getReader())
@@ -45,7 +45,7 @@ class EventPage {
         // For some reason, the leading & needs to be there
         const qry = `&lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
 
-        console.log('fetching weather data');
+        console.log(new Date(), 'fetching weather data');
         return fetch(`${WEATHER_RESOURCE}?${qry}`, {
           method: 'GET',
           mode: 'cors',
