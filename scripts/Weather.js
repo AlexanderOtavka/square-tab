@@ -1,6 +1,5 @@
 /* globals Settings, StorageKeys */
 
-
 class Weather {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');

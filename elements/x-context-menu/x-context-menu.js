@@ -29,10 +29,8 @@ class XContextMenuElement extends HTMLElement {
     if (maxW - x < menuW)
       x -= menuW;
 
-
     if (maxH - y < menuH)
       y -= menuH;
-
 
     this.$wrapper.style.left = `${x}px`;
     this.$wrapper.style.top = `${y}px`;

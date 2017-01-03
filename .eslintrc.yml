@@ -92,3 +92,7 @@ rules:
     - arrays: always-multiline
       objects: always-multiline
       functions: never
+  no-multiple-empty-lines:
+    - error
+    - max: 1
+      maxBOF: 0

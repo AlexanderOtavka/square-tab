@@ -1,5 +1,3 @@
-
-
 class Settings {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');
@@ -128,7 +126,6 @@ class Settings {
     if (value === undefined)
       value = this._defaults[storageKey];
 
-
     const activeOverride = this._getActiveOverride(storageKey);
 
     return {value, overrides: d.overrides.slice(), activeOverride};
@@ -188,7 +185,6 @@ class Settings {
         this._overridesChanged(newData, oldData))
       dataItem.dataListener.dispatch(newData, oldData);
 
-
     const newOverriddenValue = this.get(storageKey);
     if (newOverriddenValue !== oldOverriddenValue)
       dataItem.basicListener.dispatch(newOverriddenValue, oldOverriddenValue);
@@ -199,7 +195,6 @@ class Settings {
     for (let i = 0; i < len; i++)
       if (newData.overrides[i] !== oldData.overrides[i])
         return true;
-
 
     return false;
   }

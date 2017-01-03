@@ -113,7 +113,6 @@ class BookmarksNavigator {
               this.$drawerItems.lastChild
             );
 
-
           children.forEach((child, i) => {
             const bookmark = elements[i];
             if (!bookmark)

@@ -61,7 +61,6 @@ class XIconElement extends HTMLElement {
       if ($currentSVG)
         this.shadowRoot.removeChild($currentSVG);
 
-
       if (this.icon) {
         const $newSVG = this.$icons.querySelector(`svg#${this.icon}`);
         if ($newSVG)

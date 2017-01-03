@@ -229,7 +229,6 @@ class BookmarksEditor {
           if (targetI > childNodes.length)
             targetI = childNodes.length;
 
-
           for (let i = oldTargetI; i < targetI; i++) {
             childNodes[i].classList.add('translate-up');
             childNodes[i].classList.remove('translate-down');
@@ -240,7 +239,6 @@ class BookmarksEditor {
             // problems.
           if (oldTargetI > childNodes.length)
             oldTargetI = childNodes.length;
-
 
           for (let i = targetI; i < oldTargetI; i++)
             childNodes[i].classList.remove('translate-up');
@@ -321,7 +319,6 @@ class BookmarksEditor {
         });
       }
 
-
     this._resetDragState();
   }
 
@@ -396,7 +393,6 @@ class BookmarksEditor {
       if (!isFolder && !this.$editDialogURL.value)
         return;
 
-
       const create = parentId => chrome.bookmarks.create({
         parentId,
         title: this.$editDialogName.value,
@@ -412,7 +408,6 @@ class BookmarksEditor {
         });
       else
         create(BookmarksNavigator.currentFolder);
-
 
       this.$editDialog.close();
     };

@@ -114,9 +114,8 @@ class NewTab {
     const minutes = date.getMinutes();
 
     let minutesStr = String(minutes);
-    if (minutesStr.length < 2)
+    if (minutesStr.length === 1)
       minutesStr = `0${minutesStr}`;
-
 
     this.$time.textContent = `${hours % 12 || 12}:${minutesStr}`;
 
@@ -127,7 +126,6 @@ class NewTab {
       greeting = 'Good Afternoon';
     else
       greeting = 'Good Evening';
-
 
     this.$greeting.textContent = greeting;
   }

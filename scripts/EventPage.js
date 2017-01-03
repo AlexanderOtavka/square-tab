@@ -124,7 +124,6 @@ class EventPage {
       else if (isNaN(chr3))
         enc4 = 64;
 
-
       output += KEY_STR.charAt(enc1) + KEY_STR.charAt(enc2) +
                 KEY_STR.charAt(enc3) + KEY_STR.charAt(enc4);
     }
