@@ -15,11 +15,11 @@ class XIconElement extends HTMLElement {
 
   attributeChangedCallback(attrName) {
     switch (attrName) {
-    case 'icon':
-      this._updateIcon();
-      break;
-    default:
-      break;
+      case 'icon':
+        this._updateIcon();
+        break;
+      default:
+        break;
     }
   }
 

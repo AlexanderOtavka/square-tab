@@ -31,11 +31,11 @@ class XBookmarkElement extends HTMLElement {
 
   attributeChangedCallback(attrName) {
     switch (attrName) {
-    case 'small':
-      this._updateTooltip();
-      break;
-    default:
-      break;
+      case 'small':
+        this._updateTooltip();
+        break;
+      default:
+        break;
     }
   }
 

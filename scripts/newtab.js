@@ -100,11 +100,11 @@ class NewTab {
   static resolveBody() {
     this.$body.removeAttribute('unresolved');
     this.$body.animate([
-        { opacity: 0 },
-        { opacity: 1 },
+      { opacity: 0 },
+      { opacity: 1 },
     ], {
-        duration: 200,
-        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+      duration: 200,
+      easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
     });
   }
 
@@ -173,20 +173,20 @@ class NewTab {
     this.closeBookmarks();
     this.$root.classList.remove(TOGGLE, HOVER, ALWAYS, NEVER);
     switch (mode) {
-    case Settings.enums.BookmarkDrawerModes.TOGGLE:
-      this.$root.classList.add(TOGGLE);
-      break;
-    case Settings.enums.BookmarkDrawerModes.ALWAYS:
-      this.$root.classList.add(ALWAYS);
-      break;
-    case Settings.enums.BookmarkDrawerModes.HOVER:
-      this.$root.classList.add(HOVER);
-      break;
-    case Settings.enums.BookmarkDrawerModes.NEVER:
-      this.$root.classList.add(NEVER);
-      break;
-    default:
-      console.error('Invalid bookmark drawer mode.');
+      case Settings.enums.BookmarkDrawerModes.TOGGLE:
+        this.$root.classList.add(TOGGLE);
+        break;
+      case Settings.enums.BookmarkDrawerModes.ALWAYS:
+        this.$root.classList.add(ALWAYS);
+        break;
+      case Settings.enums.BookmarkDrawerModes.HOVER:
+        this.$root.classList.add(HOVER);
+        break;
+      case Settings.enums.BookmarkDrawerModes.NEVER:
+        this.$root.classList.add(NEVER);
+        break;
+      default:
+        console.error('Invalid bookmark drawer mode.');
     }
   }
 
