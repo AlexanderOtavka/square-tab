@@ -120,9 +120,9 @@ x-tooltip {
   margin: 8px;
 }
 
-/*#info-box > a {
+#info-box > a {
   text-decoration: none;
-}*/
+}
 
 #time {
   font-size: 4rem;
