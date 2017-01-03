@@ -239,6 +239,8 @@ x-tooltip {
   flex-basis: 1px;
 }
 
+/* this is just a failsafe. the x-tooltip should hide itself, but if it doesn't,
+   no one has to know */
 #bookmarks-drawer:not(:hover) ~ #bookmarks-drawer-tooltip {
   opacity: 0;
 }
