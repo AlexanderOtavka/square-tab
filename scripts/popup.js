@@ -1,6 +1,5 @@
 /* globals Settings */
 
-
 class Popup {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');

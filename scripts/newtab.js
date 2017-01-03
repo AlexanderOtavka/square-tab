@@ -31,7 +31,7 @@ class NewTab {
       document.querySelector('#bookmarks-drawer-items');
 
     const backgroundImageReady = this.loadImage()
-      .then(({ dataUrl, sourceUrl }) => this.updateImage(dataUrl, sourceUrl));
+      .then(({dataUrl, sourceUrl}) => this.updateImage(dataUrl, sourceUrl));
     Settings.loaded.then(() => this.fetchAndCacheImage());
 
     Promise.all([Settings.loaded, backgroundImageReady]).then(() =>
@@ -77,7 +77,7 @@ class NewTab {
         imageResourceURI += `?${timeOfDay}`;
     }
 
-    chrome.runtime.getBackgroundPage(({ EventPage }) => {
+    chrome.runtime.getBackgroundPage(({EventPage}) => {
       EventPage.fetchAndCacheImage(imageResourceURI);
     });
   }
@@ -100,11 +100,11 @@ class NewTab {
   static resolveBody() {
     this.$body.removeAttribute('unresolved');
     this.$body.animate([
-        { opacity: 0 },
-        { opacity: 1 },
+      {opacity: 0},
+      {opacity: 1},
     ], {
-        duration: 200,
-        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+      duration: 200,
+      easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
     });
   }
 
@@ -114,9 +114,8 @@ class NewTab {
     const minutes = date.getMinutes();
 
     let minutesStr = String(minutes);
-    if (minutesStr.length < 2)
+    if (minutesStr.length === 1)
       minutesStr = `0${minutesStr}`;
-
 
     this.$time.textContent = `${hours % 12 || 12}:${minutesStr}`;
 
@@ -127,7 +126,6 @@ class NewTab {
       greeting = 'Good Afternoon';
     else
       greeting = 'Good Evening';
-
 
     this.$greeting.textContent = greeting;
   }
@@ -167,22 +165,26 @@ class NewTab {
 
   static updateBookmarkDrawerMode(mode) {
     const TOGGLE = 'bookmarks-drawer-mode-toggle';
-    const ALWAYS = 'bookmarks-drawer-mode-always';
     const HOVER = 'bookmarks-drawer-mode-hover';
+    const ALWAYS = 'bookmarks-drawer-mode-always';
+    const NEVER = 'bookmarks-drawer-mode-never';
     this.closeBookmarks();
-    this.$root.classList.remove(TOGGLE, ALWAYS, HOVER);
+    this.$root.classList.remove(TOGGLE, HOVER, ALWAYS, NEVER);
     switch (mode) {
-    case Settings.enums.BookmarkDrawerModes.TOGGLE:
-      this.$root.classList.add(TOGGLE);
-      break;
-    case Settings.enums.BookmarkDrawerModes.ALWAYS:
-      this.$root.classList.add(ALWAYS);
-      break;
-    case Settings.enums.BookmarkDrawerModes.HOVER:
-      this.$root.classList.add(HOVER);
-      break;
-    default:
-      console.error('Invalid bookmark drawer mode.');
+      case Settings.enums.BookmarkDrawerModes.TOGGLE:
+        this.$root.classList.add(TOGGLE);
+        break;
+      case Settings.enums.BookmarkDrawerModes.ALWAYS:
+        this.$root.classList.add(ALWAYS);
+        break;
+      case Settings.enums.BookmarkDrawerModes.HOVER:
+        this.$root.classList.add(HOVER);
+        break;
+      case Settings.enums.BookmarkDrawerModes.NEVER:
+        this.$root.classList.add(NEVER);
+        break;
+      default:
+        console.error('Invalid bookmark drawer mode.');
     }
   }
 

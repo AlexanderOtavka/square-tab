@@ -29,6 +29,9 @@ rules:
     - checkLoops: false
   no-undef:
     - error
+  no-unused-vars:
+    - error
+    - args: none
   no-lonely-if:
     - error
   no-console:
@@ -55,7 +58,8 @@ rules:
   indent:
     - error
     - 2
-    - ArrayExpression: first
+    - SwitchCase: 1
+      ArrayExpression: first
       ObjectExpression: first
       MemberExpression: 1
       FunctionDeclaration:
@@ -74,6 +78,9 @@ rules:
   space-in-parens:
     - error
     - never
+  object-curly-spacing:
+    - error
+    - never
   arrow-parens:
     - error
     - as-needed
@@ -85,3 +92,7 @@ rules:
     - arrays: always-multiline
       objects: always-multiline
       functions: never
+  no-multiple-empty-lines:
+    - error
+    - max: 1
+      maxBOF: 0

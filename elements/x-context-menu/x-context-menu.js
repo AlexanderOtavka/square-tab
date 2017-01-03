@@ -1,5 +1,3 @@
-'use strict';
-
 class XContextMenuElement extends HTMLElement {
   static register() {
     this.$tmpl = document.currentScript.ownerDocument.querySelector('template');
@@ -7,8 +5,9 @@ class XContextMenuElement extends HTMLElement {
   }
 
   createdCallback() {
-    let tmplRoot = document.importNode(XContextMenuElement.$tmpl.content, true);
-    this.createShadowRoot().appendChild(tmplRoot);
+    this.createShadowRoot()
+      .appendChild(document.importNode(XContextMenuElement.$tmpl.content,
+                                       true));
 
     this.$wrapper = this.shadowRoot.querySelector('#wrapper');
 
@@ -22,18 +21,16 @@ class XContextMenuElement extends HTMLElement {
   show(x, y) {
     this.setAttribute('visible', '');
 
-    let maxW = this.clientWidth;
-    let maxH = this.clientHeight;
-    let menuW = this.$wrapper.offsetWidth;
-    let menuH = this.$wrapper.offsetHeight;
+    const maxW = this.clientWidth;
+    const maxH = this.clientHeight;
+    const menuW = this.$wrapper.offsetWidth;
+    const menuH = this.$wrapper.offsetHeight;
 
-    if (maxW - x < menuW) {
+    if (maxW - x < menuW)
       x -= menuW;
-    }
 
-    if (maxH - y < menuH) {
+    if (maxH - y < menuH)
       y -= menuH;
-    }
 
     this.$wrapper.style.left = `${x}px`;
     this.$wrapper.style.top = `${y}px`;

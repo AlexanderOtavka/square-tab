@@ -1,5 +1,3 @@
-
-
 class Settings {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');
@@ -15,6 +13,7 @@ class Settings {
         TOGGLE: 'toggle',
         HOVER: 'hover',
         ALWAYS: 'always',
+        NEVER: 'never',
       },
     };
   }
@@ -51,17 +50,14 @@ class Settings {
    */
   static get _overrides() {
     return {
-      startup: chromeVersion => {
-        if (chromeVersion < 49)
-          // CSS variables don't work right
-          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 0, false);
-      },
+      startup: chromeVersion => {},
 
       [this.keys.BOOKMARKS_DRAWER_MODE]: value => {
-        if (value === this.enums.BookmarkDrawerModes.TOGGLE)
-          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1, false);
+        if (value === this.enums.BookmarkDrawerModes.TOGGLE ||
+            value === this.enums.BookmarkDrawerModes.NEVER)
+          this._setOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 0, false);
         else
-          this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 1);
+          this._unsetOverride(this.keys.BOOKMARKS_DRAWER_SMALL, 0);
       },
 
       [this.keys.SHOW_WEATHER]: value => {
@@ -130,15 +126,14 @@ class Settings {
     if (value === undefined)
       value = this._defaults[storageKey];
 
-
     const activeOverride = this._getActiveOverride(storageKey);
 
-    return { value, overrides: d.overrides.slice(), activeOverride };
+    return {value, overrides: d.overrides.slice(), activeOverride};
   }
 
   static set(storageKey, value) {
     console.assert(this._storageKeysArray.indexOf(storageKey) !== -1);
-    chrome.storage.sync.set({ [storageKey]: value });
+    chrome.storage.sync.set({[storageKey]: value});
   }
 
   static onChanged(storageKey) {
@@ -175,7 +170,7 @@ class Settings {
     let oldData;
     let oldOverriddenValue;
     if (forceNotify) {
-      oldData = { value: undefined, overrides: [] };
+      oldData = {value: undefined, overrides: []};
       oldOverriddenValue = undefined;
     } else {
       oldData = this.getData(storageKey);
@@ -190,7 +185,6 @@ class Settings {
         this._overridesChanged(newData, oldData))
       dataItem.dataListener.dispatch(newData, oldData);
 
-
     const newOverriddenValue = this.get(storageKey);
     if (newOverriddenValue !== oldOverriddenValue)
       dataItem.basicListener.dispatch(newOverriddenValue, oldOverriddenValue);
@@ -201,7 +195,6 @@ class Settings {
     for (let i = 0; i < len; i++)
       if (newData.overrides[i] !== oldData.overrides[i])
         return true;
-
 
     return false;
   }

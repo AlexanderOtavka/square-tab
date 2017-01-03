@@ -1,5 +1,3 @@
-'use strict';
-
 class XDialogElement extends HTMLElement {
   static register() {
     this.$tmpl = document.currentScript.ownerDocument.querySelector('template');
@@ -7,8 +5,8 @@ class XDialogElement extends HTMLElement {
   }
 
   createdCallback() {
-    let tmplRoot = document.importNode(XDialogElement.$tmpl.content, true);
-    this.createShadowRoot().appendChild(tmplRoot);
+    this.createShadowRoot()
+      .appendChild(document.importNode(XDialogElement.$tmpl.content, true));
 
     this.$closeButton = this.shadowRoot.querySelector('#close-button');
     this.$footer = this.shadowRoot.querySelector('#footer');
@@ -22,14 +20,14 @@ class XDialogElement extends HTMLElement {
   open() {
     this.setAttribute('open', '');
 
-    let customEvent = new CustomEvent('x-dialog-open');
+    const customEvent = new CustomEvent('x-dialog-open');
     this.dispatchEvent(customEvent);
   }
 
   close() {
     this.removeAttribute('open');
 
-    let customEvent = new CustomEvent('x-dialog-close');
+    const customEvent = new CustomEvent('x-dialog-close');
     this.dispatchEvent(customEvent);
   }
 
@@ -38,7 +36,7 @@ class XDialogElement extends HTMLElement {
         (ev.target.classList.contains('dialog-confirm') ||
          ev.target.classList.contains('dialog-cancel'))) {
       if (ev.target.classList.contains('dialog-confirm')) {
-        let customEvent = new CustomEvent('x-dialog-confirm');
+        const customEvent = new CustomEvent('x-dialog-confirm');
         this.dispatchEvent(customEvent);
       }
 

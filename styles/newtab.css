@@ -80,11 +80,11 @@ x-tooltip {
 
 #bookmarks-open-button {
   fill: #fff;
+  visibility: hidden;
 }
 
-.bookmarks-drawer-mode-always #bookmarks-open-button,
-.bookmarks-drawer-mode-hover #bookmarks-open-button {
-  display: none;
+.bookmarks-drawer-mode-toggle #bookmarks-open-button {
+  visibility: visible;
 }
 
 #info-wrapper {
@@ -118,6 +118,10 @@ x-tooltip {
 
 #info-box > * {
   margin: 8px;
+}
+
+#info-box > a {
+  text-decoration: none;
 }
 
 #time {
@@ -164,6 +168,10 @@ x-tooltip {
   will-change: transform;
 }
 
+.bookmarks-drawer-mode-never #bookmarks-drawer {
+  display: none;
+}
+
 .bookmarks-drawer-open #bookmarks-drawer,
 .bookmarks-drawer-mode-always #bookmarks-drawer,
 .bookmarks-drawer-mode-hover #bookmarks-drawer {
@@ -179,6 +187,20 @@ x-tooltip {
   opacity: 0;
 }
 
+#drawer-backdrop {
+  z-index: 19;
+  pointer-events: none;
+  background: var(--backdrop-background);
+  opacity: 0;
+  transition: opacity var(--drawer-transition-timing);
+  will-change: opacity;
+}
+
+.bookmarks-drawer-open #drawer-backdrop {
+  pointer-events: auto;
+  opacity: 1;
+}
+
 #bookmarks-drawer x-icon {
   fill: #333;
 }
@@ -189,6 +211,10 @@ x-tooltip {
 
 #bookmarks-up-button.expand {
   transform: scale(1.2);
+}
+
+.bookmarks-drawer-small #bookmarks-up-button {
+  padding: 4px;
 }
 
 .bookmarks-drawer-small #bookmarks-drawer-title {
@@ -207,20 +233,6 @@ x-tooltip {
   height: 32px;
 }
 
-#drawer-backdrop {
-  z-index: 19;
-  pointer-events: none;
-  background: var(--backdrop-background);
-  opacity: 0;
-  transition: opacity var(--drawer-transition-timing);
-  will-change: opacity;
-}
-
-.bookmarks-drawer-open #drawer-backdrop {
-  pointer-events: auto;
-  opacity: 1;
-}
-
 #bookmarks-edit-dialog {
   --x-dialog-width: 350px;
 }
@@ -233,4 +245,10 @@ x-tooltip {
 #bookmarks-edit-dialog-url {
   flex-grow: 2;
   flex-basis: 1px;
+}
+
+/* this is just a failsafe. the x-tooltip should hide itself, but if it doesn't,
+   no one has to know */
+#bookmarks-drawer:not(:hover) ~ #bookmarks-drawer-tooltip {
+  opacity: 0;
 }

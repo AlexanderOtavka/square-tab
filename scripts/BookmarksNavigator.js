@@ -32,7 +32,7 @@ class BookmarksNavigator {
         this._createOrUpdateElement(node);
     });
 
-    chrome.bookmarks.onRemoved.addListener((id, { parentId, index }) => {
+    chrome.bookmarks.onRemoved.addListener((id, {parentId, index}) => {
       if (parentId === this.currentFolder) {
         this._deleteElementByIndex(index);
       } else if (this._stack.indexOf(id) !== -1) {
@@ -81,18 +81,12 @@ class BookmarksNavigator {
 
   static onBookmarkMouseOver(ev) {
     if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL))
-      this.$drawerTooltip.show(
-        ev.target.getBoundingClientRect(),
-        ev.target.name
-      );
+      this.$drawerTooltip.show(ev.target, ev.target.name);
   }
 
   static onUpButtonMouseOver() {
     if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL))
-      this.$drawerTooltip.show(
-        this.$header.getBoundingClientRect(),
-        this.$title.title
-      );
+      this.$drawerTooltip.show(this.$header, this.$title.title);
   }
 
   static hideTooltip() {
@@ -118,7 +112,6 @@ class BookmarksNavigator {
             this.$drawerItems.removeChild(
               this.$drawerItems.lastChild
             );
-
 
           children.forEach((child, i) => {
             const bookmark = elements[i];

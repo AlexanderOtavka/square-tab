@@ -143,6 +143,9 @@ input[type=url]:hover:invalid {
   flex-basis: 1px;
   font-size: 1.3rem;
   margin: 0 8px;
+  padding-top: 0.1rem;
+  /*margin: 0 12px;*/
+  /*line-height: 1;*/
   cursor: default;
   white-space: nowrap;
   overflow: hidden;
