@@ -213,6 +213,10 @@ x-tooltip {
   transform: scale(1.2);
 }
 
+.bookmarks-drawer-small #bookmarks-up-button {
+  padding: 4px;
+}
+
 .bookmarks-drawer-small #bookmarks-drawer-title {
   display: none;
 }
