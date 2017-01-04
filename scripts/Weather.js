@@ -69,17 +69,13 @@ class Weather {
 
   static _handleWeatherDataLoad(dataString) {
     const data = JSON.parse(dataString || 'null');
-    if (data && Date.now() < data.expiration) {
+    if (data && Date.now() < data.hardExpiration) {
       this._onInitialLoad();
       this.onDataLoad.dispatch(data);
-
-      const PRECACHE_THRESHOLD = 60 * 60 * 1000;  // 1 hour
-      const timeUntilDataExpires = data.expiration - Date.now();
-      if (timeUntilDataExpires > PRECACHE_THRESHOLD)
-        return;  // don't fetch new data in background
     }
 
-    this._fetchAndCacheWeatherData();
+    if (!data || data.freshExpiration < Date.now())
+      this._fetchAndCacheWeatherData();
   }
 
   static _updateWeather(weatherData) {
