@@ -29,6 +29,7 @@ class NewTab {
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
+    this.$bookmarksCtxMenu = document.querySelector('#bookmarks-ctx-menu');
 
     const backgroundImageReady = this.loadImage()
       .then(({dataUrl, sourceUrl}) => this.updateImage(dataUrl, sourceUrl));
@@ -285,6 +286,10 @@ class NewTab {
     this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
       ev.preventDefault();
       BookmarksEditor.openCtxMenu(ev.x, ev.y, null);
+    });
+
+    this.$bookmarksCtxMenu.addEventListener('x-context-menu-close', () => {
+      BookmarksEditor.onCtxMenuClose();
     });
   }
 

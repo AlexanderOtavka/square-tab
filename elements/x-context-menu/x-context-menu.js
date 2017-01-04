@@ -13,8 +13,8 @@ class XContextMenuElement extends HTMLElement {
 
     this.addEventListener('click', () => this.hide());
     this.addEventListener('contextmenu', ev => {
-      this.hide();
       ev.preventDefault();
+      this.hide();
     });
   }
 
@@ -38,6 +38,7 @@ class XContextMenuElement extends HTMLElement {
 
   hide() {
     this.removeAttribute('visible');
+    this.dispatchEvent(new CustomEvent('x-context-menu-close'));
   }
 }
 

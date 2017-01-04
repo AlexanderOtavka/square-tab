@@ -6,6 +6,7 @@ class BookmarksEditor {
   }
 
   static main() {
+    this.$drawer = document.querySelector('#bookmarks-drawer');
     this.$upButton = document.querySelector('#bookmarks-up-button');
     this.$drawerItems = document.querySelector('#bookmarks-drawer-items');
     this.$ctxMenu = document.querySelector('#bookmarks-ctx-menu');
@@ -140,6 +141,7 @@ class BookmarksEditor {
   }
 
   static openCtxMenu(x, y, nodeId) {
+    this.$drawer.classList.add('ctx-menu-active');
     this.$ctxMenu.show(x, y);
 
     this.$ctxMenuAddPage.classList.remove('disabled');
@@ -184,6 +186,10 @@ class BookmarksEditor {
       this.$ctxMenuDelete.classList.add('disabled');
       this.$ctxMenuDelete.onclick = () => {};
     }
+  }
+
+  static onCtxMenuClose() {
+    this.$drawer.classList.remove('ctx-menu-active');
   }
 
   static _handleDragOver(target, targetI, isFolder, y) {
