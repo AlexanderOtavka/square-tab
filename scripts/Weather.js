@@ -115,59 +115,59 @@ class Weather {
       case 200:
       case 201:
       case 202:
-        return `${dayNight}-thunderstorm`;
+        return 'thunderstorm';
       case 210:
       case 211:
       case 212:
       case 221:
-        return `${dayNight}-lightning`;
+        return 'lightning';
       case 230:
       case 231:
       case 232:
-        return `${dayNight}-storm-showers`;
+        return 'storm-showers';
       case 300:
       case 301:
       case 302:
       case 310:
       case 311:
       case 312:
-        return `${dayNight}-sprinkle`;
+        return 'sprinkle';
       case 313:
       case 314:
       case 321:
-        return `${dayNight}-showers`;
+        return 'showers';
       case 500:
       case 501:
       case 502:
       case 503:
       case 504:
       case 511:
-        return `${dayNight}-rain`;
+        return 'rain';
       case 520:
       case 521:
       case 522:
       case 531:
-        return `${dayNight}-showers`;
+        return 'showers';
       case 600:
       case 601:
       case 602:
-        return `${dayNight}-snow`;
+        return 'snow';
       case 611:
       case 612:
-        return `${dayNight}-sleet`;
+        return 'sleet';
       case 615:
       case 616:
       case 620:
       case 621:
       case 622:
-        return `${dayNight}-rain-mix`;
+        return 'rain-mix';
       case 701:
       case 741:
-        return `${dayNight}-fog`;
+        return 'fog';
       case 711:
         return 'smoke';
       case 721:
-        return isDay ? 'day-haze' : 'dust';
+        return 'dust';
       case 731:
       case 751:
         return 'sandstorm';
