@@ -84,7 +84,7 @@ class BookmarksNavigator {
       this.$drawerTooltip.show(ev.target, ev.target.name);
   }
 
-  static onUpButtonMouseOver() {
+  static onHeaderMouseOver() {
     if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL))
       this.$drawerTooltip.show(this.$header, this.$title.title);
   }

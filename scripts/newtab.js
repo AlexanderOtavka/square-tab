@@ -26,6 +26,8 @@ class NewTab {
       document.querySelector('#bookmarks-open-button');
     this.$bookmarksCloseButton =
       document.querySelector('#bookmarks-close-button');
+    this.$bookmarksDrawerHeader =
+      document.querySelector('#bookmarks-drawer .drawer-header');
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
@@ -319,11 +321,11 @@ class NewTab {
       true
     );
 
-    this.$bookmarksUpButton.addEventListener(
+    this.$bookmarksDrawerHeader.addEventListener(
       'mouseover',
-      () => BookmarksNavigator.onUpButtonMouseOver()
+      () => BookmarksNavigator.onHeaderMouseOver()
     );
-    this.$bookmarksUpButton.addEventListener(
+    this.$bookmarksDrawerHeader.addEventListener(
       'mouseleave',
       () => BookmarksNavigator.hideTooltip()
     );
