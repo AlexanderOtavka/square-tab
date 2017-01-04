@@ -7,6 +7,7 @@
   left: 0;
   pointer-events: none;
   z-index: 999;
+  --dividing-line-style: 1px solid #ddd;
 }
 
 :host([visible]) {
@@ -19,7 +20,7 @@
   min-width: 150px;
   box-shadow: var(--shadow-2);
   background: #fff;
-  border: 1px solid #bbb;
+  border-radius: 2px;
   cursor: pointer;
   user-select: none;
   opacity: 0;
@@ -51,8 +52,16 @@
   cursor: default;
 }
 
+::content .menu-item.line-below {
+  border-bottom: var(--dividing-line-style);
+}
+
+::content .menu-item.line-above {
+  border-top: var(--dividing-line-style);
+}
+
 ::content hr {
   margin: 0;
   border: none;
-  border-bottom: 1px solid #ddd;
+  border-bottom: var(--dividing-line-style);
 }
