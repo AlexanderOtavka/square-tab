@@ -21,15 +21,17 @@ class XContextMenuElement extends HTMLElement {
   show(x, y) {
     this.setAttribute('visible', '');
 
-    const windowRect = this.getBoundingClientRect();
-    const menuRect = this.$wrapper.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      const windowRect = this.getBoundingClientRect();
+      const menuRect = this.$wrapper.getBoundingClientRect();
 
-    if (windowRect.width - x < menuRect.width)
-      x -= menuRect.width;
-    if (windowRect.height - y < menuRect.height)
-      y -= menuRect.height;
+      if (windowRect.width - x < menuRect.width)
+        x -= menuRect.width;
+      if (windowRect.height - y < menuRect.height)
+        y -= menuRect.height;
 
-    this.$wrapper.style.transform = `translate(${x}px, ${y}px)`;
+      this.$wrapper.style.transform = `translate(${x}px, ${y}px)`;
+    });
   }
 
   hide() {
