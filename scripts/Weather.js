@@ -80,7 +80,9 @@ class Weather {
 
   static _updateWeather(weatherData) {
     const iconCode = weatherData.weather[0].id;
-    const description = weatherData.weather[0].description
+    const description = weatherData.weather
+      .map(condition => condition.description)
+      .join(', ')
       // convert description to Title Case
       .replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() +
                                 txt.substr(1).toLowerCase());
