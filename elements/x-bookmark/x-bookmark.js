@@ -18,7 +18,6 @@ class XBookmarkElement extends HTMLElement {
     this.setAttribute('draggable', 'true');
 
     this.addEventListener('click', () => this.onClick());
-    this.addEventListener('contextmenu', ev => this.onContextMenu(ev));
     this.addEventListener('dragstart', ev => this.onDragStart(ev));
     this.addEventListener('dragover', ev => this.onDragOver(ev));
     this.addEventListener('dragenter', ev => this.onDragOver(ev));
@@ -77,24 +76,10 @@ class XBookmarkElement extends HTMLElement {
 
   onClick() {
     const customEvent = new CustomEvent('x-bookmark-click', {
-      detail: {nodeId: this._node.id},
+      detail: {nodeId: this.node.id},
     });
 
     requestAnimationFrame(() => this.dispatchEvent(customEvent));
-  }
-
-  onContextMenu(ev) {
-    const customEvent = new CustomEvent('x-bookmark-ctx-open', {
-      detail: {
-        nodeId: this._node.id,
-        x: ev.x,
-        y: ev.y,
-      },
-    });
-
-    requestAnimationFrame(() => this.dispatchEvent(customEvent));
-
-    ev.preventDefault();
   }
 
   onDragStart(ev) {

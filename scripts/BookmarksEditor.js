@@ -147,7 +147,6 @@ class BookmarksEditor {
 
   static openCtxMenu(x, y, nodeId) {
     this.$drawer.classList.add('ctx-menu-active');
-    this.$ctxMenu.show(x, y);
 
     this.$ctxMenuName.setAttribute('hidden', '');
 
@@ -198,6 +197,8 @@ class BookmarksEditor {
       this.$ctxMenuDelete.classList.add('disabled');
       this.$ctxMenuDelete.onclick = () => {};
     }
+
+    requestAnimationFrame(() => this.$ctxMenu.show(x, y));
   }
 
   static _handleDragOver(target, targetI, isFolder, y) {

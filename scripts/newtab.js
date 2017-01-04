@@ -1,5 +1,5 @@
 /* globals BookmarksNavigator, BookmarksEditor, Settings, Weather,
-           StorageKeys */
+           StorageKeys, XBookmarkElement */
 
 class NewTab {
   constructor() {
@@ -45,8 +45,7 @@ class NewTab {
     this.addSettingsChangeListeners();
     this.addWeatherChangeListeners();
     this.addBookmarksDragDropListeners();
-    this.addBookmarksNavigationListeners();
-    this.addBookmarksRightClickListeners();
+    this.addBookmarksClickListeners();
     this.addBookmarksDrawerListeners();
     this.addBookmarksTooltipListeners();
   }
@@ -269,22 +268,19 @@ class NewTab {
     );
   }
 
-  static addBookmarksNavigationListeners() {
+  static addBookmarksClickListeners() {
     this.$bookmarksUpButton.addEventListener('click', () =>
       BookmarksNavigator.ascend()
     );
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
       BookmarksNavigator.openBookmark(ev.detail.nodeId);
     }, true);
-  }
 
-  static addBookmarksRightClickListeners() {
-    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
-      BookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.detail.nodeId);
-    }, true);
     this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
-      ev.preventDefault();
-      BookmarksEditor.openCtxMenu(ev.x, ev.y, null);
+      BookmarksEditor.openCtxMenu(
+        ev.x, ev.y,
+        (ev.target instanceof XBookmarkElement) ? ev.target.node.id : null
+      );
     });
   }
 
