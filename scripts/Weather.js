@@ -53,12 +53,15 @@ class Weather {
       const temperatureC = Number(this._data.main.temp);
       switch (unit) {
         case Settings.enums.TemperatureUnits.CELCIUS:
-          this.$temperature.innerHTML = `${Math.round(temperatureC)} &deg;C`;
+          {
+            const roundedTempC = Math.round(temperatureC);
+            this.$temperature.innerHTML = `&thinsp;${roundedTempC} &deg;C`;
+          }
           break;
         case Settings.enums.TemperatureUnits.FAHRENHEIT:
           {
             const temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
-            this.$temperature.innerHTML = `${temperatureF} &deg;F`;
+            this.$temperature.innerHTML = `&thinsp;${temperatureF} &deg;F`;
           }
           break;
         default:
