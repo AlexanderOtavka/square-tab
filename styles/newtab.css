@@ -183,7 +183,8 @@ x-tooltip {
   box-shadow: none;
 }
 
-.bookmarks-drawer-mode-hover #bookmarks-drawer:not(:hover) {
+.bookmarks-drawer-mode-hover
+#bookmarks-drawer:not(:hover):not(.ctx-menu-active) {
   opacity: 0;
 }
 

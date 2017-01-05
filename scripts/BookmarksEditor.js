@@ -6,9 +6,11 @@ class BookmarksEditor {
   }
 
   static main() {
+    this.$drawer = document.querySelector('#bookmarks-drawer');
     this.$upButton = document.querySelector('#bookmarks-up-button');
     this.$drawerItems = document.querySelector('#bookmarks-drawer-items');
     this.$ctxMenu = document.querySelector('#bookmarks-ctx-menu');
+    this.$ctxMenuName = document.querySelector('#bookmarks-ctx-menu-name');
     this.$ctxMenuEdit = document.querySelector('#bookmarks-ctx-menu-edit');
     this.$ctxMenuDelete = document.querySelector('#bookmarks-ctx-menu-delete');
     this.$ctxMenuAddPage =
@@ -28,6 +30,10 @@ class BookmarksEditor {
       document.querySelector('#bookmarks-edit-dialog .dialog-confirm');
 
     this._resetDragState();
+
+    this.$ctxMenu.addEventListener('x-context-menu-close', () => {
+      this.$drawer.classList.remove('ctx-menu-active');
+    });
 
     this.$editDialog.addEventListener('x-dialog-open', () => {
       requestAnimationFrame(() => this.$editDialogName.focus());
@@ -140,7 +146,9 @@ class BookmarksEditor {
   }
 
   static openCtxMenu(x, y, nodeId) {
-    this.$ctxMenu.show(x, y);
+    this.$drawer.classList.add('ctx-menu-active');
+
+    this.$ctxMenuName.setAttribute('hidden', '');
 
     this.$ctxMenuAddPage.classList.remove('disabled');
     this.$ctxMenuAddPage.onclick = () => {
@@ -153,7 +161,12 @@ class BookmarksEditor {
     };
 
     if (nodeId) {
-      chrome.bookmarks.get(nodeId, ([{url}]) => {
+      chrome.bookmarks.get(nodeId, ([{title, url}]) => {
+        if (title) {
+          this.$ctxMenuName.textContent = title;
+          this.$ctxMenuName.removeAttribute('hidden');
+        }
+
         if (url) {
           this.$ctxMenuAddPage.classList.add('disabled');
           this.$ctxMenuAddPage.onclick = () => {};
@@ -184,6 +197,8 @@ class BookmarksEditor {
       this.$ctxMenuDelete.classList.add('disabled');
       this.$ctxMenuDelete.onclick = () => {};
     }
+
+    requestAnimationFrame(() => this.$ctxMenu.show(x, y));
   }
 
   static _handleDragOver(target, targetI, isFolder, y) {

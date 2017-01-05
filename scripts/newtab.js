@@ -1,5 +1,5 @@
 /* globals BookmarksNavigator, BookmarksEditor, Settings, Weather,
-           StorageKeys */
+           StorageKeys, XBookmarkElement */
 
 class NewTab {
   constructor() {
@@ -26,6 +26,8 @@ class NewTab {
       document.querySelector('#bookmarks-open-button');
     this.$bookmarksCloseButton =
       document.querySelector('#bookmarks-close-button');
+    this.$bookmarksDrawerHeader =
+      document.querySelector('#bookmarks-drawer .drawer-header');
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
@@ -45,8 +47,7 @@ class NewTab {
     this.addSettingsChangeListeners();
     this.addWeatherChangeListeners();
     this.addBookmarksDragDropListeners();
-    this.addBookmarksNavigationListeners();
-    this.addBookmarksRightClickListeners();
+    this.addBookmarksClickListeners();
     this.addBookmarksDrawerListeners();
     this.addBookmarksTooltipListeners();
   }
@@ -269,22 +270,19 @@ class NewTab {
     );
   }
 
-  static addBookmarksNavigationListeners() {
+  static addBookmarksClickListeners() {
     this.$bookmarksUpButton.addEventListener('click', () =>
       BookmarksNavigator.ascend()
     );
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
       BookmarksNavigator.openBookmark(ev.detail.nodeId);
     }, true);
-  }
 
-  static addBookmarksRightClickListeners() {
-    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-open', ev => {
-      BookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.detail.nodeId);
-    }, true);
     this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
-      ev.preventDefault();
-      BookmarksEditor.openCtxMenu(ev.x, ev.y, null);
+      BookmarksEditor.openCtxMenu(
+        ev.x, ev.y,
+        (ev.target instanceof XBookmarkElement) ? ev.target.node.id : null
+      );
     });
   }
 
@@ -323,11 +321,11 @@ class NewTab {
       true
     );
 
-    this.$bookmarksUpButton.addEventListener(
+    this.$bookmarksDrawerHeader.addEventListener(
       'mouseover',
-      () => BookmarksNavigator.onUpButtonMouseOver()
+      () => BookmarksNavigator.onHeaderMouseOver()
     );
-    this.$bookmarksUpButton.addEventListener(
+    this.$bookmarksDrawerHeader.addEventListener(
       'mouseleave',
       () => BookmarksNavigator.hideTooltip()
     );

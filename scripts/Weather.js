@@ -53,12 +53,15 @@ class Weather {
       const temperatureC = Number(this._data.main.temp);
       switch (unit) {
         case Settings.enums.TemperatureUnits.CELCIUS:
-          this.$temperature.innerHTML = `${Math.round(temperatureC)} &deg;C`;
+          {
+            const roundedTempC = Math.round(temperatureC);
+            this.$temperature.innerHTML = `&thinsp;${roundedTempC} &deg;C`;
+          }
           break;
         case Settings.enums.TemperatureUnits.FAHRENHEIT:
           {
             const temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
-            this.$temperature.innerHTML = `${temperatureF} &deg;F`;
+            this.$temperature.innerHTML = `&thinsp;${temperatureF} &deg;F`;
           }
           break;
         default:
@@ -69,22 +72,20 @@ class Weather {
 
   static _handleWeatherDataLoad(dataString) {
     const data = JSON.parse(dataString || 'null');
-    if (data && Date.now() < data.expiration) {
+    if (data && Date.now() < data.hardExpiration) {
       this._onInitialLoad();
       this.onDataLoad.dispatch(data);
-
-      const PRECACHE_THRESHOLD = 60 * 60 * 1000;  // 1 hour
-      const timeUntilDataExpires = data.expiration - Date.now();
-      if (timeUntilDataExpires > PRECACHE_THRESHOLD)
-        return;  // don't fetch new data in background
     }
 
-    this._fetchAndCacheWeatherData();
+    if (!data || data.freshExpiration < Date.now())
+      this._fetchAndCacheWeatherData();
   }
 
   static _updateWeather(weatherData) {
     const iconCode = weatherData.weather[0].id;
-    const description = weatherData.weather[0].description
+    const description = weatherData.weather
+      .map(condition => condition.description)
+      .join(', ')
       // convert description to Title Case
       .replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() +
                                 txt.substr(1).toLowerCase());
@@ -117,59 +118,59 @@ class Weather {
       case 200:
       case 201:
       case 202:
-        return `${dayNight}-thunderstorm`;
+        return 'thunderstorm';
       case 210:
       case 211:
       case 212:
       case 221:
-        return `${dayNight}-lightning`;
+        return 'lightning';
       case 230:
       case 231:
       case 232:
-        return `${dayNight}-storm-showers`;
+        return 'storm-showers';
       case 300:
       case 301:
       case 302:
       case 310:
       case 311:
       case 312:
-        return `${dayNight}-sprinkle`;
+        return 'sprinkle';
       case 313:
       case 314:
       case 321:
-        return `${dayNight}-showers`;
+        return 'showers';
       case 500:
       case 501:
       case 502:
       case 503:
       case 504:
       case 511:
-        return `${dayNight}-rain`;
+        return 'rain';
       case 520:
       case 521:
       case 522:
       case 531:
-        return `${dayNight}-showers`;
+        return 'showers';
       case 600:
       case 601:
       case 602:
-        return `${dayNight}-snow`;
+        return 'snow';
       case 611:
       case 612:
-        return `${dayNight}-sleet`;
+        return 'sleet';
       case 615:
       case 616:
       case 620:
       case 621:
       case 622:
-        return `${dayNight}-rain-mix`;
+        return 'rain-mix';
       case 701:
       case 741:
-        return `${dayNight}-fog`;
+        return 'fog';
       case 711:
         return 'smoke';
       case 721:
-        return isDay ? 'day-haze' : 'dust';
+        return 'dust';
       case 731:
       case 751:
         return 'sandstorm';

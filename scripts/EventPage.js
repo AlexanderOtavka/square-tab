@@ -62,8 +62,10 @@ class EventPage {
           );
       })
       .then(data => {
-        const DATA_LIFETIME_MS = 2 * 60 * 60 * 1000;  // 2 hours
-        data.expiration = Date.now() + DATA_LIFETIME_MS;
+        const DATA_HARD_LIFETIME_MS = 2 * 60 * 60 * 1000;  // 2 hours
+        const DATA_FRESH_LIFETIME_MS = 30 * 60 * 1000;  // 30 mins
+        data.hardExpiration = Date.now() + DATA_HARD_LIFETIME_MS;
+        data.freshExpiration = Date.now() + DATA_FRESH_LIFETIME_MS;
         chrome.storage.local.set({
           [StorageKeys.WEATHER_DATA]: JSON.stringify(data),
         });
