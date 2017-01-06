@@ -11,6 +11,9 @@ class Weather {
 
     this.onDataLoad = new chrome.Event();
 
+    /** Data always remains up to date, since listeners are attached. */
+    this._data = null;
+
     this._loadCalled = false;
     this._onInitialLoad = null;
     this._initialLoad = new Promise(resolve => {
@@ -26,7 +29,7 @@ class Weather {
 
     this.onDataLoad.addListener(data => {
       this._data = data;
-      this._updateWeather(data);
+      this._updateWeather();
     });
   }
 
@@ -47,61 +50,92 @@ class Weather {
     return this._initialLoad;
   }
 
-  static updateTemperatureUnit(unit) {
-    if (this._data) {
-      // Ensure against XSS with the cast to Number
-      const temperatureC = Number(this._data.main.temp);
-      switch (unit) {
-        case Settings.enums.TemperatureUnits.CELCIUS:
-          {
-            const roundedTempC = Math.round(temperatureC);
-            this.$temperature.innerHTML = `&thinsp;${roundedTempC} &deg;C`;
-          }
-          break;
-        case Settings.enums.TemperatureUnits.FAHRENHEIT:
-          {
-            const temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
-            this.$temperature.innerHTML = `&thinsp;${temperatureF} &deg;F`;
-          }
-          break;
-        default:
-          this.$temperature.innerHTML = '';
-      }
+  static updateTempWithUnit(unit) {
+    if (!this._data) return;
+
+    // Ensure against XSS with the cast to Number
+    const temperatureC = Number(this._data.main.temp);
+    switch (unit) {
+      case Settings.enums.TemperatureUnits.CELCIUS:
+        {
+          const roundedTempC = Math.round(temperatureC);
+          this.$temperature.innerHTML = `&thinsp;${roundedTempC} &deg;C`;
+        }
+        break;
+      case Settings.enums.TemperatureUnits.FAHRENHEIT:
+        {
+          const temperatureF = Math.round(((temperatureC * 9) / 5) + 32);
+          this.$temperature.innerHTML = `&thinsp;${temperatureF} &deg;F`;
+        }
+        break;
+      default:
+        console.error('Invalid temperature unit.');
+        this.$temperature.innerHTML = '';
     }
   }
 
+  static getSunInfoMS() {
+    const HOUR_MS = 60 * 60 * 1000;
+    const DAY_MS = 24 * HOUR_MS;
+    const DEFAULT_SUNSET = 20 * HOUR_MS; // 8pm
+    const DEFAULT_SUNRISE = 6 * HOUR_MS; // 6am
+
+    const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
+    const now = (Date.now() - tzOffset) % DAY_MS;
+
+    let sunrise;
+    let sunset;
+    if (this._data && Date.now() < this._data.sunExpiration) {
+      sunrise = ((this._data.sys.sunrise * 1000) - tzOffset) % DAY_MS;
+      sunset = ((this._data.sys.sunset * 1000) - tzOffset) % DAY_MS;
+    } else {
+      sunrise = DEFAULT_SUNRISE;
+      sunset = DEFAULT_SUNSET;
+    }
+
+    return {
+      now,
+      sunrise,
+      sunset,
+      morningBegins: (sunrise - (2 * HOUR_MS)) % DAY_MS,
+      dayBegins: (sunrise + (2 * HOUR_MS)) % DAY_MS,
+      duskBegins: (sunset - (2 * HOUR_MS)) % DAY_MS,
+      nightBegins: (sunset + (2 * HOUR_MS)) % DAY_MS,
+      isDay: (sunrise < now && now < sunset),
+    };
+  }
+
   static _handleWeatherDataLoad(dataString) {
-    const data = JSON.parse(dataString || 'null');
+    const data = JSON.parse(dataString || null);
     if (data && Date.now() < data.hardExpiration) {
       this._onInitialLoad();
       this.onDataLoad.dispatch(data);
+    } else {
+      this.onDataLoad.dispatch(null);
     }
 
     if (!data || data.freshExpiration < Date.now())
       this._fetchAndCacheWeatherData();
   }
 
-  static _updateWeather(weatherData) {
-    const iconCode = weatherData.weather[0].id;
-    const description = weatherData.weather
+  static _updateWeather() {
+    if (!this._data) return;
+
+    const iconCode = this._data.weather[0].id;
+    const description = this._data.weather
       .map(condition => condition.description)
       .join(', ')
       // convert description to Title Case
-      .replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() +
-                                txt.substr(1).toLowerCase());
+      .replace(/\w\S*/, txt => txt.charAt(0).toUpperCase() +
+                              txt.substr(1).toLowerCase());
 
-    const DAY_MS = 1000 * 60 * 60 * 24;
-    const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
-    const now = (Date.now() - tzOffset) % DAY_MS;
-    const sunset = ((weatherData.sys.sunset * 1000) - tzOffset) % DAY_MS;
-    const sunrise = ((weatherData.sys.sunrise * 1000) - tzOffset) % DAY_MS;
-    const isDay = (sunrise < now && now < sunset);
+    const {isDay} = this.getSunInfoMS(this._data);
 
     const iconName = this._getIconName(iconCode, isDay);
     this.$weatherIcon.className = iconName ? `wi wi-${iconName}` : '';
     this.$weatherIcon.setAttribute('tooltip', description);
 
-    this.updateTemperatureUnit(Settings.get(Settings.keys.TEMPERATURE_UNIT));
+    this.updateTempWithUnit(Settings.get(Settings.keys.TEMPERATURE_UNIT));
   }
 
   static _fetchAndCacheWeatherData() {

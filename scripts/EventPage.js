@@ -21,14 +21,14 @@ class EventPage {
         const photoNotFoundRE = /photo-1446704477871-62a4972035cd/;
         if (resp.ok && !photoNotFoundRE.test(resp.url))
           return this._readBlob(resp.body.getReader())
-          .then(blob => {
-            const contentType = resp.headers.get('content-type');
-            const data = this._encodeUint8Array(blob);
-            const dataUrl = `data:${contentType};base64,${data}`;
-            chrome.storage.local.set({
-              [StorageKeys.IMAGE_DATA_URL]: dataUrl,
-              [StorageKeys.IMAGE_SOURCE_URL]: resp.url,
-            });
+            .then(blob => {
+              const contentType = resp.headers.get('content-type');
+              const data = this._encodeUint8Array(blob);
+              const dataUrl = `data:${contentType};base64,${data}`;
+              chrome.storage.local.set({
+                [StorageKeys.IMAGE_DATA_URL]: dataUrl,
+                [StorageKeys.IMAGE_SOURCE_URL]: resp.url,
+              });
             });
         else
           throw new Error('Image failed to fetch.');
@@ -64,10 +64,15 @@ class EventPage {
                           `${response.status}`);
       })
       .then(data => {
-        const DATA_HARD_LIFETIME_MS = 2 * 60 * 60 * 1000;  // 2 hours
-        const DATA_FRESH_LIFETIME_MS = 30 * 60 * 1000;  // 30 mins
+        const HOUR_MS = 60 * 60 * 1000;
+        const DATA_HARD_LIFETIME_MS = 2 * HOUR_MS;
+        const DATA_FRESH_LIFETIME_MS = 0.5 * HOUR_MS;
+        const SUN_DATA_LIFETIME_MS = 20 * 24 * HOUR_MS;
+
         data.hardExpiration = Date.now() + DATA_HARD_LIFETIME_MS;
         data.freshExpiration = Date.now() + DATA_FRESH_LIFETIME_MS;
+        data.sunExpiration = Date.now() + SUN_DATA_LIFETIME_MS;
+
         chrome.storage.local.set({
           [StorageKeys.WEATHER_DATA]: JSON.stringify(data),
         });
