@@ -118,12 +118,12 @@ class NewTab {
 
     const MIDNIGHT = 0;
     const NOON = 12 * 60 * 60 * 1000;
-    const {now, sunset} = Weather.getSunInfoMS();
+    const {now, duskBegins} = Weather.getSunInfoMS();
 
     let greeting;
     if (MIDNIGHT < now && now <= NOON)
       greeting = 'Good Morning';
-    else if (NOON < now && now <= sunset)
+    else if (NOON < now && now <= duskBegins)
       greeting = 'Good Afternoon';
     else
       greeting = 'Good Evening';
