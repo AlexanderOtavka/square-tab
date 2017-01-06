@@ -148,7 +148,7 @@ class BookmarksEditor {
   static openCtxMenu(x, y, nodeId) {
     this.$drawer.classList.add('ctx-menu-active');
 
-    this.$ctxMenuName.setAttribute('hidden', '');
+    this.$ctxMenuName.hidden = 'true';
 
     this.$ctxMenuAddPage.classList.remove('disabled');
     this.$ctxMenuAddPage.onclick = () => {
@@ -164,7 +164,7 @@ class BookmarksEditor {
       chrome.bookmarks.get(nodeId, ([{title, url}]) => {
         if (title) {
           this.$ctxMenuName.textContent = title;
-          this.$ctxMenuName.removeAttribute('hidden');
+          this.$ctxMenuName.hidden = false;
         }
 
         if (url) {
