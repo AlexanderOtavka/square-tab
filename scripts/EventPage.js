@@ -17,8 +17,10 @@ class EventPage {
   static fetchAndCacheImage(resourceURI) {
     console.log(new Date(), 'fetching image');
     return fetch(resourceURI)
-      .then(resp =>
-        this._readBlob(resp.body.getReader())
+      .then(resp => {
+        const photoNotFoundRE = /photo-1446704477871-62a4972035cd/;
+        if (resp.ok && !photoNotFoundRE.test(resp.url))
+          return this._readBlob(resp.body.getReader())
           .then(blob => {
             const contentType = resp.headers.get('content-type');
             const data = this._encodeUint8Array(blob);
@@ -27,8 +29,10 @@ class EventPage {
               [StorageKeys.IMAGE_DATA_URL]: dataUrl,
               [StorageKeys.IMAGE_SOURCE_URL]: resp.url,
             });
-          })
-      );
+            });
+        else
+          throw new Error('Image failed to fetch.');
+      });
   }
 
   static fetchAndCacheWeatherData() {
@@ -56,9 +60,8 @@ class EventPage {
         if (response.ok)
           return response.json();
         else
-          throw new TypeError(
-            `Weather request failed with status: ${response.status}`
-          );
+          throw new Error('Weather request failed with status: ' +
+                          `${response.status}`);
       })
       .then(data => {
         const DATA_HARD_LIFETIME_MS = 2 * 60 * 60 * 1000;  // 2 hours
