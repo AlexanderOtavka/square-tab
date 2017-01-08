@@ -129,8 +129,8 @@ class Weather {
       .map(condition => condition.description)
       .join(', ')
       // convert description to Title Case
-      .replace(/\w\S*/, txt => txt.charAt(0).toUpperCase() +
-                              txt.substr(1).toLowerCase());
+      .replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() +
+                                txt.substr(1).toLowerCase());
 
     const {isDay} = this.getSunInfoMS(this._data);
 
