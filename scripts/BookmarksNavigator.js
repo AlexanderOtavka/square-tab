@@ -14,6 +14,22 @@ class BookmarksNavigator {
       this._stack[this._stack.length - 2] : null;
   }
 
+  static get ROOT_ID() {
+    return '0';
+  }
+
+  static get BOOKMARKS_BAR_ID() {
+    return '1';
+  }
+
+  static get OTHER_BOOKMARKS_ID() {
+    return '2';
+  }
+
+  static get MOBILE_BOOKMARKS_ID() {
+    return '3';
+  }
+
   static main() {
     this.$header = document.querySelector('#bookmarks-drawer .drawer-header');
     this.$upButton = document.querySelector('#bookmarks-up-button');
@@ -21,9 +37,7 @@ class BookmarksNavigator {
     this.$drawerItems = document.querySelector('#bookmarks-drawer-items');
     this.$drawerTooltip = document.querySelector('#bookmarks-drawer-tooltip');
 
-    const ROOT_ID = '0';
-    const BOOKMARKS_BAR_ID = '1';
-    this._stack = [ROOT_ID, BOOKMARKS_BAR_ID];
+    this._stack = [this.ROOT_ID, this.BOOKMARKS_BAR_ID];
 
     this.openBookmark(this.currentFolder);
 
@@ -93,6 +107,15 @@ class BookmarksNavigator {
     this.$drawerTooltip.hide();
   }
 
+  static getNodeTitle({id, url, title}) {
+    if (title || url)
+      return title || url;
+    else if (id === this.ROOT_ID)
+      return 'Bookmarks';
+    else
+      return '(Untitled Folder)';
+  }
+
   static openBookmark(id) {
     if (id !== this.currentFolder)
       this._stack.push(id);
@@ -101,7 +124,7 @@ class BookmarksNavigator {
 
     chrome.bookmarks.get(id, ([node]) => {
       if (!node.url) {
-        const title = node.title || 'Bookmarks';
+        const title = this.getNodeTitle(node);
         this.$title.textContent = title;
         this.$title.title = title;
 

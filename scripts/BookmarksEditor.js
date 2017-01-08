@@ -1,5 +1,7 @@
 /* globals BookmarksNavigator */
 
+// todo: add undo popup
+
 class BookmarksEditor {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');
@@ -148,8 +150,6 @@ class BookmarksEditor {
   static openCtxMenu(x, y, nodeId) {
     this.$drawer.classList.add('ctx-menu-active');
 
-    this.$ctxMenuName.hidden = 'true';
-
     this.$ctxMenuAddPage.classList.remove('disabled');
     this.$ctxMenuAddPage.onclick = () => {
       this._openCreateDialog(false, nodeId);
@@ -160,20 +160,19 @@ class BookmarksEditor {
       this._openCreateDialog(true, nodeId);
     };
 
-    if (nodeId) {
-      chrome.bookmarks.get(nodeId, ([{title, url}]) => {
-        if (title) {
-          this.$ctxMenuName.textContent = title;
-          this.$ctxMenuName.hidden = false;
-        }
+    this.$ctxMenuName.hidden = !nodeId;
 
-        if (url) {
+    if (nodeId) {
+      chrome.bookmarks.get(nodeId, ([node]) => {
+        if (node.url) {
           this.$ctxMenuAddPage.classList.add('disabled');
           this.$ctxMenuAddPage.onclick = () => {};
 
           this.$ctxMenuAddFolder.classList.add('disabled');
           this.$ctxMenuAddFolder.onclick = () => {};
         }
+
+        this.$ctxMenuName.textContent = BookmarksNavigator.getNodeTitle(node);
       });
 
       this.$ctxMenuEdit.classList.remove('disabled');

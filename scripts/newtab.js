@@ -22,6 +22,7 @@ class NewTab {
     this.$greeting = document.querySelector('#greeting');
     this.$weatherWrapper = document.querySelector('#weather-wrapper');
     this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
+    this.$bookmarksDrawer = document.querySelector('#bookmarks-drawer');
     this.$bookmarksOpenButton =
       document.querySelector('#bookmarks-open-button');
     this.$bookmarksCloseButton =
@@ -271,18 +272,23 @@ class NewTab {
   }
 
   static addBookmarksClickListeners() {
-    this.$bookmarksUpButton.addEventListener('click', () =>
-      BookmarksNavigator.ascend()
-    );
+    this.$bookmarksUpButton.addEventListener('click', () => {
+      BookmarksNavigator.ascend();
+    });
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
       BookmarksNavigator.openBookmark(ev.detail.nodeId);
     }, true);
 
-    this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
-      BookmarksEditor.openCtxMenu(
-        ev.x, ev.y,
-        (ev.target instanceof XBookmarkElement) ? ev.target.node.id : null
-      );
+    this.$bookmarksDrawer.addEventListener('contextmenu', ev => {
+      let nodeId;
+      if (ev.target instanceof XBookmarkElement)
+        nodeId = ev.target.node.id;
+      else if (ev.target === this.$bookmarksUpButton)
+        nodeId = BookmarksNavigator.parentFolder;
+      else
+        nodeId = null;
+
+      BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId);
     });
   }
 
