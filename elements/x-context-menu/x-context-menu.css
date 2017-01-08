@@ -31,6 +31,7 @@
   border-radius: 2px;
   cursor: pointer;
   user-select: none;
+  overflow-y: scroll;
 }
 
 ::content .menu-item {
