@@ -14,23 +14,33 @@ class EventPage {
     });
   }
 
+  /**
+   * @returns {Promise<void>} Resolves when image has been cached.
+   */
   static fetchAndCacheImage(resourceURI) {
-    console.log(new Date(), 'fetching image');
+    console.log(`${new Date()} - fetching image`);
     return fetch(resourceURI)
-      .then(resp =>
-        this._readBlob(resp.body.getReader())
-          .then(blob => {
-            const contentType = resp.headers.get('content-type');
-            const data = this._encodeUint8Array(blob);
-            const dataUrl = `data:${contentType};base64,${data}`;
-            chrome.storage.local.set({
-              [StorageKeys.IMAGE_DATA_URL]: dataUrl,
-              [StorageKeys.IMAGE_SOURCE_URL]: resp.url,
+      .then(resp => {
+        const photoNotFoundRE = /photo-1446704477871-62a4972035cd/;
+        if (resp.ok && !photoNotFoundRE.test(resp.url))
+          return this._readBlob(resp.body.getReader())
+            .then(blob => {
+              const contentType = resp.headers.get('content-type');
+              const data = this._encodeUint8Array(blob);
+              const dataUrl = `data:${contentType};base64,${data}`;
+              chrome.storage.local.set({
+                [StorageKeys.IMAGE_DATA_URL]: dataUrl,
+                [StorageKeys.IMAGE_SOURCE_URL]: resp.url,
+              });
             });
-          })
-      );
+        else
+          throw new Error('Image failed to fetch.');
+      });
   }
 
+  /**
+   * @returns {Promise<void>} Resolves when weather data has been cached.
+   */
   static fetchAndCacheWeatherData() {
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(position => resolve(position));
@@ -46,7 +56,7 @@ class EventPage {
         // For some reason, the leading & needs to be there
         const qry = `&lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
 
-        console.log(new Date(), 'fetching weather data');
+        console.log(`${new Date()} - fetching weather data`);
         return fetch(`${WEATHER_RESOURCE}?${qry}`, {
           method: 'GET',
           mode: 'cors',
@@ -57,26 +67,36 @@ class EventPage {
         if (response.ok)
           return response.json();
         else
-          throw new TypeError(
-            `Weather request failed with status: ${response.status}`
-          );
+          throw new Error('Weather request failed with status: ' +
+                          `${response.status}`);
       })
       .then(data => {
-        const DATA_HARD_LIFETIME_MS = 2 * 60 * 60 * 1000;  // 2 hours
-        const DATA_FRESH_LIFETIME_MS = 30 * 60 * 1000;  // 30 mins
+        const HOUR_MS = 60 * 60 * 1000;
+        const DATA_HARD_LIFETIME_MS = 2 * HOUR_MS;
+        const DATA_FRESH_LIFETIME_MS = 0.5 * HOUR_MS;
+        const SUN_DATA_LIFETIME_MS = 20 * 24 * HOUR_MS;
+
         data.hardExpiration = Date.now() + DATA_HARD_LIFETIME_MS;
         data.freshExpiration = Date.now() + DATA_FRESH_LIFETIME_MS;
+        data.sunExpiration = Date.now() + SUN_DATA_LIFETIME_MS;
+
         chrome.storage.local.set({
           [StorageKeys.WEATHER_DATA]: JSON.stringify(data),
         });
       });
   }
 
-  static _readBlob(reader, blobs = []) {
-    return reader.read().then(({done, value}) => {
+  /**
+   * Read the contents of the stream as an array of bytes.
+   *
+   * @param {ReadableStream} stream
+   * @returns {Uint8Array}
+   */
+  static _readBlob(stream, blobs = []) {
+    return stream.read().then(({done, value}) => {
       if (!done) {
         blobs.push(value);
-        return this._readBlob(reader, blobs);
+        return this._readBlob(stream, blobs);
       } else {
         const size = blobs.reduce((sum, blob) => sum + blob.length, 0);
         const fullBlob = new Uint8Array(size);
@@ -93,6 +113,9 @@ class EventPage {
 
   /**
    * Encode Uint8Array to base64 string.
+   *
+   * @param {Uint8Array} input
+   * @returns {string}
    */
   static _encodeUint8Array(input) {
     // I don't know how this works; taken from:

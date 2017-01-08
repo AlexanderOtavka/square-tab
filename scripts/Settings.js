@@ -30,9 +30,7 @@ class Settings {
     };
   }
 
-  /**
-   * The default values of each setting if they are not saved in storage.
-   */
+  /** The default values of each setting if they are not saved in storage. */
   static get _defaults() {
     return {
       [this.keys.BOOKMARKS_DRAWER_MODE]: this.enums.BookmarkDrawerModes.TOGGLE,
@@ -45,9 +43,7 @@ class Settings {
     };
   }
 
-  /**
-   * Listeners attached to particular settings that set or unset overrides.
-   */
+  /** Listeners attached to particular settings that set or unset overrides. */
   static get _overrides() {
     return {
       startup: chromeVersion => {},

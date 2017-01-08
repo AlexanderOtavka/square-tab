@@ -73,29 +73,25 @@ class NewTab {
     let imageResourceURI = this.defaultImageUrl;
 
     if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-      const timeOfDay = this.getImageTimeOfDay();
-      if (timeOfDay)
-        imageResourceURI += `?${timeOfDay}`;
+      const {
+        now,
+        morningBegins,
+        dayBegins,
+        duskBegins,
+        nightBegins,
+      } = Weather.getSunInfoMS();
+
+      if (nightBegins < now || now <= morningBegins)
+        imageResourceURI += '?night';
+      else if (morningBegins < now && now <= dayBegins)
+        imageResourceURI += '?morning';
+      else if (duskBegins < now && now <= nightBegins)
+        imageResourceURI += '?evening';
     }
 
     chrome.runtime.getBackgroundPage(({EventPage}) => {
       EventPage.fetchAndCacheImage(imageResourceURI);
     });
-  }
-
-  static getImageTimeOfDay() {
-    const hour = new Date().getHours();
-    if (hour < 5 || hour >= 22)
-      // 10pm - 5am
-      return 'night';
-    else if (hour >= 5 && hour < 10)
-      // 5am - 10am
-      return 'morning';
-    else if (hour >= 18 && hour < 22)
-      // 6pm - 10pm
-      return 'evening';
-    else
-      return '';
   }
 
   static resolveBody() {
@@ -111,19 +107,23 @@ class NewTab {
 
   static updateTime() {
     const date = new Date();
-    const hours = date.getHours();
+    const hours = date.getHours() % 12 || 12;
     const minutes = date.getMinutes();
 
     let minutesStr = String(minutes);
     if (minutesStr.length === 1)
       minutesStr = `0${minutesStr}`;
 
-    this.$time.textContent = `${hours % 12 || 12}:${minutesStr}`;
+    this.$time.textContent = `${hours}:${minutesStr}`;
+
+    const MIDNIGHT = 0;
+    const NOON = 12 * 60 * 60 * 1000;
+    const {now, duskBegins} = Weather.getSunInfoMS();
 
     let greeting;
-    if (hours >= 0 && hours < 12)
+    if (MIDNIGHT < now && now <= NOON)
       greeting = 'Good Morning';
-    else if (hours >= 12 && hours < 18)
+    else if (NOON < now && now <= duskBegins)
       greeting = 'Good Afternoon';
     else
       greeting = 'Good Evening';
@@ -161,7 +161,7 @@ class NewTab {
       );
 
     Settings.onChanged(Settings.keys.TEMPERATURE_UNIT)
-      .addListener(value => Weather.updateTemperatureUnit(value));
+      .addListener(value => Weather.updateTempWithUnit(value));
   }
 
   static updateBookmarkDrawerMode(mode) {
@@ -202,8 +202,8 @@ class NewTab {
   }
 
   static addWeatherChangeListeners() {
-    Weather.onDataLoad.addListener(() => {
-      const showWeather = Settings.get(Settings.keys.SHOW_WEATHER);
+    Weather.onDataLoad.addListener(data => {
+      const showWeather = data && Settings.get(Settings.keys.SHOW_WEATHER);
       this.updateWeather(showWeather);
     });
   }
@@ -271,18 +271,32 @@ class NewTab {
   }
 
   static addBookmarksClickListeners() {
-    this.$bookmarksUpButton.addEventListener('click', () =>
-      BookmarksNavigator.ascend()
-    );
+    this.$bookmarksUpButton.addEventListener('click', () => {
+      BookmarksNavigator.ascend();
+    });
+
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
       BookmarksNavigator.openBookmark(ev.detail.nodeId);
     }, true);
 
+    this.$bookmarksDrawerHeader.addEventListener('contextmenu', ev => {
+      let nodeId;
+      if (ev.target === this.$bookmarksUpButton)
+        nodeId = BookmarksNavigator.parentFolder;
+      else
+        nodeId = BookmarksNavigator.currentFolder;
+
+      BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId);
+    });
+
     this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
-      BookmarksEditor.openCtxMenu(
-        ev.x, ev.y,
-        (ev.target instanceof XBookmarkElement) ? ev.target.node.id : null
-      );
+      let nodeId;
+      if (ev.target instanceof XBookmarkElement)
+        nodeId = ev.target.node.id;
+      else
+        nodeId = null;
+
+      BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId);
     });
   }
 

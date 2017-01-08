@@ -23,6 +23,7 @@
 
 #wrapper {
   position: absolute;
+  right: 0;
   display: block;
   max-width: 40%;
   min-width: 150px;
@@ -31,6 +32,7 @@
   border-radius: 2px;
   cursor: pointer;
   user-select: none;
+  overflow-y: scroll;
 }
 
 ::content .menu-item {

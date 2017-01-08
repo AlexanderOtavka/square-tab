@@ -1,5 +1,7 @@
 /* globals BookmarksNavigator */
 
+// todo: add undo popup
+
 class BookmarksEditor {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');
@@ -148,34 +150,31 @@ class BookmarksEditor {
   static openCtxMenu(x, y, nodeId) {
     this.$drawer.classList.add('ctx-menu-active');
 
-    this.$ctxMenuName.setAttribute('hidden', '');
-
-    this.$ctxMenuAddPage.classList.remove('disabled');
-    this.$ctxMenuAddPage.onclick = () => {
-      this._openCreateDialog(false, nodeId);
-    };
-
-    this.$ctxMenuAddFolder.classList.remove('disabled');
-    this.$ctxMenuAddFolder.onclick = () => {
-      this._openCreateDialog(true, nodeId);
-    };
-
-    if (nodeId) {
-      chrome.bookmarks.get(nodeId, ([{title, url}]) => {
-        if (title) {
-          this.$ctxMenuName.textContent = title;
-          this.$ctxMenuName.removeAttribute('hidden');
-        }
-
-        if (url) {
-          this.$ctxMenuAddPage.classList.add('disabled');
-          this.$ctxMenuAddPage.onclick = () => {};
-
-          this.$ctxMenuAddFolder.classList.add('disabled');
-          this.$ctxMenuAddFolder.onclick = () => {};
-        }
+    this.$ctxMenuName.hidden = !nodeId;
+    if (nodeId)
+      chrome.bookmarks.get(nodeId, ([node]) => {
+        this.$ctxMenuName.textContent = BookmarksNavigator.getNodeTitle(node);
       });
 
+    if (nodeId !== BookmarksNavigator.ROOT_ID) {
+      this.$ctxMenuAddPage.classList.remove('disabled');
+      this.$ctxMenuAddPage.onclick = () => {
+        this._openCreateDialog(false, null);
+      };
+
+      this.$ctxMenuAddFolder.classList.remove('disabled');
+      this.$ctxMenuAddFolder.onclick = () => {
+        this._openCreateDialog(true, null);
+      };
+    } else {
+      this.$ctxMenuAddPage.classList.add('disabled');
+      this.$ctxMenuAddPage.onclick = () => {};
+
+      this.$ctxMenuAddFolder.classList.add('disabled');
+      this.$ctxMenuAddFolder.onclick = () => {};
+    }
+
+    if (BookmarksNavigator.nodeIsEditable(nodeId)) {
       this.$ctxMenuEdit.classList.remove('disabled');
       this.$ctxMenuEdit.onclick = () => {
         this._openEditDialog(nodeId);
