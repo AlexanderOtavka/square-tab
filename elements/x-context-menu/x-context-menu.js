@@ -46,7 +46,9 @@ class XContextMenuElement extends HTMLElement {
       if (menuRect.height > maxHeight)
         this.$wrapper.style.height = `${maxHeight}px`;
 
-      this.$wrapper.style.transform = `translate(${x}px, ${y}px)`;
+      // since the wrapper is attached to the right side of the screen
+      const adjustedX = (x + menuRect.width) - windowRect.width;
+      this.$wrapper.style.transform = `translate(${adjustedX}px, ${y}px)`;
     });
   }
 
