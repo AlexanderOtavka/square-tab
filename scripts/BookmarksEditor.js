@@ -161,20 +161,12 @@ class BookmarksEditor {
     };
 
     this.$ctxMenuName.hidden = !nodeId;
-
-    if (nodeId) {
+    if (nodeId)
       chrome.bookmarks.get(nodeId, ([node]) => {
-        if (node.url) {
-          this.$ctxMenuAddPage.classList.add('disabled');
-          this.$ctxMenuAddPage.onclick = () => {};
-
-          this.$ctxMenuAddFolder.classList.add('disabled');
-          this.$ctxMenuAddFolder.onclick = () => {};
-        }
-
         this.$ctxMenuName.textContent = BookmarksNavigator.getNodeTitle(node);
       });
 
+    if (BookmarksNavigator.nodeIsEditable(nodeId)) {
       this.$ctxMenuEdit.classList.remove('disabled');
       this.$ctxMenuEdit.onclick = () => {
         this._openEditDialog(nodeId);

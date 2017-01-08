@@ -95,7 +95,7 @@ class BookmarksNavigator {
 
   static onBookmarkMouseOver(ev) {
     if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL))
-      this.$drawerTooltip.show(ev.target, ev.target.name);
+      this.$drawerTooltip.show(ev.target, this.getNodeTitle(ev.target.node));
   }
 
   static onHeaderMouseOver() {
@@ -114,6 +114,16 @@ class BookmarksNavigator {
       return 'Bookmarks';
     else
       return '(Untitled Folder)';
+  }
+
+  static nodeIsEditable(nodeId) {
+    return (
+      nodeId &&
+      nodeId !== BookmarksNavigator.ROOT_ID &&
+      nodeId !== BookmarksNavigator.BOOKMARKS_BAR_ID &&
+      nodeId !== BookmarksNavigator.OTHER_BOOKMARKS_ID &&
+      nodeId !== BookmarksNavigator.MOBILE_BOOKMARKS_ID
+    );
   }
 
   static openBookmark(id) {

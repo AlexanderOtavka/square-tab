@@ -228,12 +228,6 @@ x-tooltip {
   display: none;
 }
 
-#bookmarks-drawer-items::after {
-  content: "";
-  display: block;
-  height: 32px;
-}
-
 #bookmarks-edit-dialog {
   --x-dialog-width: 350px;
 }

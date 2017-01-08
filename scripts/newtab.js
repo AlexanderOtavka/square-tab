@@ -22,7 +22,6 @@ class NewTab {
     this.$greeting = document.querySelector('#greeting');
     this.$weatherWrapper = document.querySelector('#weather-wrapper');
     this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
-    this.$bookmarksDrawer = document.querySelector('#bookmarks-drawer');
     this.$bookmarksOpenButton =
       document.querySelector('#bookmarks-open-button');
     this.$bookmarksCloseButton =
@@ -275,16 +274,25 @@ class NewTab {
     this.$bookmarksUpButton.addEventListener('click', () => {
       BookmarksNavigator.ascend();
     });
+
     this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
       BookmarksNavigator.openBookmark(ev.detail.nodeId);
     }, true);
 
-    this.$bookmarksDrawer.addEventListener('contextmenu', ev => {
+    this.$bookmarksDrawerHeader.addEventListener('contextmenu', ev => {
+      let nodeId;
+      if (ev.target === this.$bookmarksUpButton)
+        nodeId = BookmarksNavigator.parentFolder;
+      else
+        nodeId = BookmarksNavigator.currentFolder;
+
+      BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId);
+    });
+
+    this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
       let nodeId;
       if (ev.target instanceof XBookmarkElement)
         nodeId = ev.target.node.id;
-      else if (ev.target === this.$bookmarksUpButton)
-        nodeId = BookmarksNavigator.parentFolder;
       else
         nodeId = null;
 
