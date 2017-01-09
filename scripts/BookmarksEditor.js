@@ -139,8 +139,10 @@ class BookmarksEditor {
   static onDragLeave(ev) {
     const rect = this.$drawerItems.getBoundingClientRect();
     if (ev.x < rect.left || ev.x > rect.right ||
-        ev.y < rect.top || ev.y > rect.bottom)
+        ev.y < rect.top || ev.y > rect.bottom) {
       this._returnDragHome();
+      BookmarksNavigator.hideTooltip();
+    }
   }
 
   static onDragEnd() {
@@ -216,18 +218,27 @@ class BookmarksEditor {
     const targetId = target ? target.node.id : BookmarksNavigator.currentFolder;
     const targetIsEditable = BookmarksNavigator.nodeIsEditable(targetId);
 
-    if (target && !isAtStart) {
+    let targetIsExpanded = false;
+
+    if (target) {
       const draggedElement = this._currentDraggedBookmark;
       const draggedIsEditable = !draggedElement ||
         BookmarksNavigator.nodeIsEditable(draggedElement.node.id);
 
-      if (draggedIsEditable &&
+      if (!isAtStart && draggedIsEditable &&
           this._isFolderDrop(target.isFolder, targetIsEditable, isDraggingDown,
-                             y, target.getBoundingClientRect()))
+                             y, target.getBoundingClientRect())) {
         target.classList.add('expand');
-      else
+        targetIsExpanded = true;
+      } else {
         target.classList.remove('expand');
+      }
     }
+
+    if (targetIsExpanded)
+      BookmarksNavigator.maybeShowTooltipForBookmark(target);
+    else
+      BookmarksNavigator.hideTooltip();
 
     const isNewTarget = targetI !== this._currentDraggedOverBookmarkIndex;
     if (isNewTarget && targetIsEditable) {

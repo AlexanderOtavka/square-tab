@@ -53,15 +53,15 @@ class XTooltipElement extends HTMLElement {
     requestAnimationFrame(() => {
       this._element = element;
       this._updateTransform(!wasHidden);
-      this.classList.add('show');
+      this.classList.toggle('show', !this._hidden);
     });
   }
 
   hide() {
-    this.classList.remove('show');
     this._hideFrame = requestAnimationFrame(() => {
       this._hidden = true;
       cancelAnimationFrame(this._updateTransformFrame);
+      this.classList.toggle('show', !this._hidden);
     });
   }
 
