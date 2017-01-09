@@ -209,10 +209,6 @@ class BookmarksEditor {
    * @param {number} y Y coordinate of the mouse.
    */
   static _handleDragOver(target, targetI, y) {
-    const isNewTarget = targetI !== this._currentDraggedOverBookmarkIndex;
-    if (isNewTarget)
-      this._currentDraggedOverBookmarkIndex = targetI;
-
     const startI = this._currentDraggedBookmarkIndex;
     const isDraggingDown = (startI < targetI);
     const isAtStart = (targetI === startI);
@@ -233,12 +229,15 @@ class BookmarksEditor {
         target.classList.remove('expand');
     }
 
+    const isNewTarget = targetI !== this._currentDraggedOverBookmarkIndex;
     if (isNewTarget && targetIsEditable) {
       this.$drawerItems.classList.remove('no-animate-translate');
 
       const childNodes = this.$drawerItems.childNodes;
       const oldTargetI = Math.min(this._currentDraggedOverBookmarkIndex,
                                   childNodes.length);
+
+      this._currentDraggedOverBookmarkIndex = targetI;
 
       if (isAtStart) {
         // Back at start
