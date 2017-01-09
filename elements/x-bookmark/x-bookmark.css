@@ -24,7 +24,7 @@
   cursor: pointer;
   user-select: none;
   background: #fff;
-  transition: transform var(--drag-drop-animation-timing);
+  transition: transform var(--drag-drop-transition-timing);
 }
 
 :host-context(.no-animate-translate) #link {
