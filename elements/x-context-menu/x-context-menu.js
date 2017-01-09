@@ -29,15 +29,17 @@ class XContextMenuElement extends HTMLElement {
 
       const MARGIN = 4;
 
-      const rightSideSpace = windowRect.width - x - MARGIN;
-      const bottomSideSpace = windowRect.height - y - MARGIN;
+      let transformX = x;
+      let transformY = y;
+      const rightSideSpace = windowRect.width - transformX - MARGIN;
+      const bottomSideSpace = windowRect.height - transformY - MARGIN;
       if (menuRect.width > rightSideSpace)
-        x -= menuRect.width;
+        transformX -= menuRect.width;
       if (menuRect.height > bottomSideSpace)
-        y -= menuRect.height;
+        transformY -= menuRect.height;
 
-      if (x < MARGIN) x = MARGIN;
-      if (y < MARGIN) y = MARGIN;
+      if (transformX < MARGIN) transformX = MARGIN;
+      if (transformY < MARGIN) transformY = MARGIN;
 
       const maxWidth = windowRect.width - (MARGIN * 2);
       const maxHeight = windowRect.height - (MARGIN * 2);
@@ -47,8 +49,9 @@ class XContextMenuElement extends HTMLElement {
         this.$wrapper.style.height = `${maxHeight}px`;
 
       // since the wrapper is attached to the right side of the screen
-      const adjustedX = (x + menuRect.width) - windowRect.width;
-      this.$wrapper.style.transform = `translate(${adjustedX}px, ${y}px)`;
+      const adjustedX = (transformX + menuRect.width) - windowRect.width;
+      this.$wrapper.style.transform =
+        `translate(${adjustedX}px, ${transformY}px)`;
     });
   }
 
