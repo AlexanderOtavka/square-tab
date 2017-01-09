@@ -19,26 +19,21 @@ class XDialogElement extends HTMLElement {
 
   open() {
     this.setAttribute('open', '');
-
-    const customEvent = new CustomEvent('x-dialog-open');
-    this.dispatchEvent(customEvent);
+    this.dispatchEvent(new CustomEvent('x-dialog-open'));
   }
 
   close() {
     this.removeAttribute('open');
-
-    const customEvent = new CustomEvent('x-dialog-close');
-    this.dispatchEvent(customEvent);
+    this.dispatchEvent(new CustomEvent('x-dialog-close'));
   }
 
   onFooterClick(ev) {
-    if (!ev.target.classList.contains('dialog-no-close') &&
-        (ev.target.classList.contains('dialog-confirm') ||
-         ev.target.classList.contains('dialog-cancel'))) {
-      if (ev.target.classList.contains('dialog-confirm')) {
-        const customEvent = new CustomEvent('x-dialog-confirm');
-        this.dispatchEvent(customEvent);
-      }
+    const dialogIsCloseable = !ev.target.classList.contains('dialog-no-close');
+    const buttonIsConfirm = ev.target.classList.contains('dialog-confirm');
+    const buttonIsCancel = ev.target.classList.contains('dialog-cancel');
+    if (dialogIsCloseable && (buttonIsConfirm || buttonIsCancel)) {
+      if (buttonIsConfirm)
+        this.dispatchEvent(new CustomEvent('x-dialog-confirm'));
 
       requestAnimationFrame(() => this.close());
     }
