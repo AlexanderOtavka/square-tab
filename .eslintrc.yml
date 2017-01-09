@@ -44,7 +44,8 @@ rules:
     - allowAfterThis: true
       allowAfterSuper: true
   no-param-reassign:
-    - off
+    - error
+    - props: false
   no-plusplus:
     - off
   no-else-return:
