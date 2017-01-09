@@ -157,7 +157,8 @@ class BookmarksNavigator {
           const $hoveredBookmark =
             this.$drawerItems.querySelector('x-bookmark:hover');
           if ($hoveredBookmark)
-            this.$drawerTooltip.name = $hoveredBookmark.name;
+            this.$drawerTooltip.name =
+              this.getNodeTitle($hoveredBookmark.title);
           else if (document.querySelector('#bookmarks-up-button:hover'))
             this.$drawerTooltip.name = title;
           else
