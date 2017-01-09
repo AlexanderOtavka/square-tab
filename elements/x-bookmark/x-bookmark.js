@@ -75,9 +75,10 @@ class XBookmarkElement extends HTMLElement {
   }
 
   onClick() {
+    const nodeId = this.node.id;
     requestAnimationFrame(() =>
       this.dispatchEvent(new CustomEvent('x-bookmark-click', {
-        detail: {nodeId: this.node.id},
+        detail: {nodeId},
       }))
     );
   }
