@@ -47,6 +47,10 @@
   transform: scale(1.2) translate(6%, 0);
 }
 
+:host([small].expand) #link {
+  transform: scale(1.2);
+}
+
 :host(.dragging) #link {
   opacity: 0;
 }
