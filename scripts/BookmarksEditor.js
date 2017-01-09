@@ -209,17 +209,21 @@ class BookmarksEditor {
    * @param {number} y Y coordinate of the mouse.
    */
   static _handleDragOver(target, targetI, y) {
+    const isNewTarget = targetI !== this._currentDraggedOverBookmarkIndex;
+    if (isNewTarget)
+      this._currentDraggedOverBookmarkIndex = targetI;
+
     const startI = this._currentDraggedBookmarkIndex;
     const isDraggingDown = (startI < targetI);
     const isAtStart = (targetI === startI);
 
-    const nodeId = target ? target.node.id : BookmarksNavigator.currentFolder;
-    const targetIsEditable = BookmarksNavigator.nodeIsEditable(nodeId);
+    const targetId = target ? target.node.id : BookmarksNavigator.currentFolder;
+    const targetIsEditable = BookmarksNavigator.nodeIsEditable(targetId);
 
     if (target && !isAtStart) {
-      const dragged = this._currentDraggedBookmark;
-      const draggedIsEditable =
-        !dragged || BookmarksNavigator.nodeIsEditable(dragged.node.id);
+      const draggedElement = this._currentDraggedBookmark;
+      const draggedIsEditable = !draggedElement ||
+        BookmarksNavigator.nodeIsEditable(draggedElement.node.id);
 
       if (draggedIsEditable &&
           this._isFolderDrop(target.isFolder, targetIsEditable, isDraggingDown,
@@ -229,14 +233,12 @@ class BookmarksEditor {
         target.classList.remove('expand');
     }
 
-    if (targetI !== this._currentDraggedOverBookmarkIndex && targetIsEditable) {
+    if (isNewTarget && targetIsEditable) {
       this.$drawerItems.classList.remove('no-animate-translate');
 
       const childNodes = this.$drawerItems.childNodes;
       const oldTargetI = Math.min(this._currentDraggedOverBookmarkIndex,
                                   childNodes.length);
-
-      this._currentDraggedOverBookmarkIndex = targetI;
 
       if (isAtStart) {
         // Back at start
