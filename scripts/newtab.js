@@ -221,13 +221,15 @@ class NewTab {
   }
 
   static addGlobalDragDropListeners() {
-    const removeClass = () => this.$root.classList.remove('dragover');
-
     let removeClassTimeout;
+
     window.addEventListener('dragover', () => {
       this.$root.classList.add('dragover');
+
       clearTimeout(removeClassTimeout);
-      removeClassTimeout = setTimeout(removeClass, 100);
+      removeClassTimeout = setTimeout(() => {
+        this.$root.classList.remove('dragover');
+      }, 100);
     });
   }
 
