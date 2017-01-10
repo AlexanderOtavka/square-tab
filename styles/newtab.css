@@ -173,7 +173,8 @@ x-tooltip {
   display: none;
 }
 
-.bookmarks-drawer-open #bookmarks-drawer,
+.bookmarks-drawer-mode-toggle.bookmarks-drawer-open #bookmarks-drawer,
+.bookmarks-drawer-mode-toggle.dragover #bookmarks-drawer,
 .bookmarks-drawer-mode-always #bookmarks-drawer,
 .bookmarks-drawer-mode-hover #bookmarks-drawer {
   transform: translateX(0);
@@ -184,9 +185,20 @@ x-tooltip {
   box-shadow: none;
 }
 
-.bookmarks-drawer-mode-hover
-#bookmarks-drawer:not(:hover):not(.ctx-menu-active) {
+.bookmarks-drawer-mode-hover #bookmarks-drawer {
   opacity: 0;
+}
+
+.bookmarks-drawer-mode-hover #bookmarks-drawer:hover,
+.bookmarks-drawer-mode-hover #bookmarks-drawer.ctx-menu-active,
+.bookmarks-drawer-mode-hover.dragover #bookmarks-drawer {
+  opacity: 1;
+}
+
+.bookmarks-drawer-mode-hover.dragover #bookmarks-drawer-items::after {
+  display: block;
+  content: "";
+  height: 32px;
 }
 
 #drawer-backdrop {

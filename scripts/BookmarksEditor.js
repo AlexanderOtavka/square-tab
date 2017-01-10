@@ -8,6 +8,9 @@ class BookmarksEditor {
   }
 
   static main() {
+    this.bookmarkTemplate = document.querySelector('#x-bookmark-tmpl').import
+      .querySelector('template');
+
     this.$drawer = document.querySelector('#bookmarks-drawer');
     this.$upButton = document.querySelector('#bookmarks-up-button');
     this.$drawerItems = document.querySelector('#bookmarks-drawer-items');
@@ -360,7 +363,9 @@ class BookmarksEditor {
       } else if (BookmarksNavigator.currentFolder !==
                  BookmarksNavigator.ROOT_ID) {
         const beforeElement = this.$drawerItems.childNodes[index];
-        const bookmark = document.createElement('x-bookmark');
+        const bookmark = document
+          .importNode(this.bookmarkTemplate.content, true)
+          .querySelector('.x-bookmark');
         this.$drawerItems.insertBefore(bookmark, beforeElement);
 
         chrome.bookmarks.create({

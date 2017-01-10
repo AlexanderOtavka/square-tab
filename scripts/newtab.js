@@ -1,5 +1,5 @@
 /* globals BookmarksNavigator, BookmarksEditor, Settings, Weather,
-           StorageKeys, XBookmarkElement */
+           StorageKeys */
 
 class NewTab {
   constructor() {
@@ -46,6 +46,7 @@ class NewTab {
     this.disableDefaultRightClick();
     this.addSettingsChangeListeners();
     this.addWeatherChangeListeners();
+    this.addGlobalDragDropListeners();
     this.addBookmarksDragDropListeners();
     this.addBookmarksClickListeners();
     this.addBookmarksDrawerListeners();
@@ -217,6 +218,17 @@ class NewTab {
       this.$weatherWrapper.hidden = true;
       return Promise.resolve();
     }
+  }
+
+  static addGlobalDragDropListeners() {
+    const removeClass = () => this.$root.classList.remove('dragover');
+
+    let removeClassTimeout;
+    window.addEventListener('dragover', () => {
+      this.$root.classList.add('dragover');
+      clearTimeout(removeClassTimeout);
+      removeClassTimeout = setTimeout(removeClass, 100);
+    });
   }
 
   static addBookmarksDragDropListeners() {
