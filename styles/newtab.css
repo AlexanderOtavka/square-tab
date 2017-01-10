@@ -191,11 +191,12 @@ x-tooltip {
 
 .bookmarks-drawer-mode-hover #bookmarks-drawer:hover,
 .bookmarks-drawer-mode-hover #bookmarks-drawer.ctx-menu-active,
-.bookmarks-drawer-mode-hover.dragover #bookmarks-drawer {
+.bookmarks-drawer-mode-hover.dragover #bookmarks-drawer,
+.bookmarks-drawer-mode-always.dragover #bookmarks-drawer {
   opacity: 1;
 }
 
-.bookmarks-drawer-mode-hover.dragover #bookmarks-drawer-items::after {
+.dragover #bookmarks-drawer-items::after {
   display: block;
   content: "";
   height: 40px;
