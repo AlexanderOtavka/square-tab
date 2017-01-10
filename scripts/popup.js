@@ -6,23 +6,16 @@ class Popup {
   }
 
   static main() {
-    const BOOKMARKS_DRAWER_MODE = 'BOOKMARKS_DRAWER_MODE';
-    const BOOKMARKS_DRAWER_SMALL = 'BOOKMARKS_DRAWER_SMALL';
-    const SHOW_PHOTO_SOURCE = 'SHOW_PHOTO_SOURCE';
-    const BOXED_INFO = 'BOXED_INFO';
-    const SHOW_WEATHER = 'SHOW_WEATHER';
-    const TEMPERATURE_UNIT = 'TEMPERATURE_UNIT';
-    const USE_TIME_OF_DAY_IMAGES = 'USE_TIME_OF_DAY_IMAGES';
-
-    this.bindRadioButtons(BOOKMARKS_DRAWER_MODE,
+    this.bindRadioButtons('BOOKMARKS_DRAWER_MODE',
                           Settings.enums.BookmarkDrawerModes);
-    this.bindCheckbox(BOOKMARKS_DRAWER_SMALL);
-    this.bindCheckbox(SHOW_PHOTO_SOURCE);
-    this.bindCheckbox(BOXED_INFO);
-    this.bindCheckbox(SHOW_WEATHER);
-    this.bindRadioButtons(TEMPERATURE_UNIT,
+    this.bindCheckbox('BOOKMARKS_DRAWER_SMALL');
+    this.bindCheckbox('SHOW_PHOTO_SOURCE');
+    this.bindCheckbox('BOXED_INFO');
+    this.bindCheckbox('TWENTY_FOUR_HOUR_TIME');
+    this.bindCheckbox('SHOW_WEATHER');
+    this.bindRadioButtons('TEMPERATURE_UNIT',
                           Settings.enums.TemperatureUnits);
-    this.bindCheckbox(USE_TIME_OF_DAY_IMAGES);
+    this.bindCheckbox('USE_TIME_OF_DAY_IMAGES');
   }
 
   static bindCheckbox(settingKeyName) {
