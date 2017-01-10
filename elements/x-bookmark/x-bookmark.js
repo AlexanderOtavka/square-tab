@@ -75,11 +75,12 @@ class XBookmarkElement extends HTMLElement {
   }
 
   onClick() {
-    const customEvent = new CustomEvent('x-bookmark-click', {
-      detail: {nodeId: this.node.id},
-    });
-
-    requestAnimationFrame(() => this.dispatchEvent(customEvent));
+    const nodeId = this.node.id;
+    requestAnimationFrame(() =>
+      this.dispatchEvent(new CustomEvent('x-bookmark-click', {
+        detail: {nodeId},
+      }))
+    );
   }
 
   onDragStart(ev) {
@@ -88,18 +89,16 @@ class XBookmarkElement extends HTMLElement {
     ev.dataTransfer.setDragImage(this, ev.offsetX, ev.offsetY);
     ev.dataTransfer.setData('text/x-bookmark-id', this.node.id);
 
-    const customEvent = new CustomEvent('x-bookmark-drag-start');
-    this.dispatchEvent(customEvent);
+    this.dispatchEvent(new CustomEvent('x-bookmark-drag-start'));
   }
 
   onDragOver(ev) {
     ev.preventDefault();
     ev.dataTransfer.dropEffect = 'move';
 
-    const customEvent = new CustomEvent('x-bookmark-drag-over', {
-      detail: {isFolder: this.isFolder, y: ev.y},
-    });
-    this.dispatchEvent(customEvent);
+    this.dispatchEvent(new CustomEvent('x-bookmark-drag-over', {
+      detail: {y: ev.y},
+    }));
   }
 
   onDragLeave() {
@@ -116,21 +115,17 @@ class XBookmarkElement extends HTMLElement {
     const bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
     const title = ev.dataTransfer.getData('text/plain');
     const url = ev.dataTransfer.getData('text/uri-list') || title;
-    const customEvent = new CustomEvent('x-bookmark-drop', {
+    this.dispatchEvent(new CustomEvent('x-bookmark-drop', {
       detail: {bookmarkId, title, url, y: ev.y},
-    });
-
-    this.dispatchEvent(customEvent);
+    }));
   }
 
   onMouseOver() {
-    const customEvent = new CustomEvent('x-bookmark-mouseover');
-    this.dispatchEvent(customEvent);
+    this.dispatchEvent(new CustomEvent('x-bookmark-mouseover'));
   }
 
   onMouseLeave() {
-    const customEvent = new CustomEvent('x-bookmark-mouseleave');
-    this.dispatchEvent(customEvent);
+    this.dispatchEvent(new CustomEvent('x-bookmark-mouseleave'));
   }
 
   _updateImage() {

@@ -93,18 +93,27 @@ class BookmarksNavigator {
     });
   }
 
-  static onBookmarkMouseOver(ev) {
+  /**
+   * Show the tooltip over given bookmark if the drawer is small.
+   *
+   * @param {XBookmarkElement} bookmark
+   */
+  static maybeShowTooltipForBookmark(bookmark) {
     if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL))
-      this.$drawerTooltip.show(ev.target, this.getNodeTitle(ev.target.node));
+      this.$drawerTooltip.show(bookmark, this.getNodeTitle(bookmark.node));
+  }
+
+  static hideTooltip() {
+    this.$drawerTooltip.hide();
+  }
+
+  static onBookmarkMouseOver(ev) {
+    this.maybeShowTooltipForBookmark(ev.target);
   }
 
   static onHeaderMouseOver() {
     if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL))
       this.$drawerTooltip.show(this.$header, this.$title.title);
-  }
-
-  static hideTooltip() {
-    this.$drawerTooltip.hide();
   }
 
   static getNodeTitle({id, url, title}) {
@@ -157,7 +166,7 @@ class BookmarksNavigator {
           const $hoveredBookmark =
             this.$drawerItems.querySelector('x-bookmark:hover');
           if ($hoveredBookmark)
-            this.$drawerTooltip.name = $hoveredBookmark.name;
+            this.$drawerTooltip.name = this.getNodeTitle($hoveredBookmark.node);
           else if (document.querySelector('#bookmarks-up-button:hover'))
             this.$drawerTooltip.name = title;
           else

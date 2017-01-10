@@ -66,13 +66,13 @@ class BookmarksEditor {
   static onBookmarkDragOver(ev) {
     const index = Array.prototype.indexOf.call(this.$drawerItems.childNodes,
                                                ev.target);
-    this._handleDragOver(ev.target, index, ev.detail.isFolder, ev.detail.y);
+    this._handleDragOver(ev.target, index, ev.detail.y);
   }
 
   static onBookmarkDrop(ev) {
-    const index = Array.prototype.indexOf.call(
-      this.$drawerItems.childNodes, ev.target);
-    this._handleDrop(ev.detail, index, ev.target);
+    const index = Array.prototype.indexOf.call(this.$drawerItems.childNodes,
+                                               ev.target);
+    this._handleDrop(ev.target, index, ev.detail);
   }
 
   static onItemsDragOver(ev) {
@@ -86,8 +86,7 @@ class BookmarksEditor {
     this.$drawerItems.classList.add('drag-over');
 
     if (ev.target === this.$drawerItems)
-      this._handleDragOver(null, this.$drawerItems.childElementCount, false,
-                           ev.y);
+      this._handleDragOver(null, this.$drawerItems.childElementCount, ev.y);
   }
 
   static onItemsDrop(ev) {
@@ -98,7 +97,7 @@ class BookmarksEditor {
       const title = ev.dataTransfer.getData('text/plain');
       const url = ev.dataTransfer.getData('text/uri-list') || title;
       const index = this.$drawerItems.childElementCount;
-      this._handleDrop({bookmarkId, title, url, y: ev.y}, index, null);
+      this._handleDrop(null, index, {bookmarkId, title, url, y: ev.y});
     }
   }
 
@@ -110,7 +109,8 @@ class BookmarksEditor {
     else
       ev.dataTransfer.dropEffect = 'copy';
 
-    if (BookmarksNavigator.parentFolder)
+    const parentId = BookmarksNavigator.parentFolder;
+    if (parentId && parentId !== BookmarksNavigator.ROOT_ID)
       this.$upButton.classList.add('expand');
   }
 
@@ -124,7 +124,7 @@ class BookmarksEditor {
     this.$upButton.classList.remove('expand');
 
     const parentId = BookmarksNavigator.parentFolder;
-    if (parentId) {
+    if (parentId && parentId !== BookmarksNavigator.ROOT_ID) {
       const bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
       if (bookmarkId) {
         chrome.bookmarks.move(bookmarkId, {parentId});
@@ -139,8 +139,10 @@ class BookmarksEditor {
   static onDragLeave(ev) {
     const rect = this.$drawerItems.getBoundingClientRect();
     if (ev.x < rect.left || ev.x > rect.right ||
-        ev.y < rect.top || ev.y > rect.bottom)
+        ev.y < rect.top || ev.y > rect.bottom) {
       this._returnDragHome();
+      BookmarksNavigator.hideTooltip();
+    }
   }
 
   static onDragEnd() {
@@ -200,66 +202,88 @@ class BookmarksEditor {
     requestAnimationFrame(() => this.$ctxMenu.show(x, y));
   }
 
-  static _handleDragOver(target, targetI, isFolder, y) {
-    let startI = this._currentDraggedBookmarkIndex;
+  /**
+   * Add transforms to bookmark elements when something is dragged over.
+   *
+   * @param {?XBookmarkElement} target The element the mouse is currently over,
+   *   or null if the mouse is over empty space.
+   * @param {number} targetI The index of the current dragged over bookmark.
+   * @param {number} y Y coordinate of the mouse.
+   */
+  static _handleDragOver(target, targetI, y) {
+    const startI = this._currentDraggedBookmarkIndex;
     const isDraggingDown = (startI < targetI);
     const isAtStart = (targetI === startI);
 
-    if (target && !isAtStart)
-      if (this._isFolderDrop(isFolder, isDraggingDown, y,
-                             target.getBoundingClientRect()))
-        target.classList.add('expand');
-      else
-        target.classList.remove('expand');
+    const targetId = target ? target.node.id : BookmarksNavigator.currentFolder;
+    const targetIsEditable = BookmarksNavigator.nodeIsEditable(targetId);
 
-    if (targetI !== this._currentDraggedOverBookmarkIndex) {
+    let targetIsExpanded = false;
+
+    if (target) {
+      const draggedElement = this._currentDraggedBookmark;
+      const draggedIsEditable = !draggedElement ||
+        BookmarksNavigator.nodeIsEditable(draggedElement.node.id);
+
+      if (!isAtStart && draggedIsEditable &&
+          this._isFolderDrop(target.isFolder, targetIsEditable, isDraggingDown,
+                             y, target.getBoundingClientRect())) {
+        target.classList.add('expand');
+        targetIsExpanded = true;
+      } else {
+        target.classList.remove('expand');
+      }
+    }
+
+    if (targetIsExpanded)
+      BookmarksNavigator.maybeShowTooltipForBookmark(target);
+    else
+      BookmarksNavigator.hideTooltip();
+
+    const isNewTarget = targetI !== this._currentDraggedOverBookmarkIndex;
+    if (isNewTarget && targetIsEditable) {
       this.$drawerItems.classList.remove('no-animate-translate');
 
       const childNodes = this.$drawerItems.childNodes;
-      let oldTargetI = Math.min(this._currentDraggedOverBookmarkIndex,
-                                childNodes.length);
+      const oldTargetI = Math.min(this._currentDraggedOverBookmarkIndex,
+                                  childNodes.length);
 
       this._currentDraggedOverBookmarkIndex = targetI;
 
       if (isAtStart) {
         // Back at start
-        if (startI < oldTargetI) {
-          startI++;
-          oldTargetI++;
-
-          for (let i = startI; i < oldTargetI; i++)
+        if (startI < oldTargetI)
+          // When coming out of whitespace, oldTargetI can get too big when
+          // incremented, so we ensure it doesn't exceed the length with
+          // Math.min().
+          for (let i = startI + 1;
+               i < Math.min(oldTargetI + 1, childNodes.length);
+               i++)
             childNodes[i].classList.remove('translate-up');
-        } else if (startI > oldTargetI) {
+        else if (startI > oldTargetI)
           for (let i = oldTargetI; i < startI; i++)
             childNodes[i].classList.remove('translate-down');
-        }
       } else if (isDraggingDown) {
-        targetI++;
-        oldTargetI++;
-
-        if (oldTargetI < targetI) {
-            // When in whitespace, targetI can get too big when ++'d, so we
-            // snap it back down to avoid index-out-of-bounds problems.
-          if (targetI > childNodes.length)
-            targetI = childNodes.length;
-
-          for (let i = oldTargetI; i < targetI; i++) {
+        if (oldTargetI < targetI)
+          // When in whitespace, targetI can get too big when incremented, so we
+          // ensure it doesn't exceed the length with Math.min().
+          for (let i = oldTargetI + 1;
+               i < Math.min(targetI + 1, childNodes.length);
+               i++) {
             childNodes[i].classList.add('translate-up');
             childNodes[i].classList.remove('translate-down');
           }
-        } else {
-            // When coming out of whitespace, oldTargetI can get too big when
-            // ++'d, so we snap it back down to avoid index-out-of-bounds
-            // problems.
-          if (oldTargetI > childNodes.length)
-            oldTargetI = childNodes.length;
-
-          for (let i = targetI; i < oldTargetI; i++)
+        else
+          // When coming out of whitespace, oldTargetI can get too big when
+          // incremented, so we ensure it doesn't exceed the length with
+          // Math.min().
+          for (let i = targetI + 1;
+               i < Math.min(oldTargetI + 1, childNodes.length);
+               i++)
             childNodes[i].classList.remove('translate-up');
-        }
       } else if (oldTargetI === targetI) {
-            // They are dragging upwards in the whitespace below the bookmarks,
-            // meaning they are dragging in an external link/other thing
+        // They are dragging upwards in the whitespace below the bookmarks,
+        // meaning they are dragging in an external link/other thing
         console.assert(targetI === childNodes.length);
         const lastChild = this.$drawerItems.lastChild;
         if (lastChild)
@@ -276,51 +300,65 @@ class BookmarksEditor {
     }
   }
 
-  static _handleDrop(detail, index, dropTarget) {
-    const element = this._currentDraggedBookmark;
+  /**
+   * Move or create bookmarks for drop event within the bookmarks list.
+   *
+   * @param {?XBookmarkElement} target The bookmark dropped over, or null if
+   *   it was dropped over an empty area.
+   * @param {number} index The index of the bookmark being dropped on.
+   * @param {{bookmarkId: string, title: string, url: string, y: number}} detail
+   *   Information about the dragged bookmark/link and the mouse position.
+   */
+  static _handleDrop(target, index, detail) {
+    const targetId = target ? target.node.id : BookmarksNavigator.currentFolder;
+    const targetIsEditable = BookmarksNavigator.nodeIsEditable(targetId);
 
-    if (!element || element !== dropTarget)
+    const draggedElement = this._currentDraggedBookmark;
+    const draggedIsEditable = !draggedElement ||
+      BookmarksNavigator.nodeIsEditable(draggedElement.node.id);
 
-      if (element) {
-        const startI = this._currentDraggedBookmarkIndex;
-        const isDraggingDown = (startI < index);
-        const rect = dropTarget ? dropTarget.getBoundingClientRect() : null;
+    if (draggedElement && draggedElement !== target && draggedIsEditable) {
+      const startI = this._currentDraggedBookmarkIndex;
+      const isDraggingDown = (startI < index);
+      const rect = target ? target.getBoundingClientRect() : null;
 
-        if (dropTarget &&
-            this._isFolderDrop(dropTarget.isFolder, isDraggingDown, detail.y,
-                               rect)) {
-          dropTarget.classList.remove('expand');
-          chrome.bookmarks.move(detail.bookmarkId, {
-            parentId: dropTarget.node.id,
-          });
+      if (target &&
+          this._isFolderDrop(target.isFolder, targetIsEditable,
+                             isDraggingDown, detail.y, rect)) {
+        target.classList.remove('expand');
+        chrome.bookmarks.move(detail.bookmarkId, {
+          parentId: target.node.id,
+        });
+      } else {
+        let indexOffset = 0;
+        let beforeElement;
+        if (target && this._currentDraggedBookmarkIndex < index) {
+          // When we are dragging down, we put it after the current hovered one.
+          indexOffset = 1;
+          beforeElement = target.nextSibling;
         } else {
-          let beforeElement;
-          if (dropTarget && this._currentDraggedBookmarkIndex < index) {
-            // When we are dragging down, we put it after the current hovered
-            // one.
-            index++;
-            beforeElement = dropTarget.nextSibling;
-          } else {
-            beforeElement = dropTarget;
-          }
-
-          this.$drawerItems.removeChild(element);
-          this.$drawerItems.insertBefore(element, beforeElement);
-
-          chrome.bookmarks.move(detail.bookmarkId, {
-            parentId: BookmarksNavigator.currentFolder,
-            index,
-          });
+          beforeElement = target;
         }
-      } else if (dropTarget &&
-                 this._isFolderDrop(dropTarget.isFolder, false, detail.y,
-                                    dropTarget.getBoundingClientRect())) {
+
+        this.$drawerItems.removeChild(draggedElement);
+        this.$drawerItems.insertBefore(draggedElement, beforeElement);
+
+        chrome.bookmarks.move(detail.bookmarkId, {
+          parentId: BookmarksNavigator.currentFolder,
+          index: index + indexOffset,
+        });
+      }
+    } else if (!draggedElement) {
+      if (target &&
+          this._isFolderDrop(target.isFolder, targetIsEditable, false,
+                             detail.y, target.getBoundingClientRect())) {
         chrome.bookmarks.create({
-          parentId: dropTarget.node.id,
+          parentId: target.node.id,
           title: detail.title,
           url: this._fixUrl(detail.url),
         });
-      } else {
+      } else if (BookmarksNavigator.currentFolder !==
+                 BookmarksNavigator.ROOT_ID) {
         const beforeElement = this.$drawerItems.childNodes[index];
         const bookmark = document.createElement('x-bookmark');
         this.$drawerItems.insertBefore(bookmark, beforeElement);
@@ -332,12 +370,27 @@ class BookmarksEditor {
           index,
         });
       }
+    }
 
     this._resetDragState();
   }
 
-  static _isFolderDrop(isFolder, isDraggingDown, y, rect) {
+  /**
+   * Check if a folder is being hovered over to be dropped into.
+   *
+   * @param {boolean} isFolder Whether the current hovered bookmark is a folder.
+   * @param {boolean} isEditable Whether the current hovered bookmark is
+   *   editable.
+   * @param {boolean} isDraggingDown Whether they are dragging from below or
+   *   above the current hovered bookmark.
+   * @param {number} y The Y coordinate of the mouse.
+   * @param {ClientRect} rect The bounds of the current hovered bookmark.
+   */
+  static _isFolderDrop(isFolder, isEditable, isDraggingDown, y, rect) {
     if (isFolder) {
+      if (!isEditable)
+        return true;
+
       const deadWidth = 0.3 * rect.height;
       if (isDraggingDown)
         return rect.bottom - deadWidth > y;
@@ -429,9 +482,9 @@ class BookmarksEditor {
 
   static _fixUrl(url) {
     if (url && url.search('://') === -1)
-      url = `http://${url}`;
-
-    return url;
+      return `http://${url}`;
+    else
+      return url;
   }
 }
 
