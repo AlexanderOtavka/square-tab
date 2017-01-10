@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Square Tab",
-  "description": "A clean, minimalistic new tab page.",
+  "description": "A minimalistic yet functional new tab page.",
   "version": "1.2",
   "icons": {
     "16": "images/icon16.png",
