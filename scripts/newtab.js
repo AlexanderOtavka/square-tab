@@ -290,14 +290,13 @@ class NewTab {
     });
 
     this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
-      let nodeId;
-      if (ev.target instanceof XBookmarkElement)
-        nodeId = ev.target.node.id;
-      else
-        nodeId = null;
-
-      BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId);
+      if (ev.target !== this.$bookmarksDrawerItems) return;
+      BookmarksEditor.openCtxMenu(ev.x, ev.y, null);
     });
+
+    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-menu', ev => {
+      BookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.target.node.id);
+    }, true);
   }
 
   static addBookmarksDrawerListeners() {

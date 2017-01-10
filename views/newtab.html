@@ -9,8 +9,9 @@
   <link rel="stylesheet" href="../styles/shared-styles.css" />
   <link rel="stylesheet" href="../styles/newtab.css" />
   <link rel="stylesheet" href="../styles/weather-icons/css/weather-icons.css" />
+  <link rel="stylesheet" href="../styles/x-bookmark.css" />
 
-  <link rel="import" href="../elements/x-bookmark/x-bookmark.html" />
+  <link rel="import" href="x-bookmark.html" id="x-bookmark-tmpl" />
   <link rel="import" href="../elements/x-icon/x-icon.html" />
   <link rel="import" href="../elements/x-context-menu/x-context-menu.html" />
   <link rel="import" href="../elements/x-dialog/x-dialog.html" />
@@ -97,6 +98,7 @@
     <div id="bookmarks-ctx-menu-add-folder" class="menu-item">Add Folder</div>
   </x-context-menu>
 
+  <script src="../scripts/x-bookmark.js"></script>
   <script src="../scripts/StorageKeys.js"></script>
   <script src="../scripts/Settings.js"></script>
   <script src="../scripts/BookmarksNavigator.js"></script>

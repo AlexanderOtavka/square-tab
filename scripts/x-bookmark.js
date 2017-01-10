@@ -1,16 +1,8 @@
 class XBookmarkElement extends HTMLElement {
-  static register() {
-    this.$tmpl = document.currentScript.ownerDocument.querySelector('template');
-    document.registerElement('x-bookmark', this);
-  }
-
   createdCallback() {
-    this.createShadowRoot()
-      .appendChild(document.importNode(XBookmarkElement.$tmpl.content, true));
-
-    this.$link = this.shadowRoot.querySelector('#link');
-    this.$image = this.shadowRoot.querySelector('#image');
-    this.$name = this.shadowRoot.querySelector('#name');
+    this.$link = this.querySelector('.x-bookmark__link');
+    this.$image = this.querySelector('.x-bookmark__image');
+    this.$name = this.querySelector('.x-bookmark__name');
 
     this.small = false;
     this.node = null;
@@ -18,6 +10,7 @@ class XBookmarkElement extends HTMLElement {
     this.setAttribute('draggable', 'true');
 
     this.addEventListener('click', () => this.onClick());
+    this.addEventListener('contextmenu', ev => this.onCtxMenu(ev));
     this.addEventListener('dragstart', ev => this.onDragStart(ev));
     this.addEventListener('dragover', ev => this.onDragOver(ev));
     this.addEventListener('dragenter', ev => this.onDragOver(ev));
@@ -83,6 +76,13 @@ class XBookmarkElement extends HTMLElement {
     );
   }
 
+  onCtxMenu(ev) {
+    ev.preventDefault();
+    this.dispatchEvent(new CustomEvent('x-bookmark-ctx-menu', {
+      detail: {x: ev.x, y: ev.y},
+    }));
+  }
+
   onDragStart(ev) {
     requestAnimationFrame(() => this.classList.add('dragging'));
 
@@ -143,4 +143,4 @@ class XBookmarkElement extends HTMLElement {
   }
 }
 
-XBookmarkElement.register();
+document.registerElement('x-bookmark', XBookmarkElement);
