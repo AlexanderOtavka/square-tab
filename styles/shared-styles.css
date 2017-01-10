@@ -1,4 +1,4 @@
-:root {
+:host, html {
   --font-family: 'Helvetica Neue', sans-serif;
   --backdrop-background: rgba(0, 0, 0, .4);
   --shadow-text: 0 0 16px rgba(0, 0, 0, .5);

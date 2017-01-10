@@ -1,5 +1,5 @@
 /* globals BookmarksNavigator, BookmarksEditor, Settings, Weather,
-           StorageKeys, XBookmarkElement */
+           StorageKeys */
 
 class NewTab {
   constructor() {
@@ -46,6 +46,7 @@ class NewTab {
     this.disableDefaultRightClick();
     this.addSettingsChangeListeners();
     this.addWeatherChangeListeners();
+    this.addGlobalDragDropListeners();
     this.addBookmarksDragDropListeners();
     this.addBookmarksClickListeners();
     this.addBookmarksDrawerListeners();
@@ -219,6 +220,19 @@ class NewTab {
     }
   }
 
+  static addGlobalDragDropListeners() {
+    let removeClassTimeout;
+
+    window.addEventListener('dragover', () => {
+      this.$root.classList.add('dragover');
+
+      clearTimeout(removeClassTimeout);
+      removeClassTimeout = setTimeout(() => {
+        this.$root.classList.remove('dragover');
+      }, 100);
+    });
+  }
+
   static addBookmarksDragDropListeners() {
     this.$bookmarksDrawerItems.addEventListener(
       'x-bookmark-drag-start',
@@ -290,14 +304,13 @@ class NewTab {
     });
 
     this.$bookmarksDrawerItems.addEventListener('contextmenu', ev => {
-      let nodeId;
-      if (ev.target instanceof XBookmarkElement)
-        nodeId = ev.target.node.id;
-      else
-        nodeId = null;
-
-      BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId);
+      if (ev.target !== this.$bookmarksDrawerItems) return;
+      BookmarksEditor.openCtxMenu(ev.x, ev.y, null);
     });
+
+    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-menu', ev => {
+      BookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.target.node.id);
+    }, true);
   }
 
   static addBookmarksDrawerListeners() {

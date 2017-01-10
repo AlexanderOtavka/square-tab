@@ -31,6 +31,9 @@ class BookmarksNavigator {
   }
 
   static main() {
+    this.bookmarkTemplate = document.querySelector('#x-bookmark-tmpl').import
+      .querySelector('template');
+
     this.$header = document.querySelector('#bookmarks-drawer .drawer-header');
     this.$upButton = document.querySelector('#bookmarks-up-button');
     this.$title = document.querySelector('#bookmarks-drawer .title');
@@ -204,7 +207,8 @@ class BookmarksNavigator {
         (!beforeElement.node || beforeElement.node.id === node.id)) {
       bookmark = beforeElement;
     } else {
-      bookmark = document.createElement('x-bookmark');
+      bookmark = document.importNode(this.bookmarkTemplate.content, true)
+        .querySelector('.x-bookmark');
       this.$drawerItems.insertBefore(bookmark, beforeElement);
     }
 

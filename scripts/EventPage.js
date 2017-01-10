@@ -18,11 +18,10 @@ class EventPage {
    * @returns {Promise<void>} Resolves when image has been cached.
    */
   static fetchAndCacheImage(resourceURI) {
-    console.log(`${new Date()} - fetching image`);
     return fetch(resourceURI)
       .then(resp => {
-        const photoNotFoundRE = /photo-1446704477871-62a4972035cd/;
-        if (resp.ok && !photoNotFoundRE.test(resp.url))
+        const PHOTO_NOT_FOUND = /photo-1446704477871-62a4972035cd/;
+        if (resp.ok && !PHOTO_NOT_FOUND.test(resp.url))
           return this._readBlob(resp.body.getReader())
             .then(blob => {
               const contentType = resp.headers.get('content-type');
@@ -56,7 +55,6 @@ class EventPage {
         // For some reason, the leading & needs to be there
         const qry = `&lat=${lat}&lon=${long}&APPID=${API_KEY}&units=metric`;
 
-        console.log(`${new Date()} - fetching weather data`);
         return fetch(`${WEATHER_RESOURCE}?${qry}`, {
           method: 'GET',
           mode: 'cors',
