@@ -198,7 +198,7 @@ x-tooltip {
 .bookmarks-drawer-mode-hover.dragover #bookmarks-drawer-items::after {
   display: block;
   content: "";
-  height: 32px;
+  height: 40px;
 }
 
 #drawer-backdrop {

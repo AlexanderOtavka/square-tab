@@ -244,7 +244,7 @@ class BookmarksEditor {
       BookmarksNavigator.hideTooltip();
 
     const isNewTarget = targetI !== this._currentDraggedOverBookmarkIndex;
-    if (isNewTarget && targetIsEditable) {
+    if (isNewTarget && (!target || targetIsEditable)) {
       this.$drawerItems.classList.remove('no-animate-translate');
 
       const childNodes = this.$drawerItems.childNodes;
