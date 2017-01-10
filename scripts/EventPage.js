@@ -20,8 +20,8 @@ class EventPage {
   static fetchAndCacheImage(resourceURI) {
     return fetch(resourceURI)
       .then(resp => {
-        const photoNotFoundRE = /photo-1446704477871-62a4972035cd/;
-        if (resp.ok && !photoNotFoundRE.test(resp.url))
+        const PHOTO_NOT_FOUND = /photo-1446704477871-62a4972035cd/;
+        if (resp.ok && !PHOTO_NOT_FOUND.test(resp.url))
           return this._readBlob(resp.body.getReader())
             .then(blob => {
               const contentType = resp.headers.get('content-type');
