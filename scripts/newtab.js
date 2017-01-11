@@ -115,16 +115,18 @@ class NewTab {
     if (minutesStr.length === 1)
       minutesStr = `0${minutesStr}`;
 
-    if (Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME)) {
-      let hoursStr = String(hours);
-      if (hoursStr.length === 1)
-        hoursStr = `0${hoursStr}`;
+    Settings.loaded.then(() => {
+      if (Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME)) {
+        let hoursStr = String(hours);
+        if (hoursStr.length === 1)
+          hoursStr = `0${hoursStr}`;
 
-      this.$time.textContent = hoursStr + minutesStr;
-    } else {
-      const hoursStr = String(hours % 12 || 12);
-      this.$time.textContent = `${hoursStr}:${minutesStr}`;
-    }
+        this.$time.textContent = hoursStr + minutesStr;
+      } else {
+        const hoursStr = String(hours % 12 || 12);
+        this.$time.textContent = `${hoursStr}:${minutesStr}`;
+      }
+    });
 
     const MIDNIGHT = 0;
     const NOON = 12 * 60 * 60 * 1000;
