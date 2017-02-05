@@ -14,7 +14,8 @@
   z-index: 0;
 }
 
-.x-bookmark__link {
+.x-bookmark__link,
+.x-bookmark__link:hover {
   display: flex;
   flex-direction: row;
   align-items: center;
