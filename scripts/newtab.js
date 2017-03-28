@@ -128,17 +128,20 @@ class NewTab {
       }
     });
 
-    const MIDNIGHT = 0;
-    const NOON = 12 * 60 * 60 * 1000;
     const {now, duskBegins} = Weather.getSunInfoMS();
+    const SUNRISE = Weather.getSunInfoMS().sunrise;
+    const NOON = 12 * 60 * 60 * 1000;
+    const NIGHT = 22 * 60 * 60 * 1000;
 
     let greeting;
-    if (MIDNIGHT < now && now <= NOON)
+    if (SUNRISE < now && now <= NOON)
       greeting = 'Good Morning';
     else if (NOON < now && now <= duskBegins)
       greeting = 'Good Afternoon';
-    else
+    else if (duskBegins < now && now <= NIGHT)
       greeting = 'Good Evening';
+    else
+      greeting = 'Good Night';
 
     this.$greeting.textContent = greeting;
   }
