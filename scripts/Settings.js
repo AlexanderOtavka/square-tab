@@ -1,3 +1,5 @@
+/* globals Surprise */
+
 class Settings {
   constructor() {
     throw new TypeError('Static class cannot be instantiated.');
@@ -28,6 +30,7 @@ class Settings {
       SHOW_WEATHER: 'showWeather',
       TEMPERATURE_UNIT: 'temperatureUnit',
       USE_TIME_OF_DAY_IMAGES: 'useTimeOfDayImages',
+      SURPRISE: 'surprise',
     };
   }
 
@@ -42,13 +45,19 @@ class Settings {
       [this.keys.SHOW_WEATHER]: true,
       [this.keys.TEMPERATURE_UNIT]: this.enums.TemperatureUnits.FAHRENHEIT,
       [this.keys.USE_TIME_OF_DAY_IMAGES]: false,
+      [this.keys.SURPRISE]: false,
     };
   }
 
   /** Listeners attached to particular settings that set or unset overrides. */
   static get _overrides() {
     return {
-      startup: chromeVersion => {},
+      startup: chromeVersion => {
+        if (!Surprise.isTime)
+          this._setOverride(this.keys.SURPRISE, 0, false);
+        else
+          this._unsetOverride(this.keys.SURPRISE, 0);
+      },
 
       [this.keys.BOOKMARKS_DRAWER_MODE]: value => {
         if (value === this.enums.BookmarkDrawerModes.TOGGLE ||

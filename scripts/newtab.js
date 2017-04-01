@@ -1,5 +1,5 @@
 /* globals BookmarksNavigator, BookmarksEditor, Settings, Weather,
-           StorageKeys */
+           StorageKeys, Surprise */
 
 class NewTab {
   constructor() {
@@ -17,6 +17,8 @@ class NewTab {
     this.$root = document.documentElement;
     this.$body = document.body;
     this.$backgroundImage = document.querySelector('#background-image');
+    this.$surpriseLink = document.querySelector('#surprise-link');
+    this.$unsplashLink = document.querySelector('#unsplash-link');
     this.$sourceLink = document.querySelector('#source-link');
     this.$time = document.querySelector('#time');
     this.$greeting = document.querySelector('#greeting');
@@ -32,17 +34,18 @@ class NewTab {
     this.$bookmarksDrawerItems =
       document.querySelector('#bookmarks-drawer-items');
 
-    const backgroundImageReady = this.loadImage()
+    const backgroundImageReady = Settings.loaded.then(() => {
+      if (Settings.get(Settings.keys.SURPRISE))
+        return {dataUrl: Surprise.currentImageData.url};
+      else
+        return this.loadImage();
+    })
       .then(({dataUrl, sourceUrl}) => this.updateImage(dataUrl, sourceUrl));
-    Settings.loaded.then(() => this.fetchAndCacheImage());
 
-    Promise.all([
-      Settings.loaded,
-      Weather.cacheLoaded,
-      backgroundImageReady,
-    ]).then(() =>
-      this.resolveBody()
-    );
+    this.fetchAndCacheImage();
+
+    Promise.all([Settings.loaded, Weather.cacheLoaded, backgroundImageReady])
+      .then(() => this.resolveBody());
 
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
@@ -55,17 +58,50 @@ class NewTab {
     this.addBookmarksClickListeners();
     this.addBookmarksDrawerListeners();
     this.addBookmarksTooltipListeners();
+
+    if (Surprise.isTime)
+      this.$surpriseLink.hidden = false;
+
+    this.initialSurprise = false;
+
+    this.$surpriseLink.addEventListener('click', () => {
+      Settings.loaded.then(() => {
+        const isSurprise = !Settings.get(Settings.keys.SURPRISE);
+        Settings.set(Settings.keys.SURPRISE, isSurprise);
+
+        if (isSurprise) {
+          this.updateImage(Surprise.initialImageData.url);
+          this.initialSurprise = true;
+        } else {
+          this.updateImage('');
+          this.updateImage();
+          this.initialSurprise = false;
+        }
+      });
+    });
+
+    Settings.onChanged(Settings.keys.SURPRISE).addListener(surprise => {
+      if (surprise) {
+        this.$surpriseLink.textContent = 'Let her go, Anakin';
+        this.$unsplashLink.hidden = true;
+      } else {
+        this.$surpriseLink.textContent = 'A surprise, to be sure...';
+        this.$unsplashLink.hidden = false;
+      }
+    });
   }
 
   static loadImage() {
     return new Promise(resolve => {
-      const KEYS = [StorageKeys.IMAGE_DATA_URL, StorageKeys.IMAGE_SOURCE_URL];
-      chrome.storage.local.get(KEYS, data => {
-        resolve({
-          dataUrl: data[StorageKeys.IMAGE_DATA_URL],
-          sourceUrl: data[StorageKeys.IMAGE_SOURCE_URL],
-        });
-      });
+      chrome.storage.local.get(
+        [StorageKeys.IMAGE_DATA_URL, StorageKeys.IMAGE_SOURCE_URL],
+        data => {
+          resolve({
+            dataUrl: data[StorageKeys.IMAGE_DATA_URL],
+            sourceUrl: data[StorageKeys.IMAGE_SOURCE_URL],
+          });
+        }
+      );
     });
   }
 
@@ -75,32 +111,28 @@ class NewTab {
   }
 
   static fetchAndCacheImage() {
-    const uriPromise = (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) ? (
-      Weather.getSunInfoMS().then(({
-        now,
-        morningBegins,
-        dayBegins,
-        duskBegins,
-        nightBegins,
-      }) => {
-        if (nightBegins < now || now <= morningBegins)
-          return `${this.defaultImageUrl}?night`;
-        else if (morningBegins < now && now <= dayBegins)
-          return `${this.defaultImageUrl}?morning`;
-        else if (duskBegins < now && now <= nightBegins)
-          return `${this.defaultImageUrl}?evening`;
+    Settings.loaded
+      .then(() => {
+        if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES))
+          return Weather.getSunInfoMS().then(({now, morningBegins, dayBegins,
+                                               duskBegins, nightBegins}) => {
+            if (nightBegins < now || now <= morningBegins)
+              return `${this.defaultImageUrl}?night`;
+            else if (morningBegins < now && now <= dayBegins)
+              return `${this.defaultImageUrl}?morning`;
+            else if (duskBegins < now && now <= nightBegins)
+              return `${this.defaultImageUrl}?evening`;
+            else
+              return this.defaultImageUrl;
+          });
         else
           return this.defaultImageUrl;
       })
-    ) : (
-      Promise.resolve(this.defaultImageUrl)
-    );
-
-    uriPromise.then(imageResourceURI => {
-      chrome.runtime.getBackgroundPage(({EventPage}) => {
-        EventPage.fetchAndCacheImage(imageResourceURI);
+      .then(imageResourceURI => {
+        chrome.runtime.getBackgroundPage(({EventPage}) => {
+          EventPage.fetchAndCacheImage(imageResourceURI);
+        });
       });
-    });
   }
 
   static resolveBody() {
@@ -134,20 +166,25 @@ class NewTab {
         const hoursStr = String(hours % 12 || 12);
         this.$time.textContent = `${hoursStr}:${minutesStr}`;
       }
-    });
 
-    Weather.getSunInfoMS().then(({now, duskBegins, morningBegins}) => {
-      const MIDNIGHT = 0;
-      const NOON = 12 * 60 * 60 * 1000;
-
-      if (MIDNIGHT < now && now <= morningBegins)
-        this.$greeting.textContent = 'Hello, Night Owl';
-      else if (morningBegins < now && now <= NOON)
-        this.$greeting.textContent = 'Good Morning';
-      else if (NOON < now && now <= duskBegins)
-        this.$greeting.textContent = 'Good Afternoon';
+      if (this.initialSurprise)
+        this.$greeting.textContent = Surprise.initialImageData.greeting;
+      else if (Settings.get(Settings.keys.SURPRISE))
+        this.$greeting.textContent = Surprise.currentImageData.greeting;
       else
-        this.$greeting.textContent = 'Good Evening';
+        Weather.getSunInfoMS().then(({now, duskBegins, morningBegins}) => {
+          const MIDNIGHT = 0;
+          const NOON = 12 * 60 * 60 * 1000;
+
+          if (MIDNIGHT < now && now <= morningBegins)
+            this.$greeting.textContent = 'Hello, Night Owl';
+          else if (morningBegins < now && now <= NOON)
+            this.$greeting.textContent = 'Good Morning';
+          else if (NOON < now && now <= duskBegins)
+            this.$greeting.textContent = 'Good Afternoon';
+          else
+            this.$greeting.textContent = 'Good Evening';
+        });
     });
   }
 
