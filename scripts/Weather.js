@@ -10,15 +10,20 @@ class Weather {
     this.$temperature = document.querySelector('#temperature');
 
     this.onDataLoad = new chrome.Event();
+    this.cacheLoaded = new Promise(resolve => {
+      this._setStaleData = staleData => {
+        this._staleData = staleData;
+        resolve();
+      };
+    });
 
     // Data is always kept up to date.
     this._data = null;
     this._staleData = null;
 
     this._loadCalled = false;
-    this._onInitialLoad = null;
     this._initialLoad = new Promise(resolve => {
-      this._onInitialLoad = resolve;
+      this._onInitialLoad = () => resolve();
     });
 
     chrome.storage.onChanged.addListener(
@@ -26,6 +31,12 @@ class Weather {
         if (area === 'local' && change)
           this._handleWeatherDataLoad(change.newValue);
       }
+    );
+
+    chrome.storage.local.get(
+      StorageKeys.WEATHER_DATA,
+      ({[StorageKeys.WEATHER_DATA]: data}) =>
+        this._setStaleData(JSON.parse(data || null))
     );
 
     this.onDataLoad.addListener(data => {
@@ -75,40 +86,47 @@ class Weather {
     }
   }
 
-  static getSunInfoMS() {
-    const HOUR_MS = 60 * 60 * 1000;
-    const DAY_MS = 24 * HOUR_MS;
-    const DEFAULT_SUNSET = 18 * HOUR_MS; // 6pm
-    const DEFAULT_SUNRISE = 6 * HOUR_MS; // 6am
+  static getSunInfoMS(givenData) {
+    return ((givenData) ? (
+      Promise.resolve(givenData)
+    ) : (
+      this.cacheLoaded.then(() => this._staleData)
+    ))
+      .then(data => {
+        const HOUR_MS = 60 * 60 * 1000;
+        const DAY_MS = 24 * HOUR_MS;
+        const DEFAULT_SUNSET = 18 * HOUR_MS; // 6pm
+        const DEFAULT_SUNRISE = 6 * HOUR_MS; // 6am
 
-    const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
-    const now = (Date.now() - tzOffset) % DAY_MS;
+        const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
+        const now = (Date.now() - tzOffset) % DAY_MS;
 
-    let sunrise;
-    let sunset;
-    if (this._staleData && Date.now() < this._staleData.sunExpiration) {
-      sunrise = ((this._staleData.sys.sunrise * 1000) - tzOffset) % DAY_MS;
-      sunset = ((this._staleData.sys.sunset * 1000) - tzOffset) % DAY_MS;
-    } else {
-      sunrise = DEFAULT_SUNRISE;
-      sunset = DEFAULT_SUNSET;
-    }
+        let sunrise;
+        let sunset;
+        if (data && Date.now() < data.sunExpiration) {
+          sunrise = ((data.sys.sunrise * 1000) - tzOffset) % DAY_MS;
+          sunset = ((data.sys.sunset * 1000) - tzOffset) % DAY_MS;
+        } else {
+          sunrise = DEFAULT_SUNRISE;
+          sunset = DEFAULT_SUNSET;
+        }
 
-    return {
-      now,
-      sunrise,
-      sunset,
-      morningBegins: (sunrise - (2 * HOUR_MS)) % DAY_MS,
-      dayBegins: (sunrise + (2 * HOUR_MS)) % DAY_MS,
-      duskBegins: (sunset - (1 * HOUR_MS)) % DAY_MS,
-      nightBegins: (sunset + (1 * HOUR_MS)) % DAY_MS,
-      isDay: (sunrise < now && now < sunset),
-    };
+        return {
+          now,
+          sunrise,
+          sunset,
+          morningBegins: (sunrise - (2 * HOUR_MS)) % DAY_MS,
+          dayBegins: (sunrise + (2 * HOUR_MS)) % DAY_MS,
+          duskBegins: (sunset - (1 * HOUR_MS)) % DAY_MS,
+          nightBegins: (sunset + (1 * HOUR_MS)) % DAY_MS,
+          isDay: (sunrise < now && now < sunset),
+        };
+      });
   }
 
   static _handleWeatherDataLoad(dataString) {
     const data = JSON.parse(dataString || null);
-    this._staleData = data;
+    this._setStaleData(data);
 
     if (data && Date.now() < data.hardExpiration) {
       this._onInitialLoad();
@@ -132,11 +150,11 @@ class Weather {
       .replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() +
                                 txt.substr(1).toLowerCase());
 
-    const {isDay} = this.getSunInfoMS(this._data);
-
-    const iconName = this._getIconName(iconCode, isDay);
-    this.$weatherIcon.className = iconName ? `wi wi-${iconName}` : '';
-    this.$weatherIcon.setAttribute('tooltip', description);
+    this.getSunInfoMS(this._data).then(({isDay}) => {
+      const iconName = this._getIconName(iconCode, isDay);
+      this.$weatherIcon.className = iconName ? `wi wi-${iconName}` : '';
+      this.$weatherIcon.setAttribute('tooltip', description);
+    });
 
     this.updateTempWithUnit(Settings.get(Settings.keys.TEMPERATURE_UNIT));
   }

@@ -36,7 +36,11 @@ class NewTab {
       .then(({dataUrl, sourceUrl}) => this.updateImage(dataUrl, sourceUrl));
     Settings.loaded.then(() => this.fetchAndCacheImage());
 
-    Promise.all([Settings.loaded, backgroundImageReady]).then(() =>
+    Promise.all([
+      Settings.loaded,
+      Weather.cacheLoaded,
+      backgroundImageReady,
+    ]).then(() =>
       this.resolveBody()
     );
 
@@ -71,27 +75,31 @@ class NewTab {
   }
 
   static fetchAndCacheImage() {
-    let imageResourceURI = this.defaultImageUrl;
-
-    if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-      const {
+    const uriPromise = (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) ? (
+      Weather.getSunInfoMS().then(({
         now,
         morningBegins,
         dayBegins,
         duskBegins,
         nightBegins,
-      } = Weather.getSunInfoMS();
+      }) => {
+        if (nightBegins < now || now <= morningBegins)
+          return `${this.defaultImageUrl}?night`;
+        else if (morningBegins < now && now <= dayBegins)
+          return `${this.defaultImageUrl}?morning`;
+        else if (duskBegins < now && now <= nightBegins)
+          return `${this.defaultImageUrl}?evening`;
+        else
+          return this.defaultImageUrl;
+      })
+    ) : (
+      Promise.resolve(this.defaultImageUrl)
+    );
 
-      if (nightBegins < now || now <= morningBegins)
-        imageResourceURI += '?night';
-      else if (morningBegins < now && now <= dayBegins)
-        imageResourceURI += '?morning';
-      else if (duskBegins < now && now <= nightBegins)
-        imageResourceURI += '?evening';
-    }
-
-    chrome.runtime.getBackgroundPage(({EventPage}) => {
-      EventPage.fetchAndCacheImage(imageResourceURI);
+    uriPromise.then(imageResourceURI => {
+      chrome.runtime.getBackgroundPage(({EventPage}) => {
+        EventPage.fetchAndCacheImage(imageResourceURI);
+      });
     });
   }
 
@@ -128,21 +136,19 @@ class NewTab {
       }
     });
 
-    const MIDNIGHT = 0;
-    const NOON = 12 * 60 * 60 * 1000;
-    const {now, duskBegins, morningBegins} = Weather.getSunInfoMS();
+    Weather.getSunInfoMS().then(({now, duskBegins, morningBegins}) => {
+      const MIDNIGHT = 0;
+      const NOON = 12 * 60 * 60 * 1000;
 
-    let greeting;
-    if (MIDNIGHT < now && now <= morningBegins)
-      greeting = 'Hello, Night Owl';
-    else if (morningBegins < now && now <= NOON)
-      greeting = 'Good Morning';
-    else if (NOON < now && now <= duskBegins)
-      greeting = 'Good Afternoon';
-    else
-      greeting = 'Good Evening';
-
-    this.$greeting.textContent = greeting;
+      if (MIDNIGHT < now && now <= morningBegins)
+        this.$greeting.textContent = 'Hello, Night Owl';
+      else if (morningBegins < now && now <= NOON)
+        this.$greeting.textContent = 'Good Morning';
+      else if (NOON < now && now <= duskBegins)
+        this.$greeting.textContent = 'Good Afternoon';
+      else
+        this.$greeting.textContent = 'Good Evening';
+    });
   }
 
   static disableDefaultRightClick() {
