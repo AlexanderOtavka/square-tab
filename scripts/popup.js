@@ -1,4 +1,4 @@
-/* globals Settings */
+/* globals Settings, Surprise */
 
 class Popup {
   constructor() {
@@ -16,6 +16,10 @@ class Popup {
     this.bindRadioButtons('TEMPERATURE_UNIT',
                           Settings.enums.TemperatureUnits);
     this.bindCheckbox('USE_TIME_OF_DAY_IMAGES');
+    this.bindCheckbox('SURPRISE');
+
+    if (Surprise.isTime)
+      document.querySelector('#surprise-container').hidden = false;
   }
 
   static bindCheckbox(settingKeyName) {

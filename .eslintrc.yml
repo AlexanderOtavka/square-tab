@@ -50,6 +50,10 @@ rules:
     - off
   no-else-return:
     - off
+  new-parens:
+    - off
+  class-methods-use-this:
+    - off
 
   # Code Style
   max-len:
