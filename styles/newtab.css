@@ -8,8 +8,12 @@
   --drawer-width: 64px;
 }
 
-:root.bookmarks-drawer-mode-always {
+:root.bookmarks-drawer-mode-always.bookmarks-drawer-position-right {
   --main-right-margin: var(--drawer-width);
+}
+
+:root.bookmarks-drawer-mode-always.bookmarks-drawer-position-left {
+  --main-left-margin: var(--drawer-width);
 }
 
 header {
@@ -71,8 +75,15 @@ x-tooltip {
   text-shadow: var(--shadow-text);
   text-transform: uppercase;
   color: #fff;
-  right: var(--main-right-margin);
   transition: right var(--drawer-transition-timing);
+}
+
+.bookmarks-drawer-small.bookmarks-drawer-position-right #main-toolbar {
+  right: var(--main-right-margin);
+}
+
+.bookmarks-drawer-small.bookmarks-drawer-position-left #main-toolbar {
+  left: var(--main-left-margin);
 }
 
 #main-toolbar > a {
@@ -96,8 +107,15 @@ x-tooltip {
   align-items: center;
   user-select: none;
   cursor: default;
-  right: var(--main-right-margin);
   transition: right var(--drawer-transition-timing);
+}
+
+.bookmarks-drawer-small.bookmarks-drawer-position-right #info-wrapper {
+  right: var(--main-right-margin);
+}
+
+.bookmarks-drawer-small.bookmarks-drawer-position-left #info-wrapper {
+  left: var(--main-left-margin);
 }
 
 #info-box {
@@ -166,10 +184,18 @@ x-tooltip {
 }
 
 #bookmarks-drawer {
-  right: 0;
   background: #fff;
-  transform: translateX(105%);
   will-change: transform;
+}
+
+.bookmarks-drawer-position-right #bookmarks-drawer {
+  right: 0;
+  transform: translateX(105%);
+}
+
+.bookmarks-drawer-position-left #bookmarks-drawer {
+  left: 0;
+  transform: translateX(-105%);
 }
 
 .bookmarks-drawer-mode-never #bookmarks-drawer {
