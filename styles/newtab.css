@@ -24,6 +24,10 @@ header {
   z-index: 1;
 }
 
+.bookmarks-drawer-mode-always.bookmarks-drawer-position-left #main-toolbar {
+  left: var(--drawer-width);
+}
+
 x-tooltip {
   z-index: 30;
 }
