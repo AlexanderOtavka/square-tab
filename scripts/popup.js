@@ -8,6 +8,8 @@ class Popup {
   static main() {
     this.bindRadioButtons('BOOKMARKS_DRAWER_MODE',
                           Settings.enums.BookmarkDrawerModes);
+    this.bindRadioButtons('BOOKMARKS_DRAWER_POSITION',
+                          Settings.enums.BookmarkDrawerPositions);
     this.bindCheckbox('BOOKMARKS_DRAWER_SMALL');
     this.bindCheckbox('SHOW_PHOTO_SOURCE');
     this.bindCheckbox('BOXED_INFO');

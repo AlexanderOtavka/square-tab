@@ -17,12 +17,17 @@ class Settings {
         ALWAYS: 'always',
         NEVER: 'never',
       },
+      BookmarkDrawerPositions: {
+        RIGHT: 'right',
+        LEFT: 'left',
+      },
     };
   }
 
   static get keys() {
     return {
       BOOKMARKS_DRAWER_MODE: 'bookmarkDrawerMode',
+      BOOKMARKS_DRAWER_POSITION: 'bookmarkDrawerPosition',
       BOOKMARKS_DRAWER_SMALL: 'bookmarksDrawerSmall',
       SHOW_PHOTO_SOURCE: 'showPhotoSource',
       BOXED_INFO: 'boxedInfo',
@@ -38,6 +43,7 @@ class Settings {
   static get _defaults() {
     return {
       [this.keys.BOOKMARKS_DRAWER_MODE]: this.enums.BookmarkDrawerModes.TOGGLE,
+      [this.keys.BOOKMARKS_DRAWER_POSITION]: this.enums.BookmarkDrawerPositions.RIGHT,
       [this.keys.BOOKMARKS_DRAWER_SMALL]: true,
       [this.keys.SHOW_PHOTO_SOURCE]: true,
       [this.keys.BOXED_INFO]: true,

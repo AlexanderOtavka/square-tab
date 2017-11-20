@@ -196,6 +196,9 @@ class NewTab {
     Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE)
       .addListener(value => this.updateBookmarkDrawerMode(value));
 
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_POSITION)
+      .addListener(value => this.updateBookmarkDrawerPosition(value));
+
     Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL)
       .addListener(value => {
         this.updateBookmarkDrawerSmall(value);
@@ -243,6 +246,22 @@ class NewTab {
         break;
       default:
         console.error('Invalid bookmark drawer mode.');
+    }
+  }
+
+  static updateBookmarkDrawerPosition(position) {
+    const RIGHT = 'bookmarks-drawer-position-right';
+    const LEFT = 'bookmarks-drawer-position-left';
+    this.$root.classList.remove(RIGHT, LEFT);
+    switch (position) {
+      case Settings.enums.BookmarkDrawerPositions.RIGHT:
+        this.$root.classList.add(RIGHT);
+        break;
+      case Settings.enums.BookmarkDrawerPositions.LEFT:
+        this.$root.classList.add(LEFT);
+        break;
+      default:
+        console.error('Invalid bookmark drawer position');
     }
   }
 

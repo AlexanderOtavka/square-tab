@@ -88,12 +88,21 @@ class XTooltipElement extends HTMLElement {
 
   _updateXTransform(clientRect = null) {
     if (this._element) {
+      const TOOLTIP_X_OFFSET = 10;
       const elementClientRect =
         clientRect || this._element.getBoundingClientRect();
       this._x = elementClientRect.left;
 
+      let pos = Settings.get(Settings.keys.BOOKMARKS_DRAWER_POSITION);
+
       const tooltipClientRect = this.$tooltip.getBoundingClientRect();
-      const x = this._x - (tooltipClientRect.width - 10);
+
+      let x = this._x - (tooltipClientRect.width - TOOLTIP_X_OFFSET);
+
+      if (pos === Settings.enums.BookmarkDrawerPositions.LEFT) {
+        x = this._x + (elementClientRect.width - TOOLTIP_X_OFFSET);
+      }
+
       const y = this._y - (tooltipClientRect.height / 2);
       this.$tooltip.style.transform = `translate(${x}px, ${y}px)`;
     }
