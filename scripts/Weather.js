@@ -63,7 +63,7 @@ class Weather {
   }
 
   static updateTempWithUnit(unit) {
-    if (!this._data) return;
+    if (!this._data || !unit) return;
 
     // Ensure against XSS with the cast to Number
     const temperatureC = Number(this._data.main.temp);
