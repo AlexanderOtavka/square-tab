@@ -2,6 +2,7 @@
   --drawer-width: 300px;
   --drawer-transition-timing: 200ms cubic-bezier(0, 0, .3, 1);
   --main-right-margin: 0;
+  --main-left-margin: 0;
 }
 
 :root.bookmarks-drawer-small {
