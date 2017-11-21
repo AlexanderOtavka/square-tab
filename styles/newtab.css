@@ -1,6 +1,6 @@
 :root {
   --drawer-width: 300px;
-  --drawer-transition-timing: 200ms cubic-bezier(0, 0, .3, 1);
+  --drawer-transition-timing: 200ms cubic-bezier(0, 0, 0.3, 1);
   --main-right-margin: 0;
   --main-left-margin: 0;
 }
@@ -25,6 +25,10 @@ header {
   z-index: 1;
 }
 
+.bookmarks-drawer-position-left #main-toolbar {
+  flex-direction: row-reverse;
+}
+
 .bookmarks-drawer-mode-always.bookmarks-drawer-position-left #main-toolbar {
   left: var(--drawer-width);
 }
@@ -47,13 +51,13 @@ x-tooltip {
   top: 0;
   bottom: 0;
   width: var(--drawer-width);
-  box-shadow: -2px 0 12px rgba(0, 0, 0, .4);
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.4);
   transition: all var(--drawer-transition-timing);
 }
 
 .drawer-header {
   height: var(--toolbar-height);
-  border-bottom: 1px solid rgba(0, 0, 0, .2);;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .drawer-content {
@@ -132,7 +136,7 @@ x-tooltip {
   padding: 8px;
   min-width: 210px;
   max-width: 280px;
-  font-family: 'Lucida Grande', var(--font-family);
+  font-family: "Lucida Grande", var(--font-family);
   font-size: 1.5rem;
   font-weight: 300;
   color: #fff;
@@ -215,7 +219,7 @@ x-tooltip {
 }
 
 .bookmarks-drawer-mode-always #bookmarks-drawer {
-  opacity: .9;
+  opacity: 0.9;
   box-shadow: none;
 }
 
