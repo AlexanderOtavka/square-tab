@@ -6,11 +6,13 @@ class NewTab {
     throw new TypeError('Static class cannot be instantiated.');
   }
 
-  static get defaultImageUrl() {
+  static getImageUrl(search = '') {
     const screenPxWidth = window.screen.availWidth * window.devicePixelRatio;
     const screenPxHeight = window.screen.availHeight * window.devicePixelRatio;
-    return 'https://source.unsplash.com/category/nature/' +
-           `${screenPxWidth}x${screenPxHeight}/`;
+    return (
+      `https://source.unsplash.com/${screenPxWidth}x${screenPxHeight}/` +
+      `?nature,${search}`
+    );
   }
 
   static main() {
@@ -24,28 +26,35 @@ class NewTab {
     this.$greeting = document.querySelector('#greeting');
     this.$weatherWrapper = document.querySelector('#weather-wrapper');
     this.$drawerBackdrop = document.querySelector('#drawer-backdrop');
-    this.$bookmarksOpenButton =
-      document.querySelector('#bookmarks-open-button');
-    this.$bookmarksCloseButton =
-      document.querySelector('#bookmarks-close-button');
-    this.$bookmarksDrawerHeader =
-      document.querySelector('#bookmarks-drawer .drawer-header');
+    this.$bookmarksOpenButton = document.querySelector(
+      '#bookmarks-open-button'
+    );
+    this.$bookmarksCloseButton = document.querySelector(
+      '#bookmarks-close-button'
+    );
+    this.$bookmarksDrawerHeader = document.querySelector(
+      '#bookmarks-drawer .drawer-header'
+    );
     this.$bookmarksUpButton = document.querySelector('#bookmarks-up-button');
-    this.$bookmarksDrawerItems =
-      document.querySelector('#bookmarks-drawer-items');
+    this.$bookmarksDrawerItems = document.querySelector(
+      '#bookmarks-drawer-items'
+    );
 
-    const backgroundImageReady = Settings.loaded.then(() => {
-      if (Settings.get(Settings.keys.SURPRISE))
-        return {dataUrl: Surprise.currentImageData.url};
-      else
-        return this.loadImage();
-    })
+    const backgroundImageReady = Settings.loaded
+      .then(() => {
+        if (Settings.get(Settings.keys.SURPRISE))
+          return {dataUrl: Surprise.currentImageData.url};
+        else return this.loadImage();
+      })
       .then(({dataUrl, sourceUrl}) => this.updateImage(dataUrl, sourceUrl));
 
     this.fetchAndCacheImage();
 
-    Promise.all([Settings.loaded, Weather.cacheLoaded, backgroundImageReady])
-      .then(() => this.resolveBody());
+    Promise.all([
+      Settings.loaded,
+      Weather.cacheLoaded,
+      backgroundImageReady,
+    ]).then(() => this.resolveBody());
 
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
@@ -59,8 +68,7 @@ class NewTab {
     this.addBookmarksDrawerListeners();
     this.addBookmarksTooltipListeners();
 
-    if (Surprise.isTime)
-      this.$surpriseLink.hidden = false;
+    if (Surprise.isTime) this.$surpriseLink.hidden = false;
 
     this.initialSurprise = false;
 
@@ -105,7 +113,7 @@ class NewTab {
     });
   }
 
-  static updateImage(dataUrl = this.defaultImageUrl, sourceUrl = dataUrl) {
+  static updateImage(dataUrl = this.getImageUrl(), sourceUrl = dataUrl) {
     this.$backgroundImage.src = dataUrl;
     this.$sourceLink.href = sourceUrl;
   }
@@ -114,19 +122,18 @@ class NewTab {
     Settings.loaded
       .then(() => {
         if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES))
-          return Weather.getSunInfoMS().then(({now, morningBegins, dayBegins,
-                                               duskBegins, nightBegins}) => {
-            if (nightBegins < now || now <= morningBegins)
-              return `${this.defaultImageUrl}?night`;
-            else if (morningBegins < now && now <= dayBegins)
-              return `${this.defaultImageUrl}?morning`;
-            else if (duskBegins < now && now <= nightBegins)
-              return `${this.defaultImageUrl}?evening`;
-            else
-              return this.defaultImageUrl;
-          });
-        else
-          return this.defaultImageUrl;
+          return Weather.getSunInfoMS().then(
+            ({now, morningBegins, dayBegins, duskBegins, nightBegins}) => {
+              if (nightBegins < now || now <= morningBegins)
+                return this.getImageUrl('night');
+              else if (morningBegins < now && now <= dayBegins)
+                return this.getImageUrl('morning');
+              else if (duskBegins < now && now <= nightBegins)
+                return this.getImageUrl('evening');
+              else return this.getImageUrl();
+            }
+          );
+        else return this.getImageUrl();
       })
       .then(imageResourceURI => {
         chrome.runtime.getBackgroundPage(({EventPage}) => {
@@ -137,10 +144,7 @@ class NewTab {
 
   static resolveBody() {
     this.$body.removeAttribute('unresolved');
-    this.$body.animate([
-      {opacity: 0},
-      {opacity: 1},
-    ], {
+    this.$body.animate([{opacity: 0}, {opacity: 1}], {
       duration: 200,
       easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
     });
@@ -152,14 +156,12 @@ class NewTab {
     const minutes = date.getMinutes();
 
     let minutesStr = String(minutes);
-    if (minutesStr.length === 1)
-      minutesStr = `0${minutesStr}`;
+    if (minutesStr.length === 1) minutesStr = `0${minutesStr}`;
 
     Settings.loaded.then(() => {
       if (Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME)) {
         let hoursStr = String(hours);
-        if (hoursStr.length === 1)
-          hoursStr = `0${hoursStr}`;
+        if (hoursStr.length === 1) hoursStr = `0${hoursStr}`;
 
         this.$time.textContent = hoursStr + minutesStr;
       } else {
@@ -182,8 +184,7 @@ class NewTab {
             this.$greeting.textContent = 'Good Morning';
           else if (NOON < now && now <= duskBegins)
             this.$greeting.textContent = 'Good Afternoon';
-          else
-            this.$greeting.textContent = 'Good Evening';
+          else this.$greeting.textContent = 'Good Evening';
         });
     });
   }
@@ -193,35 +194,36 @@ class NewTab {
   }
 
   static addSettingsChangeListeners() {
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE)
-      .addListener(value => this.updateBookmarkDrawerMode(value));
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE).addListener(value =>
+      this.updateBookmarkDrawerMode(value)
+    );
 
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_POSITION)
-      .addListener(value => this.updateBookmarkDrawerPosition(value));
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_POSITION).addListener(
+      value => this.updateBookmarkDrawerPosition(value)
+    );
 
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL)
-      .addListener(value => {
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).addListener(
+      value => {
         this.updateBookmarkDrawerSmall(value);
         BookmarksNavigator.updateSize(value);
-      });
+      }
+    );
 
-    Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE)
-      .addListener(value =>
-        this.updateShowPhotoSource(value)
-      );
+    Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE).addListener(value =>
+      this.updateShowPhotoSource(value)
+    );
 
-    Settings.onChanged(Settings.keys.BOXED_INFO)
-      .addListener(value =>
-        this.updateBoxedInfo(value)
-      );
+    Settings.onChanged(Settings.keys.BOXED_INFO).addListener(value =>
+      this.updateBoxedInfo(value)
+    );
 
-    Settings.onChanged(Settings.keys.SHOW_WEATHER)
-      .addListener(value =>
-        this.updateWeather(value)
-      );
+    Settings.onChanged(Settings.keys.SHOW_WEATHER).addListener(value =>
+      this.updateWeather(value)
+    );
 
-    Settings.onChanged(Settings.keys.TEMPERATURE_UNIT)
-      .addListener(value => Weather.updateTempWithUnit(value));
+    Settings.onChanged(Settings.keys.TEMPERATURE_UNIT).addListener(value =>
+      Weather.updateTempWithUnit(value)
+    );
   }
 
   static updateBookmarkDrawerMode(mode) {
@@ -325,26 +327,21 @@ class NewTab {
       true
     );
 
-    this.$bookmarksDrawerItems.addEventListener(
-      'dragover',
-      ev => BookmarksEditor.onItemsDragOver(ev)
+    this.$bookmarksDrawerItems.addEventListener('dragover', ev =>
+      BookmarksEditor.onItemsDragOver(ev)
     );
-    this.$bookmarksDrawerItems.addEventListener(
-      'drop',
-      ev => BookmarksEditor.onItemsDrop(ev)
+    this.$bookmarksDrawerItems.addEventListener('drop', ev =>
+      BookmarksEditor.onItemsDrop(ev)
     );
 
-    this.$bookmarksUpButton.addEventListener(
-      'dragover',
-      ev => BookmarksEditor.onUpButtonDragOver(ev)
+    this.$bookmarksUpButton.addEventListener('dragover', ev =>
+      BookmarksEditor.onUpButtonDragOver(ev)
     );
-    this.$bookmarksUpButton.addEventListener(
-      'dragleave',
-      ev => BookmarksEditor.onUpButtonDragLeave(ev)
+    this.$bookmarksUpButton.addEventListener('dragleave', ev =>
+      BookmarksEditor.onUpButtonDragLeave(ev)
     );
-    this.$bookmarksUpButton.addEventListener(
-      'drop',
-      ev => BookmarksEditor.onUpButtonDrop(ev)
+    this.$bookmarksUpButton.addEventListener('drop', ev =>
+      BookmarksEditor.onUpButtonDrop(ev)
     );
 
     this.$bookmarksDrawerItems.addEventListener(
@@ -364,16 +361,19 @@ class NewTab {
       BookmarksNavigator.ascend();
     });
 
-    this.$bookmarksDrawerItems.addEventListener('x-bookmark-click', ev => {
-      BookmarksNavigator.openBookmark(ev.detail.nodeId);
-    }, true);
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-click',
+      ev => {
+        BookmarksNavigator.openBookmark(ev.detail.nodeId);
+      },
+      true
+    );
 
     this.$bookmarksDrawerHeader.addEventListener('contextmenu', ev => {
       let nodeId;
       if (ev.target === this.$bookmarksUpButton)
         nodeId = BookmarksNavigator.parentFolder;
-      else
-        nodeId = BookmarksNavigator.currentFolder;
+      else nodeId = BookmarksNavigator.currentFolder;
 
       BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId);
     });
@@ -383,24 +383,27 @@ class NewTab {
       BookmarksEditor.openCtxMenu(ev.x, ev.y, null);
     });
 
-    this.$bookmarksDrawerItems.addEventListener('x-bookmark-ctx-menu', ev => {
-      BookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.target.node.id);
-    }, true);
+    this.$bookmarksDrawerItems.addEventListener(
+      'x-bookmark-ctx-menu',
+      ev => {
+        BookmarksEditor.openCtxMenu(
+          ev.detail.x,
+          ev.detail.y,
+          ev.target.node.id
+        );
+      },
+      true
+    );
   }
 
   static addBookmarksDrawerListeners() {
-    this.$bookmarksOpenButton.addEventListener(
-      'click',
-      () => this.openBookmarks()
+    this.$bookmarksOpenButton.addEventListener('click', () =>
+      this.openBookmarks()
     );
-    this.$bookmarksCloseButton.addEventListener(
-      'click',
-      () => this.closeBookmarks()
+    this.$bookmarksCloseButton.addEventListener('click', () =>
+      this.closeBookmarks()
     );
-    this.$drawerBackdrop.addEventListener(
-      'click',
-      () => this.closeBookmarks()
-    );
+    this.$drawerBackdrop.addEventListener('click', () => this.closeBookmarks());
   }
 
   static openBookmarks() {
@@ -423,13 +426,11 @@ class NewTab {
       true
     );
 
-    this.$bookmarksDrawerHeader.addEventListener(
-      'mouseover',
-      () => BookmarksNavigator.onHeaderMouseOver()
+    this.$bookmarksDrawerHeader.addEventListener('mouseover', () =>
+      BookmarksNavigator.onHeaderMouseOver()
     );
-    this.$bookmarksDrawerHeader.addEventListener(
-      'mouseleave',
-      () => BookmarksNavigator.hideTooltip()
+    this.$bookmarksDrawerHeader.addEventListener('mouseleave', () =>
+      BookmarksNavigator.hideTooltip()
     );
   }
 }
