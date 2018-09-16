@@ -159,15 +159,12 @@ class NewTab {
     if (minutesStr.length === 1) minutesStr = `0${minutesStr}`;
 
     Settings.loaded.then(() => {
-      if (Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME)) {
-        let hoursStr = String(hours);
-        if (hoursStr.length === 1) hoursStr = `0${hoursStr}`;
-
-        this.$time.textContent = hoursStr + minutesStr;
-      } else {
-        const hoursStr = String(hours % 12 || 12);
-        this.$time.textContent = `${hoursStr}:${minutesStr}`;
-      }
+      const hoursStr = String(
+        Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME)
+          ? hours
+          : hours % 12 || 12
+      );
+      this.$time.textContent = `${hoursStr}:${minutesStr}`;
 
       if (this.initialSurprise)
         this.$greeting.textContent = Surprise.initialImageData.greeting;
