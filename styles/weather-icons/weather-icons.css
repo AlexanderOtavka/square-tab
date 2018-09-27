@@ -20,14 +20,14 @@
  *    "Font Awesome by Dave Gandy - http://fontawesome.io"
  */
 @font-face {
-  font-family: 'weathericons';
-  src: url('./weathericons-regular-webfont.ttf') format('truetype');
+  font-family: "weathericons";
+  src: url("./weathericons-regular-webfont.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 .wi {
   display: inline-block;
-  font-family: 'weathericons';
+  font-family: "weathericons";
   font-style: normal;
   font-weight: normal;
   line-height: 1;

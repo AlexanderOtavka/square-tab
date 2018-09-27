@@ -1,0 +1,11 @@
+##
+# .prettierrc.yml
+#
+# Created by Zander Otavka on 9/27/18.
+# Copyright (C) 2018 Zander Otavka.  All rights reserved.
+#
+# Distributed under the GNU General Public License, Version 3.
+# See the accompanying file LICENSE or http://www.gnu.org/licenses/gpl-3.0.txt
+##
+
+semi: false

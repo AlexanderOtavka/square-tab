@@ -1,12 +1,13 @@
-:host, html {
-  --font-family: 'Helvetica Neue', sans-serif;
-  --backdrop-background: rgba(0, 0, 0, .4);
-  --shadow-text: 0 0 16px rgba(0, 0, 0, .5);
-  --shadow-1: 0 2px 4px rgba(0, 0, 0, .2);
-  --shadow-2: 0 3px 8px rgba(0, 0, 0, .2);
+:host,
+html {
+  --font-family: "Helvetica Neue", sans-serif;
+  --backdrop-background: rgba(0, 0, 0, 0.4);
+  --shadow-text: 0 0 16px rgba(0, 0, 0, 0.5);
+  --shadow-1: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-2: 0 3px 8px rgba(0, 0, 0, 0.2);
   --toolbar-height: 68px;
-  --drag-drop-transition-timing: 100ms cubic-bezier(0, 0, .3, 1);
-  --x-dialog-transition-timing: 100ms cubic-bezier(0, 0, .3, 1);
+  --drag-drop-transition-timing: 100ms cubic-bezier(0, 0, 0.3, 1);
+  --x-dialog-transition-timing: 100ms cubic-bezier(0, 0, 0.3, 1);
   --mouse-effect-transition-timing: 200ms;
 }
 
@@ -20,7 +21,8 @@ body {
   margin: 0;
 }
 
-body[unresolved], [hidden] {
+body[unresolved],
+[hidden] {
   display: none !important;
 }
 
@@ -57,7 +59,7 @@ button::after {
   bottom: 0;
   left: 0;
   pointer-events: none;
-  background-color: rgba(0, 0, 0, .1);
+  background-color: rgba(0, 0, 0, 0.1);
   opacity: 0;
   transition: opacity 200ms;
 }
@@ -75,8 +77,8 @@ button:active::after {
   opacity: 1;
 }
 
-input[type=text],
-input[type=url] {
+input[type="text"],
+input[type="url"] {
   border: none;
   margin: 2px;
   padding: 8px;
@@ -88,30 +90,30 @@ input[type=url] {
   will-change: border-bottom;
 }
 
-input[type=url]:invalid {
+input[type="url"]:invalid {
   background: #dbb;
 }
 
-input[type=text]::-webkit-input-placeholder,
-input[type=url]::-webkit-input-placeholder {
+input[type="text"]::-webkit-input-placeholder,
+input[type="url"]::-webkit-input-placeholder {
   color: #666;
 }
 
-input[type=text]:focus,
-input[type=url]:focus {
+input[type="text"]:focus,
+input[type="url"]:focus {
   outline: none;
   box-shadow: var(--shadow-1);
   border-bottom: 2px solid #333;
 }
 
-input[type=text]:hover,
-input[type=url]:hover {
+input[type="text"]:hover,
+input[type="url"]:hover {
   box-shadow: var(--shadow-2);
   border-bottom: 2px solid #333;
 }
 
-input[type=url]:focus:invalid,
-input[type=url]:hover:invalid {
+input[type="url"]:focus:invalid,
+input[type="url"]:hover:invalid {
   background: #dbb;
   border-bottom: 2px solid #d22;
 }
@@ -160,7 +162,7 @@ input[type=url]:hover:invalid {
   content: "";
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(0, 0, 0, .15),
+    rgba(0, 0, 0, 0.15),
     rgba(0, 0, 0, 0) 60%
   );
   display: block;

@@ -8,7 +8,6 @@
 # See the accompanying file LICENSE or http://www.gnu.org/licenses/gpl-3.0.txt
 ##
 
-extends: airbnb
 installedESLint: true
 env:
   es6: true
@@ -37,8 +36,8 @@ rules:
   no-console:
     - warn
     - allow:
-      - assert
-      - error
+        - assert
+        - error
   no-underscore-dangle:
     - error
     - allowAfterThis: true
@@ -50,54 +49,32 @@ rules:
     - off
   no-else-return:
     - off
-  new-parens:
-    - off
   class-methods-use-this:
     - off
 
   # Code Style
-  max-len:
-    - error
-    - code: 80
-      ignoreUrls: true
-  indent:
-    - error
-    - 2
-    - SwitchCase: 1
-      ArrayExpression: first
-      ObjectExpression: first
-      MemberExpression: 1
-      FunctionDeclaration:
-        parameters: first
-      FunctionExpression:
-        parameters: first
-      CallExpression:
-        arguments: first
   camelcase:
-    - error
+    - warn
     - properties: always
   curly:
-    - error
-    - multi
-    - consistent
-  space-in-parens:
-    - error
-    - never
-  object-curly-spacing:
-    - error
-    - never
-  arrow-parens:
-    - error
-    - as-needed
+    - warn
+    - all
   arrow-body-style:
-    - error
+    - warn
     - as-needed
+  max-len:
+    - off
+  indent:
+    - off
+  new-parens:
+    - off
+  space-in-parens:
+    - off
+  object-curly-spacing:
+    - off
+  arrow-parens:
+    - off
   comma-dangle:
-    - error
-    - arrays: always-multiline
-      objects: always-multiline
-      functions: never
+    - off
   no-multiple-empty-lines:
-    - error
-    - max: 1
-      maxBOF: 0
+    - off

@@ -4,205 +4,228 @@
 
 class BookmarksEditor {
   constructor() {
-    throw new TypeError('Static class cannot be instantiated.');
+    throw new TypeError("Static class cannot be instantiated.")
   }
 
   static main() {
-    this.bookmarkTemplate = document.querySelector('#x-bookmark-tmpl').import
-      .querySelector('template');
+    this.bookmarkTemplate = document
+      .querySelector("#x-bookmark-tmpl")
+      .import.querySelector("template")
 
-    this.$drawer = document.querySelector('#bookmarks-drawer');
-    this.$upButton = document.querySelector('#bookmarks-up-button');
-    this.$drawerItems = document.querySelector('#bookmarks-drawer-items');
-    this.$ctxMenu = document.querySelector('#bookmarks-ctx-menu');
-    this.$ctxMenuName = document.querySelector('#bookmarks-ctx-menu-name');
-    this.$ctxMenuEdit = document.querySelector('#bookmarks-ctx-menu-edit');
-    this.$ctxMenuDelete = document.querySelector('#bookmarks-ctx-menu-delete');
-    this.$ctxMenuAddPage =
-      document.querySelector('#bookmarks-ctx-menu-add-page');
-    this.$ctxMenuAddFolder =
-      document.querySelector('#bookmarks-ctx-menu-add-folder');
-    this.$editDialog = document.querySelector('#bookmarks-edit-dialog');
-    this.$editDialogFavicon =
-      document.querySelector('#bookmarks-edit-dialog-favicon');
-    this.$editDialogTitle =
-      document.querySelector('#bookmarks-edit-dialog-title');
-    this.$editDialogName =
-      document.querySelector('#bookmarks-edit-dialog-name');
-    this.$editDialogURL =
-      document.querySelector('#bookmarks-edit-dialog-url');
-    this.$editDialogDone =
-      document.querySelector('#bookmarks-edit-dialog .dialog-confirm');
+    this.$drawer = document.querySelector("#bookmarks-drawer")
+    this.$upButton = document.querySelector("#bookmarks-up-button")
+    this.$drawerItems = document.querySelector("#bookmarks-drawer-items")
+    this.$ctxMenu = document.querySelector("#bookmarks-ctx-menu")
+    this.$ctxMenuName = document.querySelector("#bookmarks-ctx-menu-name")
+    this.$ctxMenuEdit = document.querySelector("#bookmarks-ctx-menu-edit")
+    this.$ctxMenuDelete = document.querySelector("#bookmarks-ctx-menu-delete")
+    this.$ctxMenuAddPage = document.querySelector(
+      "#bookmarks-ctx-menu-add-page"
+    )
+    this.$ctxMenuAddFolder = document.querySelector(
+      "#bookmarks-ctx-menu-add-folder"
+    )
+    this.$editDialog = document.querySelector("#bookmarks-edit-dialog")
+    this.$editDialogFavicon = document.querySelector(
+      "#bookmarks-edit-dialog-favicon"
+    )
+    this.$editDialogTitle = document.querySelector(
+      "#bookmarks-edit-dialog-title"
+    )
+    this.$editDialogName = document.querySelector("#bookmarks-edit-dialog-name")
+    this.$editDialogURL = document.querySelector("#bookmarks-edit-dialog-url")
+    this.$editDialogDone = document.querySelector(
+      "#bookmarks-edit-dialog .dialog-confirm"
+    )
 
-    this._resetDragState();
+    this._resetDragState()
 
-    this.$ctxMenu.addEventListener('x-context-menu-close', () => {
-      this.$drawer.classList.remove('ctx-menu-active');
-    });
+    this.$ctxMenu.addEventListener("x-context-menu-close", () => {
+      this.$drawer.classList.remove("ctx-menu-active")
+    })
 
-    this.$editDialog.addEventListener('x-dialog-open', () => {
-      requestAnimationFrame(() => this.$editDialogName.focus());
-    });
+    this.$editDialog.addEventListener("x-dialog-open", () => {
+      requestAnimationFrame(() => this.$editDialogName.focus())
+    })
 
-    this.$editDialogName.addEventListener('keypress', ev => {
-      if (ev.keyCode === 13)
-        this.$editDialogDone.click();
-    });
+    this.$editDialogName.addEventListener("keypress", ev => {
+      if (ev.keyCode === 13) {
+        this.$editDialogDone.click()
+      }
+    })
 
-    this.$editDialogURL.addEventListener('keypress', ev => {
-      if (ev.keyCode === 13)
-        this.$editDialogDone.click();
-    });
+    this.$editDialogURL.addEventListener("keypress", ev => {
+      if (ev.keyCode === 13) {
+        this.$editDialogDone.click()
+      }
+    })
 
-    this.$editDialogURL.addEventListener('change', () => {
-      this.$editDialogURL.value = this._fixUrl(this.$editDialogURL.value);
-    });
+    this.$editDialogURL.addEventListener("change", () => {
+      this.$editDialogURL.value = this._fixUrl(this.$editDialogURL.value)
+    })
   }
 
   static onBookmarkDragStart(ev) {
-    this._currentDraggedBookmark = ev.target;
+    this._currentDraggedBookmark = ev.target
     this._currentDraggedBookmarkIndex = Array.prototype.indexOf.call(
-      this.$drawerItems.childNodes, ev.target);
-    this._currentDraggedOverBookmarkIndex = this._currentDraggedBookmarkIndex;
+      this.$drawerItems.childNodes,
+      ev.target
+    )
+    this._currentDraggedOverBookmarkIndex = this._currentDraggedBookmarkIndex
   }
 
   static onBookmarkDragOver(ev) {
-    const index = Array.prototype.indexOf.call(this.$drawerItems.childNodes,
-                                               ev.target);
-    this._handleDragOver(ev.target, index, ev.detail.y);
+    const index = Array.prototype.indexOf.call(
+      this.$drawerItems.childNodes,
+      ev.target
+    )
+    this._handleDragOver(ev.target, index, ev.detail.y)
   }
 
   static onBookmarkDrop(ev) {
-    const index = Array.prototype.indexOf.call(this.$drawerItems.childNodes,
-                                               ev.target);
-    this._handleDrop(ev.target, index, ev.detail);
+    const index = Array.prototype.indexOf.call(
+      this.$drawerItems.childNodes,
+      ev.target
+    )
+    this._handleDrop(ev.target, index, ev.detail)
   }
 
   static onItemsDragOver(ev) {
-    ev.preventDefault();
+    ev.preventDefault()
 
-    if (this._currentDraggedBookmark)
-      ev.dataTransfer.dropEffect = 'move';
-    else
-      ev.dataTransfer.dropEffect = 'copy';
+    if (this._currentDraggedBookmark) {
+      ev.dataTransfer.dropEffect = "move"
+    } else {
+      ev.dataTransfer.dropEffect = "copy"
+    }
 
-    this.$drawerItems.classList.add('drag-over');
+    this.$drawerItems.classList.add("drag-over")
 
-    if (ev.target === this.$drawerItems)
-      this._handleDragOver(null, this.$drawerItems.childElementCount, ev.y);
+    if (ev.target === this.$drawerItems) {
+      this._handleDragOver(null, this.$drawerItems.childElementCount, ev.y)
+    }
   }
 
   static onItemsDrop(ev) {
-    ev.preventDefault();
+    ev.preventDefault()
 
     if (ev.target === this.$drawerItems) {
-      const bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
-      const title = ev.dataTransfer.getData('text/plain');
-      const url = ev.dataTransfer.getData('text/uri-list') || title;
-      const index = this.$drawerItems.childElementCount;
-      this._handleDrop(null, index, {bookmarkId, title, url, y: ev.y});
+      const bookmarkId = ev.dataTransfer.getData("text/x-bookmark-id") || null
+      const title = ev.dataTransfer.getData("text/plain")
+      const url = ev.dataTransfer.getData("text/uri-list") || title
+      const index = this.$drawerItems.childElementCount
+      this._handleDrop(null, index, { bookmarkId, title, url, y: ev.y })
     }
   }
 
   static onUpButtonDragOver(ev) {
-    ev.preventDefault();
+    ev.preventDefault()
 
-    if (this._currentDraggedBookmark)
-      ev.dataTransfer.dropEffect = 'move';
-    else
-      ev.dataTransfer.dropEffect = 'copy';
+    if (this._currentDraggedBookmark) {
+      ev.dataTransfer.dropEffect = "move"
+    } else {
+      ev.dataTransfer.dropEffect = "copy"
+    }
 
-    const parentId = BookmarksNavigator.parentFolder;
-    if (parentId && parentId !== BookmarksNavigator.ROOT_ID)
-      this.$upButton.classList.add('expand');
+    const parentId = BookmarksNavigator.parentFolder
+    if (parentId && parentId !== BookmarksNavigator.ROOT_ID) {
+      this.$upButton.classList.add("expand")
+    }
   }
 
   static onUpButtonDragLeave(ev) {
-    if (ev.target === this.$upButton)
-      this.$upButton.classList.remove('expand');
+    if (ev.target === this.$upButton) {
+      this.$upButton.classList.remove("expand")
+    }
   }
 
   static onUpButtonDrop(ev) {
-    ev.preventDefault();
-    this.$upButton.classList.remove('expand');
+    ev.preventDefault()
+    this.$upButton.classList.remove("expand")
 
-    const parentId = BookmarksNavigator.parentFolder;
+    const parentId = BookmarksNavigator.parentFolder
     if (parentId && parentId !== BookmarksNavigator.ROOT_ID) {
-      const bookmarkId = ev.dataTransfer.getData('text/x-bookmark-id') || null;
+      const bookmarkId = ev.dataTransfer.getData("text/x-bookmark-id") || null
       if (bookmarkId) {
-        chrome.bookmarks.move(bookmarkId, {parentId});
+        chrome.bookmarks.move(bookmarkId, { parentId })
       } else {
-        const title = ev.dataTransfer.getData('text/plain');
-        const url = ev.dataTransfer.getData('text/uri-list') || title;
-        chrome.bookmarks.create({parentId, title, url});
+        const title = ev.dataTransfer.getData("text/plain")
+        const url = ev.dataTransfer.getData("text/uri-list") || title
+        chrome.bookmarks.create({ parentId, title, url })
       }
     }
   }
 
   static onDragLeave(ev) {
-    const rect = this.$drawerItems.getBoundingClientRect();
-    if (ev.x < rect.left || ev.x > rect.right ||
-        ev.y < rect.top || ev.y > rect.bottom) {
-      this._returnDragHome();
-      BookmarksNavigator.hideTooltip();
+    const rect = this.$drawerItems.getBoundingClientRect()
+    if (
+      ev.x < rect.left ||
+      ev.x > rect.right ||
+      ev.y < rect.top ||
+      ev.y > rect.bottom
+    ) {
+      this._returnDragHome()
+      BookmarksNavigator.hideTooltip()
     }
   }
 
   static onDragEnd() {
-    this._resetDragState();
+    this._resetDragState()
   }
 
   static openCtxMenu(x, y, nodeId) {
-    this.$drawer.classList.add('ctx-menu-active');
+    this.$drawer.classList.add("ctx-menu-active")
 
-    this.$ctxMenuName.hidden = !nodeId;
-    if (nodeId)
+    this.$ctxMenuName.hidden = !nodeId
+    if (nodeId) {
       chrome.bookmarks.get(nodeId, ([node]) => {
-        this.$ctxMenuName.textContent = BookmarksNavigator.getNodeTitle(node);
-      });
+        this.$ctxMenuName.textContent = BookmarksNavigator.getNodeTitle(node)
+      })
+    }
 
     if (nodeId !== BookmarksNavigator.ROOT_ID) {
-      this.$ctxMenuAddPage.classList.remove('disabled');
+      this.$ctxMenuAddPage.classList.remove("disabled")
       this.$ctxMenuAddPage.onclick = () => {
-        this._openCreateDialog(false, null);
-      };
+        this._openCreateDialog(false, null)
+      }
 
-      this.$ctxMenuAddFolder.classList.remove('disabled');
+      this.$ctxMenuAddFolder.classList.remove("disabled")
       this.$ctxMenuAddFolder.onclick = () => {
-        this._openCreateDialog(true, null);
-      };
+        this._openCreateDialog(true, null)
+      }
     } else {
-      this.$ctxMenuAddPage.classList.add('disabled');
-      this.$ctxMenuAddPage.onclick = () => {};
+      this.$ctxMenuAddPage.classList.add("disabled")
+      this.$ctxMenuAddPage.onclick = () => {}
 
-      this.$ctxMenuAddFolder.classList.add('disabled');
-      this.$ctxMenuAddFolder.onclick = () => {};
+      this.$ctxMenuAddFolder.classList.add("disabled")
+      this.$ctxMenuAddFolder.onclick = () => {}
     }
 
     if (BookmarksNavigator.nodeIsEditable(nodeId)) {
-      this.$ctxMenuEdit.classList.remove('disabled');
+      this.$ctxMenuEdit.classList.remove("disabled")
       this.$ctxMenuEdit.onclick = () => {
-        this._openEditDialog(nodeId);
-      };
+        this._openEditDialog(nodeId)
+      }
 
-      this.$ctxMenuDelete.classList.remove('disabled');
+      this.$ctxMenuDelete.classList.remove("disabled")
       this.$ctxMenuDelete.onclick = () => {
         chrome.bookmarks.getChildren(nodeId, children => {
-          if (children)
-            chrome.bookmarks.removeTree(nodeId);
-          else
-            chrome.bookmarks.remove(nodeId);
-        });
-      };
+          if (children) {
+            chrome.bookmarks.removeTree(nodeId)
+          } else {
+            chrome.bookmarks.remove(nodeId)
+          }
+        })
+      }
     } else {
-      this.$ctxMenuEdit.classList.add('disabled');
-      this.$ctxMenuEdit.onclick = () => {};
+      this.$ctxMenuEdit.classList.add("disabled")
+      this.$ctxMenuEdit.onclick = () => {}
 
-      this.$ctxMenuDelete.classList.add('disabled');
-      this.$ctxMenuDelete.onclick = () => {};
+      this.$ctxMenuDelete.classList.add("disabled")
+      this.$ctxMenuDelete.onclick = () => {}
     }
 
-    requestAnimationFrame(() => this.$ctxMenu.show(x, y));
+    requestAnimationFrame(() => this.$ctxMenu.show(x, y))
   }
 
   /**
@@ -214,91 +237,117 @@ class BookmarksEditor {
    * @param {number} y Y coordinate of the mouse.
    */
   static _handleDragOver(target, targetI, y) {
-    const startI = this._currentDraggedBookmarkIndex;
-    const isDraggingDown = (startI < targetI);
-    const isAtStart = (targetI === startI);
+    const startI = this._currentDraggedBookmarkIndex
+    const isDraggingDown = startI < targetI
+    const isAtStart = targetI === startI
 
-    const targetId = target ? target.node.id : BookmarksNavigator.currentFolder;
-    const targetIsEditable = BookmarksNavigator.nodeIsEditable(targetId);
+    const targetId = target ? target.node.id : BookmarksNavigator.currentFolder
+    const targetIsEditable = BookmarksNavigator.nodeIsEditable(targetId)
 
-    let targetIsExpanded = false;
+    let targetIsExpanded = false
 
     if (target) {
-      const draggedElement = this._currentDraggedBookmark;
-      const draggedIsEditable = !draggedElement ||
-        BookmarksNavigator.nodeIsEditable(draggedElement.node.id);
+      const draggedElement = this._currentDraggedBookmark
+      const draggedIsEditable =
+        !draggedElement ||
+        BookmarksNavigator.nodeIsEditable(draggedElement.node.id)
 
-      if (!isAtStart && draggedIsEditable &&
-          this._isFolderDrop(target.isFolder, targetIsEditable, isDraggingDown,
-                             y, target.getBoundingClientRect())) {
-        target.classList.add('expand');
-        targetIsExpanded = true;
+      if (
+        !isAtStart &&
+        draggedIsEditable &&
+        this._isFolderDrop(
+          target.isFolder,
+          targetIsEditable,
+          isDraggingDown,
+          y,
+          target.getBoundingClientRect()
+        )
+      ) {
+        target.classList.add("expand")
+        targetIsExpanded = true
       } else {
-        target.classList.remove('expand');
+        target.classList.remove("expand")
       }
     }
 
-    if (targetIsExpanded)
-      BookmarksNavigator.maybeShowTooltipForBookmark(target);
-    else
-      BookmarksNavigator.hideTooltip();
+    if (targetIsExpanded) {
+      BookmarksNavigator.maybeShowTooltipForBookmark(target)
+    } else {
+      BookmarksNavigator.hideTooltip()
+    }
 
-    const isNewTarget = targetI !== this._currentDraggedOverBookmarkIndex;
+    const isNewTarget = targetI !== this._currentDraggedOverBookmarkIndex
     if (isNewTarget && (!target || targetIsEditable)) {
-      this.$drawerItems.classList.remove('no-animate-translate');
+      this.$drawerItems.classList.remove("no-animate-translate")
 
-      const childNodes = this.$drawerItems.childNodes;
-      const oldTargetI = Math.min(this._currentDraggedOverBookmarkIndex,
-                                  childNodes.length);
+      const childNodes = this.$drawerItems.childNodes
+      const oldTargetI = Math.min(
+        this._currentDraggedOverBookmarkIndex,
+        childNodes.length
+      )
 
-      this._currentDraggedOverBookmarkIndex = targetI;
+      this._currentDraggedOverBookmarkIndex = targetI
 
       if (isAtStart) {
         // Back at start
-        if (startI < oldTargetI)
+        if (startI < oldTargetI) {
           // When coming out of whitespace, oldTargetI can get too big when
           // incremented, so we ensure it doesn't exceed the length with
           // Math.min().
-          for (let i = startI + 1;
-               i < Math.min(oldTargetI + 1, childNodes.length);
-               i++)
-            childNodes[i].classList.remove('translate-up');
-        else if (startI > oldTargetI)
-          for (let i = oldTargetI; i < startI; i++)
-            childNodes[i].classList.remove('translate-down');
+          for (
+            let i = startI + 1;
+            i < Math.min(oldTargetI + 1, childNodes.length);
+            i++
+          ) {
+            childNodes[i].classList.remove("translate-up")
+          }
+        } else if (startI > oldTargetI) {
+          for (let i = oldTargetI; i < startI; i++) {
+            childNodes[i].classList.remove("translate-down")
+          }
+        }
       } else if (isDraggingDown) {
-        if (oldTargetI < targetI)
+        if (oldTargetI < targetI) {
           // When in whitespace, targetI can get too big when incremented, so we
           // ensure it doesn't exceed the length with Math.min().
-          for (let i = oldTargetI + 1;
-               i < Math.min(targetI + 1, childNodes.length);
-               i++) {
-            childNodes[i].classList.add('translate-up');
-            childNodes[i].classList.remove('translate-down');
+          for (
+            let i = oldTargetI + 1;
+            i < Math.min(targetI + 1, childNodes.length);
+            i++
+          ) {
+            childNodes[i].classList.add("translate-up")
+            childNodes[i].classList.remove("translate-down")
           }
-        else
-          // When coming out of whitespace, oldTargetI can get too big when
-          // incremented, so we ensure it doesn't exceed the length with
-          // Math.min().
-          for (let i = targetI + 1;
-               i < Math.min(oldTargetI + 1, childNodes.length);
-               i++)
-            childNodes[i].classList.remove('translate-up');
+        }
+        // When coming out of whitespace, oldTargetI can get too big when
+        // incremented, so we ensure it doesn't exceed the length with
+        // Math.min().
+        else {
+          for (
+            let i = targetI + 1;
+            i < Math.min(oldTargetI + 1, childNodes.length);
+            i++
+          ) {
+            childNodes[i].classList.remove("translate-up")
+          }
+        }
       } else if (oldTargetI === targetI) {
         // They are dragging upwards in the whitespace below the bookmarks,
         // meaning they are dragging in an external link/other thing
-        console.assert(targetI === childNodes.length);
-        const lastChild = this.$drawerItems.lastChild;
-        if (lastChild)
-          lastChild.classList.remove('translate-down');
+        console.assert(targetI === childNodes.length)
+        const lastChild = this.$drawerItems.lastChild
+        if (lastChild) {
+          lastChild.classList.remove("translate-down")
+        }
       } else if (oldTargetI > targetI) {
         for (let i = targetI; i < oldTargetI; i++) {
-          childNodes[i].classList.add('translate-down');
-          childNodes[i].classList.remove('translate-up');
+          childNodes[i].classList.add("translate-down")
+          childNodes[i].classList.remove("translate-up")
         }
       } else {
-        for (let i = oldTargetI; i < targetI; i++)
-          childNodes[i].classList.remove('translate-down');
+        for (let i = oldTargetI; i < targetI; i++) {
+          childNodes[i].classList.remove("translate-down")
+        }
       }
     }
   }
@@ -313,71 +362,87 @@ class BookmarksEditor {
    *   Information about the dragged bookmark/link and the mouse position.
    */
   static _handleDrop(target, index, detail) {
-    const targetId = target ? target.node.id : BookmarksNavigator.currentFolder;
-    const targetIsEditable = BookmarksNavigator.nodeIsEditable(targetId);
+    const targetId = target ? target.node.id : BookmarksNavigator.currentFolder
+    const targetIsEditable = BookmarksNavigator.nodeIsEditable(targetId)
 
-    const draggedElement = this._currentDraggedBookmark;
-    const draggedIsEditable = !draggedElement ||
-      BookmarksNavigator.nodeIsEditable(draggedElement.node.id);
+    const draggedElement = this._currentDraggedBookmark
+    const draggedIsEditable =
+      !draggedElement ||
+      BookmarksNavigator.nodeIsEditable(draggedElement.node.id)
 
     if (draggedElement && draggedElement !== target && draggedIsEditable) {
-      const startI = this._currentDraggedBookmarkIndex;
-      const isDraggingDown = (startI < index);
-      const rect = target ? target.getBoundingClientRect() : null;
+      const startI = this._currentDraggedBookmarkIndex
+      const isDraggingDown = startI < index
+      const rect = target ? target.getBoundingClientRect() : null
 
-      if (target &&
-          this._isFolderDrop(target.isFolder, targetIsEditable,
-                             isDraggingDown, detail.y, rect)) {
-        target.classList.remove('expand');
+      if (
+        target &&
+        this._isFolderDrop(
+          target.isFolder,
+          targetIsEditable,
+          isDraggingDown,
+          detail.y,
+          rect
+        )
+      ) {
+        target.classList.remove("expand")
         chrome.bookmarks.move(detail.bookmarkId, {
-          parentId: target.node.id,
-        });
+          parentId: target.node.id
+        })
       } else {
-        let indexOffset = 0;
-        let beforeElement;
+        let indexOffset = 0
+        let beforeElement
         if (target && this._currentDraggedBookmarkIndex < index) {
           // When we are dragging down, we put it after the current hovered one.
-          indexOffset = 1;
-          beforeElement = target.nextSibling;
+          indexOffset = 1
+          beforeElement = target.nextSibling
         } else {
-          beforeElement = target;
+          beforeElement = target
         }
 
-        this.$drawerItems.removeChild(draggedElement);
-        this.$drawerItems.insertBefore(draggedElement, beforeElement);
+        this.$drawerItems.removeChild(draggedElement)
+        this.$drawerItems.insertBefore(draggedElement, beforeElement)
 
         chrome.bookmarks.move(detail.bookmarkId, {
           parentId: BookmarksNavigator.currentFolder,
-          index: index + indexOffset,
-        });
+          index: index + indexOffset
+        })
       }
     } else if (!draggedElement) {
-      if (target &&
-          this._isFolderDrop(target.isFolder, targetIsEditable, false,
-                             detail.y, target.getBoundingClientRect())) {
+      if (
+        target &&
+        this._isFolderDrop(
+          target.isFolder,
+          targetIsEditable,
+          false,
+          detail.y,
+          target.getBoundingClientRect()
+        )
+      ) {
         chrome.bookmarks.create({
           parentId: target.node.id,
           title: detail.title,
-          url: this._fixUrl(detail.url),
-        });
-      } else if (BookmarksNavigator.currentFolder !==
-                 BookmarksNavigator.ROOT_ID) {
-        const beforeElement = this.$drawerItems.childNodes[index];
+          url: this._fixUrl(detail.url)
+        })
+      } else if (
+        BookmarksNavigator.currentFolder !== BookmarksNavigator.ROOT_ID
+      ) {
+        const beforeElement = this.$drawerItems.childNodes[index]
         const bookmark = document
           .importNode(this.bookmarkTemplate.content, true)
-          .querySelector('.x-bookmark');
-        this.$drawerItems.insertBefore(bookmark, beforeElement);
+          .querySelector(".x-bookmark")
+        this.$drawerItems.insertBefore(bookmark, beforeElement)
 
         chrome.bookmarks.create({
           parentId: BookmarksNavigator.currentFolder,
           title: detail.title,
           url: this._fixUrl(detail.url),
-          index,
-        });
+          index
+        })
       }
     }
 
-    this._resetDragState();
+    this._resetDragState()
   }
 
   /**
@@ -393,106 +458,114 @@ class BookmarksEditor {
    */
   static _isFolderDrop(isFolder, isEditable, isDraggingDown, y, rect) {
     if (isFolder) {
-      if (!isEditable)
-        return true;
+      if (!isEditable) {
+        return true
+      }
 
-      const deadWidth = 0.3 * rect.height;
-      if (isDraggingDown)
-        return rect.bottom - deadWidth > y;
-      else
-        return rect.top + deadWidth < y;
+      const deadWidth = 0.3 * rect.height
+      if (isDraggingDown) {
+        return rect.bottom - deadWidth > y
+      } else {
+        return rect.top + deadWidth < y
+      }
     } else {
-      return false;
+      return false
     }
   }
 
   static _resetDragState() {
-    this._currentDraggedBookmark = null;
-    this._currentDraggedBookmarkIndex = Number.MAX_SAFE_INTEGER;
+    this._currentDraggedBookmark = null
+    this._currentDraggedBookmarkIndex = Number.MAX_SAFE_INTEGER
 
-    this.$drawerItems.classList.add('no-animate-translate');
+    this.$drawerItems.classList.add("no-animate-translate")
 
-    this._returnDragHome();
+    this._returnDragHome()
   }
 
   static _returnDragHome() {
-    this._currentDraggedOverBookmarkIndex = this._currentDraggedBookmarkIndex;
+    this._currentDraggedOverBookmarkIndex = this._currentDraggedBookmarkIndex
 
-    this.$drawerItems.classList.remove('drag-over');
+    this.$drawerItems.classList.remove("drag-over")
 
-    const childNodes = this.$drawerItems.childNodes;
+    const childNodes = this.$drawerItems.childNodes
     Array.prototype.slice.call(childNodes).forEach(element => {
-      element.classList.remove('translate-up');
-      element.classList.remove('translate-down');
-    });
+      element.classList.remove("translate-up")
+      element.classList.remove("translate-down")
+    })
   }
 
   static _openEditDialog(nodeId) {
-    this.$editDialog.open();
+    this.$editDialog.open()
 
-    this.$editDialogTitle.textContent = 'Edit';
+    this.$editDialogTitle.textContent = "Edit"
 
-    chrome.bookmarks.get(nodeId, ([{title, url}]) => {
-      this.$editDialogName.value = title || '';
+    chrome.bookmarks.get(nodeId, ([{ title, url }]) => {
+      this.$editDialogName.value = title || ""
       if (url) {
-        this.$editDialogURL.hidden = false;
-        this.$editDialogURL.value = url;
-        this.$editDialogFavicon.src = `chrome://favicon/size/16@8x/${url}`;
+        this.$editDialogURL.hidden = false
+        this.$editDialogURL.value = url
+        this.$editDialogFavicon.src = `chrome://favicon/size/16@8x/${url}`
       } else {
-        this.$editDialogURL.hidden = true;
-        this.$editDialogFavicon.src = '/images/folder-outline.svg';
+        this.$editDialogURL.hidden = true
+        this.$editDialogFavicon.src = "/images/folder-outline.svg"
       }
-    });
+    })
 
     this.$editDialogDone.onclick = () => {
       chrome.bookmarks.update(nodeId, {
         title: this.$editDialogName.value,
-        url: this.$editDialogURL.value,
-      });
-    };
+        url: this.$editDialogURL.value
+      })
+    }
   }
 
   static _openCreateDialog(isFolder, nodeId) {
-    this.$editDialog.open();
-    this.$editDialogTitle.textContent = isFolder ? 'Add Folder' : 'Add Page';
-    this.$editDialogName.value = '';
-    this.$editDialogURL.value = '';
-    this.$editDialogURL.hidden = isFolder;
-    this.$editDialogFavicon.src = isFolder ? '/images/folder-outline.svg' :
-                                             'chrome://favicon/size/16@8x/';
+    this.$editDialog.open()
+    this.$editDialogTitle.textContent = isFolder ? "Add Folder" : "Add Page"
+    this.$editDialogName.value = ""
+    this.$editDialogURL.value = ""
+    this.$editDialogURL.hidden = isFolder
+    this.$editDialogFavicon.src = isFolder
+      ? "/images/folder-outline.svg"
+      : "chrome://favicon/size/16@8x/"
 
     this.$editDialogDone.onclick = () => {
-      if (!isFolder && !this.$editDialogURL.value)
-        return;
+      if (!isFolder && !this.$editDialogURL.value) {
+        return
+      }
 
-      const create = parentId => chrome.bookmarks.create({
-        parentId,
-        title: this.$editDialogName.value,
-        url: this.$editDialogURL.value,
-      });
+      const create = parentId =>
+        chrome.bookmarks.create({
+          parentId,
+          title: this.$editDialogName.value,
+          url: this.$editDialogURL.value
+        })
 
-      if (nodeId)
+      if (nodeId) {
         chrome.bookmarks.get(nodeId, ([node]) => {
-          if (node.url)
-            create(node.parentId);
-          else
-            create(node.id);
-        });
-      else
-        create(BookmarksNavigator.currentFolder);
+          if (node.url) {
+            create(node.parentId)
+          } else {
+            create(node.id)
+          }
+        })
+      } else {
+        create(BookmarksNavigator.currentFolder)
+      }
 
-      this.$editDialog.close();
-    };
+      this.$editDialog.close()
+    }
   }
 
   static _fixUrl(url) {
-    if (url && url.search('://') === -1)
-      return `http://${url}`;
-    else
-      return url;
+    if (url && url.search("://") === -1) {
+      return `http://${url}`
+    } else {
+      return url
+    }
   }
 }
 
-BookmarksEditor.main();
+BookmarksEditor.main()
 
-window.BookmarksEditor = BookmarksEditor;
+window.BookmarksEditor = BookmarksEditor

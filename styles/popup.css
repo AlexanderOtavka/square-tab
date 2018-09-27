@@ -6,7 +6,7 @@
 body {
   width: 220px;
   user-select: none;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 400;
 }
 
@@ -22,14 +22,14 @@ h2 {
   margin: 4px 0;
 }
 
-input[type=checkbox],
-input[type=radio] {
+input[type="checkbox"],
+input[type="radio"] {
   width: var(--small-input-size);
   height: var(--small-input-size);
   margin: var(--small-input-margin);
 }
 
-input[type=checkbox] {
+input[type="checkbox"] {
   position: relative;
   top: -1px;
 }
@@ -58,7 +58,8 @@ input[disabled] + label {
   margin-left: calc(var(--small-input-size) + var(--small-input-margin) * 2);
 }
 
-.header, .footer {
+.header,
+.footer {
   color: #333;
   background-color: #f0f0f0;
   padding: 8px;

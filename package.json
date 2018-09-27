@@ -1,16 +1,18 @@
 {
   "name": "square-tab",
   "version": "0.0.0",
+  "license": "GPL-3.0",
   "scripts": {
     "zip": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
-    "lint": "./node_modules/.bin/eslint scripts elements",
-    "fix": "./node_modules/.bin/eslint --fix scripts elements"
+    "lint": "eslint scripts elements",
+    "fix": "eslint --fix scripts elements && prettier --write '{scripts,styles,elements}/**/*.{js,css}'"
   },
   "devDependencies": {
     "eslint": "^3.9.1",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.1.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.6.0"
+    "eslint-plugin-react": "^6.6.0",
+    "prettier": "^1.14.3"
   }
 }

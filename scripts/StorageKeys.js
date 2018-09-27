@@ -1,7 +1,7 @@
 const StorageKeys = {
-  WEATHER_DATA: 'weatherData',
-  IMAGE_DATA_URL: 'imageDataURL',
-  IMAGE_SOURCE_URL: 'imageSourceURL',
-};
+  WEATHER_DATA: "weatherData",
+  IMAGE_DATA_URL: "imageDataURL",
+  IMAGE_SOURCE_URL: "imageSourceURL"
+}
 
-window.StorageKeys = StorageKeys;
+window.StorageKeys = StorageKeys
