@@ -1,15 +1,17 @@
 /* globals Settings */
+import html from "../modules/html.js"
 
-class XTooltipElement extends HTMLElement {
-  static register() {
-    this.$tmpl = document.currentScript.ownerDocument.querySelector("template")
-    document.registerElement("x-tooltip", this)
-  }
+export default class XTooltipElement extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: "open" }).appendChild(html`
+      <link rel="stylesheet" href="/styles/shared-styles.css" />
+      <link rel="stylesheet" href="/elements/x-tooltip.css" />
 
-  createdCallback() {
-    this.createShadowRoot().appendChild(
-      document.importNode(XTooltipElement.$tmpl.content, true)
-    )
+      <div class="fullbleed">
+        <div id="tooltip">Tooltip</div>
+      </div>
+    `)
 
     this.$tooltip = this.shadowRoot.querySelector("#tooltip")
 
@@ -115,4 +117,4 @@ class XTooltipElement extends HTMLElement {
   }
 }
 
-XTooltipElement.register()
+customElements.define("x-tooltip", XTooltipElement)

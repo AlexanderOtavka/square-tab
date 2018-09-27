@@ -1,13 +1,16 @@
-class XContextMenuElement extends HTMLElement {
-  static register() {
-    this.$tmpl = document.currentScript.ownerDocument.querySelector("template")
-    document.registerElement("x-context-menu", this)
-  }
+import html from "../modules/html.js"
 
-  createdCallback() {
-    this.createShadowRoot().appendChild(
-      document.importNode(XContextMenuElement.$tmpl.content, true)
-    )
+export default class XContextMenuElement extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: "open" }).appendChild(html`
+      <link rel="stylesheet" href="/styles/shared-styles.css" />
+      <link rel="stylesheet" href="/elements/x-context-menu.css" />
+
+      <div id="wrapper">
+        <slot></slot>
+      </div>
+    `)
 
     this.$wrapper = this.shadowRoot.querySelector("#wrapper")
 
@@ -68,4 +71,4 @@ class XContextMenuElement extends HTMLElement {
   }
 }
 
-XContextMenuElement.register()
+customElements.define("x-context-menu", XContextMenuElement)

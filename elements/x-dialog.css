@@ -52,7 +52,7 @@
   background: var(--backdrop-background);
 }
 
-::content .dialog-title {
+::slotted([slot="title"]) {
   margin: 0;
   font-size: 1rem;
   flex-grow: 1;
@@ -62,7 +62,7 @@
   white-space: nowrap;
 }
 
-::content img.dialog-title {
+::slotted(img[slot="title"]) {
   width: 16px;
   height: 16px;
   flex-grow: 0;
@@ -71,16 +71,16 @@
   margin-right: 16px;
 }
 
-::content .dialog-content {
+::slotted([slot="content"]) {
   margin: 0 16px;
 }
 
-::content .dialog-confirm {
+::slotted([slot="confirm"]) {
   background-color: #2196f3;
   color: #fff;
 }
 
-::content .dialog-confirm,
-::content .dialog-cancel {
+::slotted([slot="confirm"]),
+::slotted([slot="cancel"]) {
   margin: 0 6px;
 }

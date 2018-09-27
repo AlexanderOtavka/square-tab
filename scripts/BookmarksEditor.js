@@ -1,4 +1,5 @@
 /* globals BookmarksNavigator */
+import XBookmarkElement from "../elements/x-bookmark.js"
 
 // todo: add undo popup
 
@@ -8,10 +9,6 @@ class BookmarksEditor {
   }
 
   static main() {
-    this.bookmarkTemplate = document
-      .querySelector("#x-bookmark-tmpl")
-      .import.querySelector("template")
-
     this.$drawer = document.querySelector("#bookmarks-drawer")
     this.$upButton = document.querySelector("#bookmarks-up-button")
     this.$drawerItems = document.querySelector("#bookmarks-drawer-items")
@@ -34,9 +31,7 @@ class BookmarksEditor {
     )
     this.$editDialogName = document.querySelector("#bookmarks-edit-dialog-name")
     this.$editDialogURL = document.querySelector("#bookmarks-edit-dialog-url")
-    this.$editDialogDone = document.querySelector(
-      "#bookmarks-edit-dialog .dialog-confirm"
-    )
+    this.$editDialogDone = document.querySelector("#bookmarks-edit-dialog-done")
 
     this._resetDragState()
 
@@ -428,9 +423,7 @@ class BookmarksEditor {
         BookmarksNavigator.currentFolder !== BookmarksNavigator.ROOT_ID
       ) {
         const beforeElement = this.$drawerItems.childNodes[index]
-        const bookmark = document
-          .importNode(this.bookmarkTemplate.content, true)
-          .querySelector(".x-bookmark")
+        const bookmark = new XBookmarkElement()
         this.$drawerItems.insertBefore(bookmark, beforeElement)
 
         chrome.bookmarks.create({

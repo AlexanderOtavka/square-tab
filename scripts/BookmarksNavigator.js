@@ -1,4 +1,5 @@
 /* globals Settings */
+import XBookmarkElement from "../elements/x-bookmark.js"
 
 class BookmarksNavigator {
   constructor() {
@@ -30,10 +31,6 @@ class BookmarksNavigator {
   }
 
   static main() {
-    this.bookmarkTemplate = document
-      .querySelector("#x-bookmark-tmpl")
-      .import.querySelector("template")
-
     this.$header = document.querySelector("#bookmarks-drawer .drawer-header")
     this.$upButton = document.querySelector("#bookmarks-up-button")
     this.$title = document.querySelector("#bookmarks-drawer .title")
@@ -219,9 +216,7 @@ class BookmarksNavigator {
     ) {
       bookmark = beforeElement
     } else {
-      bookmark = document
-        .importNode(this.bookmarkTemplate.content, true)
-        .querySelector(".x-bookmark")
+      bookmark = new XBookmarkElement()
       this.$drawerItems.insertBefore(bookmark, beforeElement)
     }
 

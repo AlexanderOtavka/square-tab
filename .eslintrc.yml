@@ -9,6 +9,9 @@
 ##
 
 installedESLint: true
+parserOptions:
+  ecmaVersion: 2015
+  sourceType: module
 env:
   es6: true
   browser: true
@@ -29,7 +32,7 @@ rules:
   no-undef:
     - error
   no-unused-vars:
-    - error
+    - warn
     - args: none
   no-lonely-if:
     - error

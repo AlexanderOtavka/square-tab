@@ -1,8 +1,21 @@
-class XBookmarkElement extends HTMLElement {
-  createdCallback() {
-    this.$link = this.querySelector(".x-bookmark__link")
-    this.$image = this.querySelector(".x-bookmark__image")
-    this.$name = this.querySelector(".x-bookmark__name")
+import html from "../modules/html.js"
+
+export default class XBookmarkElement extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: "open" }).appendChild(html`
+      <link rel="stylesheet" href="/styles/shared-styles.css" />
+      <link rel="stylesheet" href="/elements/x-bookmark.css" />
+
+      <a id="link">
+        <img id="image" />
+        <div id="name"></div>
+      </a>
+    `)
+
+    this.$link = this.shadowRoot.querySelector("#link")
+    this.$image = this.shadowRoot.querySelector("#image")
+    this.$name = this.shadowRoot.querySelector("#name")
 
     this.small = false
     this.node = null
@@ -154,4 +167,4 @@ class XBookmarkElement extends HTMLElement {
   }
 }
 
-document.registerElement("x-bookmark", XBookmarkElement)
+customElements.define("x-bookmark", XBookmarkElement)

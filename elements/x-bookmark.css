@@ -1,21 +1,19 @@
-.x-bookmark {
+:host {
   display: block;
   position: relative;
   z-index: 1;
 }
 
-.x-bookmark.translate-down,
-.x-bookmark.translate-up,
-.x-bookmark.expand {
+:host(.translate-down, .translate-up, .expand) {
   z-index: 2;
 }
 
-.x-bookmark.dragging {
+:host(.dragging) {
   z-index: 0;
 }
 
-.x-bookmark__link,
-.x-bookmark__link:hover {
+#link,
+#link:hover {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -28,35 +26,35 @@
   transition: transform var(--drag-drop-transition-timing);
 }
 
-.no-animate-translate .x-bookmark__link {
+:host-context(.no-animate-translate) #link {
   transition: none;
 }
 
-.drag-over .x-bookmark__link {
+:host-context(.drag-over) #link {
   pointer-events: none;
 }
 
-.x-bookmark.translate-up .x-bookmark__link {
+:host(.translate-up) #link {
   transform: translateY(-100%);
 }
 
-.x-bookmark.translate-down .x-bookmark__link {
+:host(.translate-down) #link {
   transform: translateY(100%);
 }
 
-.x-bookmark.expand .x-bookmark__link {
+:host(.expand) #link {
   transform: scale(1.2) translate(6%, 0);
 }
 
-.x-bookmark[small].expand .x-bookmark__link {
+:host([small].expand) #link {
   transform: scale(1.2);
 }
 
-.x-bookmark.dragging .x-bookmark__link {
+:host(.dragging) #link {
   opacity: 0;
 }
 
-.x-bookmark__link::after {
+#link::after {
   content: "";
   display: block;
   position: absolute;
@@ -70,17 +68,17 @@
   transition: opacity var(--mouse-effect-transition-timing);
 }
 
-.x-bookmark__link:active::after {
+#link:active::after {
   opacity: 1;
 }
 
-.x-bookmark__image {
+#image {
   width: 16px;
   height: 16px;
   margin: 8px 16px;
 }
 
-.x-bookmark__name {
+#name {
   flex-grow: 1;
   flex-basis: 1px;
   font-size: 1rem;
@@ -90,6 +88,6 @@
   font-weight: var(--x-bookmark-font-weight);
 }
 
-.x-bookmark[small] .x-bookmark__name {
+:host([small]) #name {
   display: none;
 }

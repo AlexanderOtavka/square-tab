@@ -9,13 +9,20 @@
   <link rel="stylesheet" href="../styles/shared-styles.css" />
   <link rel="stylesheet" href="../styles/newtab.css" />
   <link rel="stylesheet" href="../styles/weather-icons/weather-icons.css" />
-  <link rel="stylesheet" href="../styles/x-bookmark.css" />
 
-  <link rel="import" href="x-bookmark.html" id="x-bookmark-tmpl" />
-  <link rel="import" href="../elements/x-icon/x-icon.html" />
-  <link rel="import" href="../elements/x-context-menu/x-context-menu.html" />
-  <link rel="import" href="../elements/x-dialog/x-dialog.html" />
-  <link rel="import" href="../elements/x-tooltip/x-tooltip.html" />
+  <script type="module" src="../elements/x-bookmark.js"></script>
+  <script type="module" src="../elements/x-context-menu.js"></script>
+  <script type="module" src="../elements/x-dialog.js"></script>
+  <script type="module" src="../elements/x-icon.js"></script>
+  <script type="module" src="../elements/x-tooltip.js"></script>
+
+  <script type="module" src="../scripts/StorageKeys.js"></script>
+  <script type="module" src="../scripts/Surprise.js"></script>
+  <script type="module" src="../scripts/Settings.js"></script>
+  <script type="module" src="../scripts/BookmarksNavigator.js"></script>
+  <script type="module" src="../scripts/BookmarksEditor.js"></script>
+  <script type="module" src="../scripts/Weather.js"></script>
+  <script type="module" src="../scripts/newtab.js"></script>
 </head>
 
 <body unresolved>
@@ -23,11 +30,7 @@
 
   <header id="main-toolbar" class="toolbar">
     <a id="surprise-link" hidden></a>
-    <a
-      id="unsplash-link"
-      class="source-link"
-      target="_blank"
-      href="https://unsplash.com/">
+    <a id="unsplash-link" class="source-link" target="_blank" href="https://unsplash.com/">
 
       Unsplash
     </a>
@@ -35,11 +38,7 @@
 
     <span class="title"></span>
 
-    <x-icon
-      id="bookmarks-open-button"
-      class="radial-shadow"
-      icon="bookmarks"
-      large button>
+    <x-icon id="bookmarks-open-button" class="radial-shadow" icon="bookmarks" large button>
     </x-icon>
   </header>
 
@@ -48,10 +47,7 @@
       <a id="time" href="https://www.google.com/search?q=time"></a>
       <div id="greeting"></div>
 
-      <a
-        id="weather-wrapper"
-        href="https://www.google.com/search?q=weather"
-        hidden>
+      <a id="weather-wrapper" href="https://www.google.com/search?q=weather" hidden>
 
         <i id="weather-icon" class="wi wi-day-sunny"></i>
         <span id="temperature"></span>
@@ -72,24 +68,22 @@
   </aside>
 
   <x-dialog id="bookmarks-edit-dialog">
-    <img id="bookmarks-edit-dialog-favicon" class="dialog-title" />
-    <h1 id="bookmarks-edit-dialog-title" class="dialog-title"></h1>
+    <img slot="title" id="bookmarks-edit-dialog-favicon" />
+    <h1 slot="title" id="bookmarks-edit-dialog-title"></h1>
 
-    <div class="dialog-content row">
+    <div slot="content" class="row">
       <input id="bookmarks-edit-dialog-name" type="text" placeholder="Name" />
       <input id="bookmarks-edit-dialog-url" type="url" placeholder="URL" />
     </div>
 
-    <button class="dialog-cancel">Cancel</button>
-    <button class="dialog-confirm">Done</button>
+    <button slot="cancel">Cancel</button>
+    <button slot="confirm" id="bookmarks-edit-dialog-done">Done</button>
   </x-dialog>
 
   <x-tooltip id="bookmarks-drawer-tooltip"></x-tooltip>
 
   <x-context-menu id="bookmarks-ctx-menu">
-    <div
-      id="bookmarks-ctx-menu-name"
-      class="menu-item disabled line-below">
+    <div id="bookmarks-ctx-menu-name" class="menu-item disabled line-below">
     </div>
 
     <div id="bookmarks-ctx-menu-edit" class="menu-item">Edit</div>
@@ -98,15 +92,6 @@
     <div id="bookmarks-ctx-menu-add-page" class="menu-item">Add Page</div>
     <div id="bookmarks-ctx-menu-add-folder" class="menu-item">Add Folder</div>
   </x-context-menu>
-
-  <script src="../scripts/StorageKeys.js"></script>
-  <script src="../scripts/Surprise.js"></script>
-  <script src="../scripts/Settings.js"></script>
-  <script src="../scripts/BookmarksNavigator.js"></script>
-  <script src="../scripts/BookmarksEditor.js"></script>
-  <script src="../scripts/Weather.js"></script>
-  <script src="../scripts/newtab.js"></script>
-  <script src="../scripts/x-bookmark.js"></script>
 </body>
 
 </html>

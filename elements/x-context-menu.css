@@ -35,7 +35,7 @@
   overflow-y: scroll;
 }
 
-::content .menu-item {
+::slotted(.menu-item) {
   display: block;
   padding: 8px;
   font-size: 0.9rem;
@@ -44,24 +44,24 @@
   transition: background 200ms;
 }
 
-::content .menu-item:not(.disabled):active {
+::slotted(.menu-item:not(.disabled):active) {
   background: rgba(0, 0, 0, 0.2);
 }
 
-::content .menu-item.disabled {
+::slotted(.menu-item.disabled) {
   color: #bbb;
   cursor: default;
 }
 
-::content .menu-item.line-below {
+::slotted(.menu-item.line-below) {
   border-bottom: var(--dividing-line-style);
 }
 
-::content .menu-item.line-above {
+::slotted(.menu-item.line-above) {
   border-top: var(--dividing-line-style);
 }
 
-::content hr {
+::slotted(hr) {
   margin: 0;
   border: none;
   border-bottom: var(--dividing-line-style);
