@@ -27,7 +27,7 @@
   },
 
   "background": {
-    "scripts": ["scripts/StorageKeys.js", "scripts/EventPage.js"],
+    "page": "views/event-page.html",
     "persistent": false
   }
 }

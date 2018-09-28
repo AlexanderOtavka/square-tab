@@ -1,4 +1,5 @@
-/* globals Settings, Surprise */
+import * as Surprise from "../modules/Surprise.js"
+import * as Settings from "../modules/Settings.js"
 
 class Popup {
   constructor() {
@@ -23,7 +24,7 @@ class Popup {
     this.bindCheckbox("USE_TIME_OF_DAY_IMAGES")
     this.bindCheckbox("SURPRISE")
 
-    if (Surprise.isTime) {
+    if (Surprise.isTime()) {
       document.querySelector("#surprise-container").hidden = false
     }
   }

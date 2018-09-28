@@ -1,4 +1,4 @@
-/* globals StorageKeys */
+import StorageKeys from "../modules/StorageKeys.js"
 
 class EventPage {
   constructor() {

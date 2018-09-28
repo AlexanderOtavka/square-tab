@@ -1,5 +1,5 @@
-/* globals Settings */
 import html from "../modules/html.js"
+import * as Settings from "../modules/Settings.js"
 
 export default class XTooltipElement extends HTMLElement {
   constructor() {

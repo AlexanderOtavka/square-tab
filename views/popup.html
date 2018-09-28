@@ -8,6 +8,8 @@
 
   <link rel="stylesheet" href="../styles/shared-styles.css" />
   <link rel="stylesheet" href="../styles/popup.css" />
+
+  <script type="module" src="../scripts/popup.js"></script>
 </head>
 
 <body>
@@ -18,51 +20,27 @@
 
     <div class="child">
       <div class="small-input-container">
-        <input
-          id="drawer-mode-toggle"
-          type="radio"
-          name="BOOKMARKS_DRAWER_MODE"
-          value="TOGGLE"
-          tabindex="-1" />
+        <input id="drawer-mode-toggle" type="radio" name="BOOKMARKS_DRAWER_MODE" value="TOGGLE" tabindex="-1" />
         <label for="drawer-mode-toggle">Sliding Drawer</label>
       </div>
 
       <div class="small-input-container">
-        <input
-          id="drawer-mode-hover"
-          type="radio"
-          name="BOOKMARKS_DRAWER_MODE"
-          value="HOVER"
-          tabindex="-1" />
+        <input id="drawer-mode-hover" type="radio" name="BOOKMARKS_DRAWER_MODE" value="HOVER" tabindex="-1" />
         <label for="drawer-mode-hover">Show When Hovered</label>
       </div>
 
       <div class="small-input-container">
-        <input
-          id="drawer-mode-always"
-          type="radio"
-          name="BOOKMARKS_DRAWER_MODE"
-          value="ALWAYS"
-          tabindex="-1" />
+        <input id="drawer-mode-always" type="radio" name="BOOKMARKS_DRAWER_MODE" value="ALWAYS" tabindex="-1" />
         <label for="drawer-mode-always">Always Show</label>
       </div>
 
       <div class="small-input-container">
-        <input
-          id="drawer-mode-never"
-          type="radio"
-          name="BOOKMARKS_DRAWER_MODE"
-          value="NEVER"
-          tabindex="-1" />
+        <input id="drawer-mode-never" type="radio" name="BOOKMARKS_DRAWER_MODE" value="NEVER" tabindex="-1" />
         <label for="drawer-mode-never">Never Show</label>
       </div>
 
       <div class="small-input-container">
-        <input
-          id="bookmarks-drawer-small"
-          type="checkbox"
-          name="BOOKMARKS_DRAWER_SMALL"
-          tabindex="-1" />
+        <input id="bookmarks-drawer-small" type="checkbox" name="BOOKMARKS_DRAWER_SMALL" tabindex="-1" />
         <label for="bookmarks-drawer-small">Small</label>
       </div>
     </div>
@@ -71,116 +49,63 @@
 
     <div class="child">
       <div class="small-input-container">
-        <input
-          id="drawer-position-right"
-          type="radio"
-          name="BOOKMARKS_DRAWER_POSITION"
-          value="RIGHT"
-          tabindex="-1" />
+        <input id="drawer-position-right" type="radio" name="BOOKMARKS_DRAWER_POSITION" value="RIGHT" tabindex="-1" />
         <label for="drawer-position-right">Right</label>
       </div>
 
       <div class="small-input-container">
-        <input
-          id="drawer-position-left"
-          type="radio"
-          name="BOOKMARKS_DRAWER_POSITION"
-          value="LEFT"
-          tabindex="-1" />
+        <input id="drawer-position-left" type="radio" name="BOOKMARKS_DRAWER_POSITION" value="LEFT" tabindex="-1" />
         <label for="drawer-position-left">Left</label>
       </div>
     </div>
 
     <div class="small-input-container">
-      <input
-        id="show-photo-source"
-        type="checkbox"
-        name="SHOW_PHOTO_SOURCE"
-        tabindex="-1" />
+      <input id="show-photo-source" type="checkbox" name="SHOW_PHOTO_SOURCE" tabindex="-1" />
       <label for="show-photo-source">Show Photo Source</label>
     </div>
 
     <div class="small-input-container">
-      <input
-        id="boxed-info"
-        type="checkbox"
-        name="BOXED_INFO"
-        tabindex="-1" />
+      <input id="boxed-info" type="checkbox" name="BOXED_INFO" tabindex="-1" />
       <label for="boxed-info">Show Box Around Info</label>
     </div>
 
     <div class="small-input-container">
-      <input
-        id="twenty-four-hour-time"
-        type="checkbox"
-        name="TWENTY_FOUR_HOUR_TIME"
-        tabindex="-1" />
+      <input id="twenty-four-hour-time" type="checkbox" name="TWENTY_FOUR_HOUR_TIME" tabindex="-1" />
       <label for="twenty-four-hour-time">24 Hour Time</label>
     </div>
 
     <div class="small-input-container">
-      <input
-        id="show-weather"
-        type="checkbox"
-        name="SHOW_WEATHER"
-        tabindex="-1" />
+      <input id="show-weather" type="checkbox" name="SHOW_WEATHER" tabindex="-1" />
       <label for="show-weather">Show Weather</label>
     </div>
 
     <div class="child">
       <div class="small-input-container inline">
-        <input
-          id="temp-unit-f"
-          type="radio"
-          name="TEMPERATURE_UNIT"
-          value="FAHRENHEIT"
-          tabindex="-1" />
+        <input id="temp-unit-f" type="radio" name="TEMPERATURE_UNIT" value="FAHRENHEIT" tabindex="-1" />
         <label for="temp-unit-f">&deg;F</label>
       </div>
 
       <div class="small-input-container inline">
-        <input
-          id="temp-unit-c"
-          type="radio"
-          name="TEMPERATURE_UNIT"
-          value="CELCIUS"
-          tabindex="-1" />
+        <input id="temp-unit-c" type="radio" name="TEMPERATURE_UNIT" value="CELSIUS" tabindex="-1" />
         <label for="temp-unit-c">&deg;C</label>
       </div>
     </div>
 
     <div class="small-input-container">
-      <input
-        id="tod-images"
-        type="checkbox"
-        name="USE_TIME_OF_DAY_IMAGES"
-        tabindex="-1" />
+      <input id="tod-images" type="checkbox" name="USE_TIME_OF_DAY_IMAGES" tabindex="-1" />
       <label for="tod-images">Filter Images Based on Time</label>
     </div>
 
     <div class="small-input-container" id="surprise-container" hidden>
-      <input
-        id="surprise"
-        type="checkbox"
-        name="SURPRISE"
-        tabindex="-1" />
+      <input id="surprise" type="checkbox" name="SURPRISE" tabindex="-1" />
       <label for="surprise">April Surprise</label>
     </div>
   </div>
 
-  <a
-    id="github"
-    class="footer"
-    href="https://github.com/AlexanderOtavka/square-tab"
-    target="_blank"
-    tabindex="-1">
+  <a id="github" class="footer" href="https://github.com/AlexanderOtavka/square-tab" target="_blank" tabindex="-1">
 
     <span>GitHub</span>
   </a>
-
-  <script src="../scripts/Surprise.js"></script>
-  <script src="../scripts/Settings.js"></script>
-  <script src="../scripts/popup.js"></script>
 </body>
 
 </html>

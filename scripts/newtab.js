@@ -1,5 +1,9 @@
-/* globals BookmarksNavigator, BookmarksEditor, Settings, Weather,
-           StorageKeys, Surprise */
+import StorageKeys from "../modules/StorageKeys.js"
+import * as Surprise from "../modules/Surprise.js"
+import * as Settings from "../modules/Settings.js"
+import * as Weather from "../modules/Weather.js"
+import * as BookmarksNavigator from "../modules/BookmarksNavigator.js"
+import * as BookmarksEditor from "../modules/BookmarksEditor.js"
 
 class NewTab {
   constructor() {
@@ -68,7 +72,7 @@ class NewTab {
     this.addBookmarksDrawerListeners()
     this.addBookmarksTooltipListeners()
 
-    if (Surprise.isTime) {
+    if (Surprise.isTime()) {
       this.$surpriseLink.hidden = false
     }
 
@@ -380,9 +384,9 @@ class NewTab {
     this.$bookmarksDrawerHeader.addEventListener("contextmenu", ev => {
       let nodeId
       if (ev.target === this.$bookmarksUpButton) {
-        nodeId = BookmarksNavigator.parentFolder
+        nodeId = BookmarksNavigator.getParentFolder()
       } else {
-        nodeId = BookmarksNavigator.currentFolder
+        nodeId = BookmarksNavigator.getCurrentFolder()
       }
 
       BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId)
