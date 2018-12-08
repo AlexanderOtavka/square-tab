@@ -4,6 +4,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "parcel": "parcel",
+    "build": "rm -rf dist && parcel build --public-url '.' views/*",
     "watch": "parcel watch --public-url '.' --no-hmr views/*",
     "zip": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
     "lint": "eslint scripts elements",
