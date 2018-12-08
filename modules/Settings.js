@@ -1,3 +1,6 @@
+import { BehaviorSubject } from "rxjs"
+import { distinctUntilChanged, map } from "rxjs/operators"
+
 import * as Surprise from "./Surprise.js"
 
 export const enums = {
@@ -78,17 +81,16 @@ const storageKeysArray = Object.keys(keys).map(keyName => keys[keyName])
 
 const data = {}
 storageKeysArray.forEach(storageKey => {
-  data[storageKey] = {
-    value: undefined,
-    overrides: [],
-    basicListener: new chrome.Event(),
-    dataListener: new chrome.Event()
-  }
-
-  if (storageKey in overrides) {
-    onChanged(storageKey).addListener(overrides[storageKey])
-  }
+  data[storageKey] = new BehaviorSubject({ value: undefined, overrides: [] })
 })
+
+Object.keys(overrides)
+  .filter(name => storageKeysArray.includes(name))
+  .forEach(storageKey => {
+    if (storageKey in overrides) {
+      onChanged(storageKey).subscribe(overrides[storageKey])
+    }
+  })
 
 export const loaded = new Promise(resolve => {
   chrome.storage.sync.get(storageKeysArray, data => resolve(data))
@@ -112,28 +114,13 @@ chrome.storage.onChanged.addListener((changes, area) => {
 })
 
 export function get(storageKey) {
-  console.assert(storageKeysArray.indexOf(storageKey) !== -1)
-  const override = getActiveOverride(storageKey)
-  if (override !== undefined) {
-    return override
-  } else if (data[storageKey].value !== undefined) {
-    return data[storageKey].value
-  } else {
-    return defaults[storageKey]
-  }
+  const valueMapper = createValueMapper(storageKey)
+  return valueMapper(data[storageKey].getValue())
 }
 
 export function getData(storageKey) {
-  console.assert(storageKeysArray.indexOf(storageKey) !== -1)
-  const d = data[storageKey]
-  let value = d.value
-  if (value === undefined) {
-    value = defaults[storageKey]
-  }
-
-  const activeOverride = getActiveOverride(storageKey)
-
-  return { value, overrides: d.overrides.slice(), activeOverride }
+  const dataMapper = createDataMapper(storageKey)
+  return dataMapper(data[storageKey].getValue())
 }
 
 export function set(storageKey, value) {
@@ -142,64 +129,68 @@ export function set(storageKey, value) {
 }
 
 export function onChanged(storageKey) {
-  console.assert(storageKeysArray.indexOf(storageKey) !== -1)
-  return data[storageKey].basicListener
+  return data[storageKey].pipe(
+    map(createValueMapper(storageKey)),
+    distinctUntilChanged()
+  )
 }
 
 export function onDataChanged(storageKey) {
-  console.assert(storageKeysArray.indexOf(storageKey) !== -1)
-  return data[storageKey].dataListener
+  return data[storageKey].pipe(
+    map(createDataMapper(storageKey)),
+    distinctUntilChanged(
+      (a, b) =>
+        a.value === b.value && !arraysShallowEqual(a.overrides, b.overrides)
+    )
+  )
 }
 
-function getActiveOverride(storageKey) {
-  return data[storageKey].overrides.find(ovr => ovr !== undefined)
+function createDataMapper(storageKey) {
+  return ({ value = defaults[storageKey], overrides }) => ({
+    value,
+    overrides,
+    activeOverride: getActiveOverride(overrides)
+  })
 }
 
-function setValue(storageKey, newValue, forceNotify = false) {
-  const PROP_NAME = "value"
-  setDataProperty(storageKey, PROP_NAME, newValue, forceNotify)
+function createValueMapper(storageKey) {
+  return ({ value = defaults[storageKey], overrides }) =>
+    hasActiveOverride(overrides) ? getActiveOverride(overrides) : value
 }
 
-function setOverride(storageKey, priority, newOverride, forceNotify = false) {
-  const PROP_NAME = "overrides"
-  const overrides = data[storageKey].overrides.slice()
-  overrides[priority] = newOverride
-  setDataProperty(storageKey, PROP_NAME, overrides, forceNotify)
+function getActiveOverride(overrides) {
+  return overrides.find(ovr => ovr !== undefined)
+}
+
+function hasActiveOverride(overrides) {
+  return overrides.some(x => x !== undefined)
+}
+
+function setValue(storageKey, newValue) {
+  data[storageKey].next({
+    ...data[storageKey].getValue(),
+    value: newValue
+  })
+}
+
+function setOverride(storageKey, priority, newOverride) {
+  const oldData = data[storageKey].getValue()
+  data[storageKey].next({
+    ...oldData,
+    overrides: oldData.overrides.map(
+      (oldOverride, i) => (i === priority ? newOverride : oldOverride)
+    )
+  })
 }
 
 function unsetOverride(storageKey, priority) {
   setOverride(storageKey, priority, undefined)
 }
 
-function setDataProperty(storageKey, property, value, forceNotify) {
-  let oldData
-  let oldOverriddenValue
-  if (forceNotify) {
-    oldData = { value: undefined, overrides: [] }
-    oldOverriddenValue = undefined
-  } else {
-    oldData = getData(storageKey)
-    oldOverriddenValue = get(storageKey)
-  }
-
-  const dataItem = data[storageKey]
-  dataItem[property] = value
-
-  const newData = getData(storageKey)
-  if (newData.value !== oldData.value || overridesChanged(newData, oldData)) {
-    dataItem.dataListener.dispatch(newData, oldData)
-  }
-
-  const newOverriddenValue = get(storageKey)
-  if (newOverriddenValue !== oldOverriddenValue) {
-    dataItem.basicListener.dispatch(newOverriddenValue, oldOverriddenValue)
-  }
-}
-
-function overridesChanged(newData, oldData) {
-  const len = Math.max(newData.overrides.length, oldData.overrides.length)
+function arraysShallowEqual(a, b) {
+  const len = Math.max(a.length, b.length)
   for (let i = 0; i < len; i++) {
-    if (newData.overrides[i] !== oldData.overrides[i]) {
+    if (a[i] !== b[i]) {
       return true
     }
   }

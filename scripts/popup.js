@@ -40,7 +40,7 @@ class Popup {
       Settings.set(settingKey, value)
     })
 
-    Settings.onDataChanged(settingKey).addListener(data => {
+    Settings.onDataChanged(settingKey).subscribe(data => {
       $checkbox.checked = data.value
       $checkbox.disabled = data.activeOverride !== undefined
     })
@@ -61,7 +61,7 @@ class Popup {
       })
     })
 
-    Settings.onDataChanged(settingKey).addListener(data => {
+    Settings.onDataChanged(settingKey).subscribe(data => {
       const valueName = Object.keys(values).find(
         key => values[key] === data.value
       )

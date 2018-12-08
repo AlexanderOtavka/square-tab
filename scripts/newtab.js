@@ -94,7 +94,7 @@ class NewTab {
       })
     })
 
-    Settings.onChanged(Settings.keys.SURPRISE).addListener(surprise => {
+    Settings.onChanged(Settings.keys.SURPRISE).subscribe(surprise => {
       if (surprise) {
         this.$surpriseLink.textContent = "Let her go, Anakin"
         this.$unsplashLink.hidden = true
@@ -206,34 +206,34 @@ class NewTab {
   }
 
   static addSettingsChangeListeners() {
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE).addListener(value =>
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE).subscribe(value =>
       this.updateBookmarkDrawerMode(value)
     )
 
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_POSITION).addListener(
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_POSITION).subscribe(
       value => this.updateBookmarkDrawerPosition(value)
     )
 
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).addListener(
+    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).subscribe(
       value => {
         this.updateBookmarkDrawerSmall(value)
         BookmarksNavigator.updateSize(value)
       }
     )
 
-    Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE).addListener(value =>
+    Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE).subscribe(value =>
       this.updateShowPhotoSource(value)
     )
 
-    Settings.onChanged(Settings.keys.BOXED_INFO).addListener(value =>
+    Settings.onChanged(Settings.keys.BOXED_INFO).subscribe(value =>
       this.updateBoxedInfo(value)
     )
 
-    Settings.onChanged(Settings.keys.SHOW_WEATHER).addListener(value =>
+    Settings.onChanged(Settings.keys.SHOW_WEATHER).subscribe(value =>
       this.updateWeather(value)
     )
 
-    Settings.onChanged(Settings.keys.TEMPERATURE_UNIT).addListener(value =>
+    Settings.onChanged(Settings.keys.TEMPERATURE_UNIT).subscribe(value =>
       Weather.updateTempWithUnit(value)
     )
   }
