@@ -1,5 +1,17 @@
 import html from "../modules/html.js"
 
+function addEventListeners(object, listeners) {
+  for (const eventName of Object.keys(listeners)) {
+    object.addEventListener(eventName, listeners[eventName])
+  }
+}
+
+function removeEventListeners(object, listeners) {
+  for (const eventName of Object.keys(listeners)) {
+    object.removeEventListener(eventName, listeners[eventName])
+  }
+}
+
 export default class XBookmarkElement extends HTMLElement {
   constructor() {
     super()
@@ -17,21 +29,28 @@ export default class XBookmarkElement extends HTMLElement {
     this.$image = this.shadowRoot.querySelector("#image")
     this.$name = this.shadowRoot.querySelector("#name")
 
-    this.small = false
-    this.node = null
+    this._node = null
+    this._eventListeners = {
+      click: () => this.onClick(),
+      contextmenu: ev => this.onCtxMenu(ev),
+      dragstart: ev => this.onDragStart(ev),
+      dragover: ev => this.onDragOver(ev),
+      dragenter: ev => this.onDragOver(ev),
+      dragleave: ev => this.onDragLeave(ev),
+      dragend: ev => this.onDragEnd(ev),
+      drop: ev => this.onDrop(ev),
+      mouseover: ev => this.onMouseOver(ev),
+      mouseleave: ev => this.onMouseLeave(ev)
+    }
+  }
 
+  connectedCallback() {
     this.setAttribute("draggable", "true")
+    addEventListeners(this, this._eventListeners)
+  }
 
-    this.addEventListener("click", () => this.onClick())
-    this.addEventListener("contextmenu", ev => this.onCtxMenu(ev))
-    this.addEventListener("dragstart", ev => this.onDragStart(ev))
-    this.addEventListener("dragover", ev => this.onDragOver(ev))
-    this.addEventListener("dragenter", ev => this.onDragOver(ev))
-    this.addEventListener("dragleave", ev => this.onDragLeave(ev))
-    this.addEventListener("dragend", ev => this.onDragEnd(ev))
-    this.addEventListener("drop", ev => this.onDrop(ev))
-    this.addEventListener("mouseover", ev => this.onMouseOver(ev))
-    this.addEventListener("mouseleave", ev => this.onMouseLeave(ev))
+  disconnectedCallback() {
+    removeEventListeners(this, this._eventListeners)
   }
 
   attributeChangedCallback(attrName) {

@@ -1,4 +1,3 @@
-import XBookmarkElement from "../elements/x-bookmark.js"
 import * as BookmarksNavigator from "./BookmarksNavigator.js"
 
 // todo: add undo popup
@@ -413,7 +412,7 @@ function handleDrop(target, index, detail) {
       BookmarksNavigator.getCurrentFolder() !== BookmarksNavigator.ROOT_ID
     ) {
       const beforeElement = $drawerItems.childNodes[index]
-      const bookmark = new XBookmarkElement()
+      const bookmark = document.createElement("x-bookmark")
       $drawerItems.insertBefore(bookmark, beforeElement)
 
       chrome.bookmarks.create({

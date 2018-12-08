@@ -1,5 +1,7 @@
 square-tab.zip
 node_modules
+dist
+.cache
 
 .DS_Store
 npm-debug.log

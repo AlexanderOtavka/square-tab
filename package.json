@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "license": "GPL-3.0",
   "scripts": {
+    "parcel": "parcel",
+    "watch": "parcel watch --public-url '.' --no-hmr views/*",
     "zip": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
     "lint": "eslint scripts elements",
     "fix": "eslint --fix scripts elements && prettier --write '{scripts,styles,elements}/**/*.{js,css}'"
@@ -13,6 +15,10 @@
     "eslint-plugin-import": "^2.1.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.6.0",
+    "parcel-bundler": "^1.10.3",
     "prettier": "^1.14.3"
+  },
+  "dependencies": {
+    "rxjs": "^6.3.3"
   }
 }

@@ -14,7 +14,7 @@
   "permissions": ["bookmarks", "storage", "chrome://favicon/", "geolocation"],
 
   "chrome_url_overrides": {
-    "newtab": "views/newtab.html"
+    "newtab": "dist/newtab.html"
   },
 
   "browser_action": {
@@ -23,11 +23,11 @@
       "38": "images/icon38.png"
     },
     "default_title": "Square Tab",
-    "default_popup": "views/popup.html"
+    "default_popup": "dist/popup.html"
   },
 
   "background": {
-    "page": "views/event-page.html",
+    "page": "dist/event-page.html",
     "persistent": false
   }
 }

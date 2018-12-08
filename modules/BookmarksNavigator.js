@@ -1,5 +1,4 @@
 import * as Settings from "./Settings.js"
-import XBookmarkElement from "../elements/x-bookmark.js"
 
 export const ROOT_ID = "0"
 export const BOOKMARKS_BAR_ID = "1"
@@ -196,7 +195,7 @@ function createOrUpdateElement(node) {
   ) {
     bookmark = beforeElement
   } else {
-    bookmark = new XBookmarkElement()
+    bookmark = document.createElement("x-bookmark")
     $drawerItems.insertBefore(bookmark, beforeElement)
   }
 
