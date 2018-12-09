@@ -1,9 +1,120 @@
+import React from "react"
+import { render } from "react-dom"
+
 import StorageKeys from "../modules/StorageKeys.js"
 import * as Surprise from "../modules/Surprise.js"
 import * as Settings from "../modules/Settings.js"
-import * as Weather from "../modules/Weather.js"
-import * as BookmarksNavigator from "../modules/BookmarksNavigator.js"
-import * as BookmarksEditor from "../modules/BookmarksEditor.js"
+import createWeather from "../modules/Weather.js"
+import createBookmarksNavigator from "../modules/BookmarksNavigator.js"
+import createBookmarksEditor from "../modules/BookmarksEditor.js"
+
+import "../elements/x-bookmark"
+import "../elements/x-context-menu"
+import "../elements/x-dialog"
+import "../elements/x-icon"
+import "../elements/x-tooltip"
+
+import "../styles/shared-styles.css"
+import "../styles/newtab.css"
+import "../styles/weather-icons/weather-icons.css"
+
+render(
+  <>
+    <img id="background-image" className="fullbleed" />
+
+    <header id="main-toolbar" className="toolbar">
+      <a id="surprise-link" hidden />
+      <a
+        id="unsplash-link"
+        className="source-link"
+        target="_blank"
+        href="https://unsplash.com/"
+      >
+        Unsplash
+      </a>
+      <a id="source-link" className="source-link" target="_blank">
+        Photo
+      </a>
+
+      <span className="title" />
+
+      <x-icon
+        id="bookmarks-open-button"
+        className="radial-shadow"
+        icon="bookmarks"
+        large
+        button
+      />
+    </header>
+
+    <main id="info-wrapper" className="fullbleed">
+      <div id="info-box">
+        <a id="time" href="https://www.google.com/search?q=time" />
+        <div id="greeting" />
+
+        <a
+          id="weather-wrapper"
+          href="https://www.google.com/search?q=weather"
+          hidden
+        >
+          <i id="weather-icon" className="wi wi-day-sunny" />
+          <span id="temperature" />
+        </a>
+      </div>
+    </main>
+
+    <div id="drawer-backdrop" className="fullbleed backdrop" />
+
+    <aside id="bookmarks-drawer" className="drawer">
+      <header className="drawer-header toolbar">
+        <x-icon id="bookmarks-up-button" large />
+        <span id="bookmarks-drawer-title" className="title" />
+        <x-icon id="bookmarks-close-button" icon="close" large button />
+      </header>
+
+      <nav id="bookmarks-drawer-items" className="drawer-content" />
+    </aside>
+
+    <x-dialog id="bookmarks-edit-dialog">
+      <img slot="title" id="bookmarks-edit-dialog-favicon" />
+      <h1 slot="title" id="bookmarks-edit-dialog-title" />
+
+      <div slot="content" className="row">
+        <input id="bookmarks-edit-dialog-name" type="text" placeholder="Name" />
+        <input id="bookmarks-edit-dialog-url" type="url" placeholder="URL" />
+      </div>
+
+      <button slot="cancel">Cancel</button>
+      <button slot="confirm" id="bookmarks-edit-dialog-done">
+        Done
+      </button>
+    </x-dialog>
+
+    <x-tooltip id="bookmarks-drawer-tooltip" />
+
+    <x-context-menu id="bookmarks-ctx-menu">
+      <div
+        id="bookmarks-ctx-menu-name"
+        className="menu-item disabled line-below"
+      />
+
+      <div id="bookmarks-ctx-menu-edit" className="menu-item">
+        Edit
+      </div>
+      <div id="bookmarks-ctx-menu-delete" className="menu-item">
+        Delete
+      </div>
+      <hr />
+      <div id="bookmarks-ctx-menu-add-page" className="menu-item">
+        Add Page
+      </div>
+      <div id="bookmarks-ctx-menu-add-folder" className="menu-item">
+        Add Folder
+      </div>
+    </x-context-menu>
+  </>,
+  document.body
+)
 
 const $root = document.documentElement
 const $body = document.body
@@ -23,6 +134,64 @@ const $bookmarksDrawerHeader = document.querySelector(
 const $bookmarksUpButton = document.querySelector("#bookmarks-up-button")
 const $bookmarksDrawerItems = document.querySelector("#bookmarks-drawer-items")
 
+const $drawer = document.querySelector("#bookmarks-drawer")
+const $upButton = document.querySelector("#bookmarks-up-button")
+const $drawerItems = document.querySelector("#bookmarks-drawer-items")
+const $ctxMenu = document.querySelector("#bookmarks-ctx-menu")
+const $ctxMenuName = document.querySelector("#bookmarks-ctx-menu-name")
+const $ctxMenuEdit = document.querySelector("#bookmarks-ctx-menu-edit")
+const $ctxMenuDelete = document.querySelector("#bookmarks-ctx-menu-delete")
+const $ctxMenuAddPage = document.querySelector("#bookmarks-ctx-menu-add-page")
+const $ctxMenuAddFolder = document.querySelector(
+  "#bookmarks-ctx-menu-add-folder"
+)
+const $editDialog = document.querySelector("#bookmarks-edit-dialog")
+const $editDialogFavicon = document.querySelector(
+  "#bookmarks-edit-dialog-favicon"
+)
+const $editDialogTitle = document.querySelector("#bookmarks-edit-dialog-title")
+const $editDialogName = document.querySelector("#bookmarks-edit-dialog-name")
+const $editDialogURL = document.querySelector("#bookmarks-edit-dialog-url")
+const $editDialogDone = document.querySelector("#bookmarks-edit-dialog-done")
+
+const $header = document.querySelector("#bookmarks-drawer .drawer-header")
+const $title = document.querySelector("#bookmarks-drawer .title")
+const $drawerTooltip = document.querySelector("#bookmarks-drawer-tooltip")
+
+const $weatherIcon = document.querySelector("#weather-icon")
+const $temperature = document.querySelector("#temperature")
+
+const bookmarksNavigator = createBookmarksNavigator({
+  $header,
+  $upButton,
+  $title,
+  $drawerItems,
+  $drawerTooltip
+})
+
+const bookmarksEditor = createBookmarksEditor(
+  {
+    $drawer,
+    $upButton,
+    $drawerItems,
+    $ctxMenu,
+    $ctxMenuName,
+    $ctxMenuEdit,
+    $ctxMenuDelete,
+    $ctxMenuAddPage,
+    $ctxMenuAddFolder,
+    $editDialog,
+    $editDialogFavicon,
+    $editDialogTitle,
+    $editDialogName,
+    $editDialogURL,
+    $editDialogDone
+  },
+  bookmarksNavigator
+)
+
+const weather = createWeather({ $weatherIcon, $temperature })
+
 const backgroundImageReady = Settings.loaded
   .then(() => {
     if (Settings.get(Settings.keys.SURPRISE)) {
@@ -35,7 +204,7 @@ const backgroundImageReady = Settings.loaded
 
 fetchAndCacheImage()
 
-Promise.all([Settings.loaded, Weather.cacheLoaded, backgroundImageReady]).then(
+Promise.all([Settings.loaded, weather.cacheLoaded, backgroundImageReady]).then(
   () => resolveBody()
 )
 
@@ -115,19 +284,21 @@ function fetchAndCacheImage() {
   Settings.loaded
     .then(() => {
       if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-        return Weather.getSunInfoMS().then(
-          ({ now, morningBegins, dayBegins, duskBegins, nightBegins }) => {
-            if (nightBegins < now || now <= morningBegins) {
-              return getImageUrl("night")
-            } else if (morningBegins < now && now <= dayBegins) {
-              return getImageUrl("morning")
-            } else if (duskBegins < now && now <= nightBegins) {
-              return getImageUrl("evening")
-            } else {
-              return getImageUrl()
+        return weather
+          .getSunInfoMS()
+          .then(
+            ({ now, morningBegins, dayBegins, duskBegins, nightBegins }) => {
+              if (nightBegins < now || now <= morningBegins) {
+                return getImageUrl("night")
+              } else if (morningBegins < now && now <= dayBegins) {
+                return getImageUrl("morning")
+              } else if (duskBegins < now && now <= nightBegins) {
+                return getImageUrl("evening")
+              } else {
+                return getImageUrl()
+              }
             }
-          }
-        )
+          )
       } else {
         return getImageUrl()
       }
@@ -170,7 +341,7 @@ function updateTime() {
     } else if (Settings.get(Settings.keys.SURPRISE)) {
       $greeting.textContent = Surprise.currentImageData.greeting
     } else {
-      Weather.getSunInfoMS().then(({ now, duskBegins, morningBegins }) => {
+      weather.getSunInfoMS().then(({ now, duskBegins, morningBegins }) => {
         const MIDNIGHT = 0
         const NOON = 12 * 60 * 60 * 1000
 
@@ -203,7 +374,7 @@ function addSettingsChangeListeners() {
 
   Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).subscribe(value => {
     updateBookmarkDrawerSmall(value)
-    BookmarksNavigator.updateSize(value)
+    bookmarksNavigator.updateSize(value)
   })
 
   Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE).subscribe(value =>
@@ -219,7 +390,7 @@ function addSettingsChangeListeners() {
   )
 
   Settings.onChanged(Settings.keys.TEMPERATURE_UNIT).subscribe(value =>
-    Weather.updateTempWithUnit(value)
+    weather.updateTempWithUnit(value)
   )
 }
 
@@ -277,7 +448,7 @@ function updateBoxedInfo(boxedInfo) {
 }
 
 function addWeatherChangeListeners() {
-  Weather.onDataLoad.addListener(data => {
+  weather.onDataLoad.addListener(data => {
     const showWeather = data && Settings.get(Settings.keys.SHOW_WEATHER)
     updateWeather(showWeather)
   })
@@ -285,7 +456,7 @@ function addWeatherChangeListeners() {
 
 function updateWeather(showWeather) {
   if (showWeather) {
-    return Weather.load().then(() => {
+    return weather.load().then(() => {
       $weatherWrapper.hidden = false
     })
   } else {
@@ -310,58 +481,58 @@ function addGlobalDragDropListeners() {
 function addBookmarksDragDropListeners() {
   $bookmarksDrawerItems.addEventListener(
     "x-bookmark-drag-start",
-    ev => BookmarksEditor.onBookmarkDragStart(ev),
+    ev => bookmarksEditor.onBookmarkDragStart(ev),
     true
   )
   $bookmarksDrawerItems.addEventListener(
     "x-bookmark-drag-over",
-    ev => BookmarksEditor.onBookmarkDragOver(ev),
+    ev => bookmarksEditor.onBookmarkDragOver(ev),
     true
   )
   $bookmarksDrawerItems.addEventListener(
     "x-bookmark-drop",
-    ev => BookmarksEditor.onBookmarkDrop(ev),
+    ev => bookmarksEditor.onBookmarkDrop(ev),
     true
   )
 
   $bookmarksDrawerItems.addEventListener("dragover", ev =>
-    BookmarksEditor.onItemsDragOver(ev)
+    bookmarksEditor.onItemsDragOver(ev)
   )
   $bookmarksDrawerItems.addEventListener("drop", ev =>
-    BookmarksEditor.onItemsDrop(ev)
+    bookmarksEditor.onItemsDrop(ev)
   )
 
   $bookmarksUpButton.addEventListener("dragover", ev =>
-    BookmarksEditor.onUpButtonDragOver(ev)
+    bookmarksEditor.onUpButtonDragOver(ev)
   )
   $bookmarksUpButton.addEventListener("dragleave", ev =>
-    BookmarksEditor.onUpButtonDragLeave(ev)
+    bookmarksEditor.onUpButtonDragLeave(ev)
   )
   $bookmarksUpButton.addEventListener("drop", ev =>
-    BookmarksEditor.onUpButtonDrop(ev)
+    bookmarksEditor.onUpButtonDrop(ev)
   )
 
   $bookmarksDrawerItems.addEventListener(
     "dragleave",
-    ev => BookmarksEditor.onDragLeave(ev),
+    ev => bookmarksEditor.onDragLeave(ev),
     true
   )
   $bookmarksDrawerItems.addEventListener(
     "dragend",
-    ev => BookmarksEditor.onDragEnd(ev),
+    ev => bookmarksEditor.onDragEnd(ev),
     true
   )
 }
 
 function addBookmarksClickListeners() {
   $bookmarksUpButton.addEventListener("click", () => {
-    BookmarksNavigator.ascend()
+    bookmarksNavigator.ascend()
   })
 
   $bookmarksDrawerItems.addEventListener(
     "x-bookmark-click",
     ev => {
-      BookmarksNavigator.openBookmark(ev.detail.nodeId)
+      bookmarksNavigator.openBookmark(ev.detail.nodeId)
     },
     true
   )
@@ -369,25 +540,25 @@ function addBookmarksClickListeners() {
   $bookmarksDrawerHeader.addEventListener("contextmenu", ev => {
     let nodeId
     if (ev.target === $bookmarksUpButton) {
-      nodeId = BookmarksNavigator.getParentFolder()
+      nodeId = bookmarksNavigator.getParentFolder()
     } else {
-      nodeId = BookmarksNavigator.getCurrentFolder()
+      nodeId = bookmarksNavigator.getCurrentFolder()
     }
 
-    BookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId)
+    bookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId)
   })
 
   $bookmarksDrawerItems.addEventListener("contextmenu", ev => {
     if (ev.target !== $bookmarksDrawerItems) {
       return
     }
-    BookmarksEditor.openCtxMenu(ev.x, ev.y, null)
+    bookmarksEditor.openCtxMenu(ev.x, ev.y, null)
   })
 
   $bookmarksDrawerItems.addEventListener(
     "x-bookmark-ctx-menu",
     ev => {
-      BookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.target.node.id)
+      bookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.target.node.id)
     },
     true
   )
@@ -410,19 +581,19 @@ function closeBookmarks() {
 function addBookmarksTooltipListeners() {
   $bookmarksDrawerItems.addEventListener(
     "x-bookmark-mouseover",
-    ev => BookmarksNavigator.onBookmarkMouseOver(ev),
+    ev => bookmarksNavigator.onBookmarkMouseOver(ev),
     true
   )
   $bookmarksDrawerItems.addEventListener(
     "x-bookmark-mouseleave",
-    () => BookmarksNavigator.hideTooltip(),
+    () => bookmarksNavigator.hideTooltip(),
     true
   )
 
   $bookmarksDrawerHeader.addEventListener("mouseover", () =>
-    BookmarksNavigator.onHeaderMouseOver()
+    bookmarksNavigator.onHeaderMouseOver()
   )
   $bookmarksDrawerHeader.addEventListener("mouseleave", () =>
-    BookmarksNavigator.hideTooltip()
+    bookmarksNavigator.hideTooltip()
   )
 }

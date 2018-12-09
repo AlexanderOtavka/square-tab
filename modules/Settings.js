@@ -79,9 +79,12 @@ const overrides = {
 
 const storageKeysArray = Object.keys(keys).map(keyName => keys[keyName])
 
-const data = {}
+const subjects = {}
 storageKeysArray.forEach(storageKey => {
-  data[storageKey] = new BehaviorSubject({ value: undefined, overrides: [] })
+  subjects[storageKey] = new BehaviorSubject({
+    value: undefined,
+    overrides: []
+  })
 })
 
 Object.keys(overrides)
@@ -115,12 +118,12 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 export function get(storageKey) {
   const valueMapper = createValueMapper(storageKey)
-  return valueMapper(data[storageKey].getValue())
+  return valueMapper(subjects[storageKey].getValue())
 }
 
 export function getData(storageKey) {
   const dataMapper = createDataMapper(storageKey)
-  return dataMapper(data[storageKey].getValue())
+  return dataMapper(subjects[storageKey].getValue())
 }
 
 export function set(storageKey, value) {
@@ -129,14 +132,14 @@ export function set(storageKey, value) {
 }
 
 export function onChanged(storageKey) {
-  return data[storageKey].pipe(
+  return subjects[storageKey].pipe(
     map(createValueMapper(storageKey)),
     distinctUntilChanged()
   )
 }
 
 export function onDataChanged(storageKey) {
-  return data[storageKey].pipe(
+  return subjects[storageKey].pipe(
     map(createDataMapper(storageKey)),
     distinctUntilChanged(
       (a, b) =>
@@ -167,18 +170,18 @@ function hasActiveOverride(overrides) {
 }
 
 function setValue(storageKey, newValue) {
-  data[storageKey].next({
-    ...data[storageKey].getValue(),
+  subjects[storageKey].next({
+    ...subjects[storageKey].getValue(),
     value: newValue
   })
 }
 
 function setOverride(storageKey, priority, newOverride) {
-  const oldData = data[storageKey].getValue()
-  data[storageKey].next({
+  const oldData = subjects[storageKey].getValue()
+  subjects[storageKey].next({
     ...oldData,
-    overrides: oldData.overrides.map(
-      (oldOverride, i) => (i === priority ? newOverride : oldOverride)
+    overrides: oldData.overrides.map((oldOverride, i) =>
+      i === priority ? newOverride : oldOverride
     )
   })
 }

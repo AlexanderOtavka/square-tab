@@ -7,19 +7,23 @@
     "build": "rm -rf dist && parcel build --public-url '.' entry/*",
     "watch": "parcel watch --public-url '.' --no-hmr entry/*",
     "zip": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
-    "lint": "eslint scripts elements",
-    "fix": "eslint --fix scripts elements && prettier --write '{scripts,styles,elements}/**/*.{js,css}'"
+    "lint": "eslint modules scripts elements",
+    "fix": "eslint --fix modules scripts elements && prettier --write '{modules,scripts,styles,elements}/**/*.{js,css}'"
   },
   "devDependencies": {
-    "eslint": "^3.9.1",
-    "eslint-config-airbnb": "^13.0.0",
-    "eslint-plugin-import": "^2.1.0",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.6.0",
+    "@babel/core": "^7.2.0",
+    "@babel/preset-react": "^7.0.0",
+    "eslint": "^5.10.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
     "parcel-bundler": "^1.10.3",
-    "prettier": "^1.14.3"
+    "prettier": "^1.15.3"
   },
   "dependencies": {
+    "react": "16.7.0-alpha.2",
+    "react-dom": "16.7.0-alpha.2",
     "rxjs": "^6.3.3"
   }
 }
