@@ -1,5 +1,9 @@
+import classnames from "classnames"
+
 import StorageKeys from "../StorageKeys"
 import * as Settings from "../Settings"
+
+import weatherIconStyles from "./weather-icons/weather-icons.css"
 
 export default function createWeather({ $weatherIcon, $temperature }) {
   const onDataLoad = new chrome.Event()
@@ -161,7 +165,12 @@ export default function createWeather({ $weatherIcon, $temperature }) {
 
     getSunInfoMS(data).then(({ isDay }) => {
       const iconName = getIconName(iconCode, isDay)
-      $weatherIcon.className = iconName ? `wi wi-${iconName}` : ""
+      $weatherIcon.className = iconName
+        ? classnames(
+            weatherIconStyles["wi"],
+            weatherIconStyles[`wi-${iconName}`]
+          )
+        : ""
       $weatherIcon.setAttribute("tooltip", description)
     })
 

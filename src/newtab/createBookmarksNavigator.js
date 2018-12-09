@@ -1,4 +1,5 @@
 import * as Settings from "../Settings"
+import { bookmarksUpButton as upButtonClassName } from "./Page.css"
 
 export const ROOT_ID = "0"
 export const BOOKMARKS_BAR_ID = "1"
@@ -172,7 +173,7 @@ export default function createBookmarksNavigator({
           )
           if ($hoveredBookmark) {
             $drawerTooltip.name = getNodeTitle($hoveredBookmark.node)
-          } else if (document.querySelector("#bookmarks-up-button:hover")) {
+          } else if (document.querySelector(`.${upButtonClassName}:hover`)) {
             $drawerTooltip.name = title
           } else {
             hideTooltip()

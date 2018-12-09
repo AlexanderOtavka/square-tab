@@ -19,9 +19,11 @@
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "parcel-bundler": "^1.10.3",
+    "postcss-modules": "^1.4.1",
     "prettier": "^1.15.3"
   },
   "dependencies": {
+    "classnames": "^2.2.6",
     "react": "16.7.0-alpha.2",
     "react-dom": "16.7.0-alpha.2",
     "rxjs": "^6.3.3"

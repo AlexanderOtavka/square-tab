@@ -1,19 +1,19 @@
-:root {
+html {
   --drawer-width: 300px;
   --drawer-transition-timing: 200ms cubic-bezier(0, 0, 0.3, 1);
   --main-right-margin: 0;
   --main-left-margin: 0;
 }
 
-:root.bookmarks-drawer-small {
+html.bookmarksDrawerSmall {
   --drawer-width: 64px;
 }
 
-:root.bookmarks-drawer-mode-always.bookmarks-drawer-position-right {
+html.bookmarksDrawerModeAlways.bookmarksDrawerPositionRight {
   --main-right-margin: var(--drawer-width);
 }
 
-:root.bookmarks-drawer-mode-always.bookmarks-drawer-position-left {
+html.bookmarksDrawerModeAlways.bookmarksDrawerPositionLeft {
   --main-left-margin: var(--drawer-width);
 }
 
@@ -25,11 +25,11 @@ header {
   z-index: 1;
 }
 
-.bookmarks-drawer-position-left #main-toolbar {
+.bookmarksDrawerPositionLeft .mainToolbar {
   flex-direction: row-reverse;
 }
 
-.bookmarks-drawer-mode-always.bookmarks-drawer-position-left #main-toolbar {
+.bookmarksDrawerModeAlways.bookmarksDrawerPositionLeft .mainToolbar {
   left: var(--drawer-width);
 }
 
@@ -37,11 +37,11 @@ x-tooltip {
   z-index: 30;
 }
 
-.source-link {
+.sourceLink {
   display: none;
 }
 
-.show-photo-source .source-link {
+.showPhotoSource .sourceLink {
   display: block;
 }
 
@@ -55,12 +55,12 @@ x-tooltip {
   transition: all var(--drawer-transition-timing);
 }
 
-.drawer-header {
+.drawerHeader {
   height: var(--toolbar-height);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-.drawer-content {
+.drawerContent {
   display: block;
   position: absolute;
   top: var(--toolbar-height);
@@ -71,14 +71,14 @@ x-tooltip {
   overflow-y: auto;
 }
 
-#background-image {
+.backgroundImage {
   z-index: -999;
   object-fit: cover;
   width: 100%;
   height: 100%;
 }
 
-#main-toolbar {
+.mainToolbar {
   font-size: 16px;
   font-weight: 300;
   text-shadow: var(--shadow-text);
@@ -87,29 +87,29 @@ x-tooltip {
   transition: right var(--drawer-transition-timing);
 }
 
-.bookmarks-drawer-small.bookmarks-drawer-position-right #main-toolbar {
+.bookmarksDrawerSmall.bookmarksDrawerPositionRight .mainToolbar {
   right: var(--main-right-margin);
 }
 
-.bookmarks-drawer-small.bookmarks-drawer-position-left #main-toolbar {
+.bookmarksDrawerSmall.bookmarksDrawerPositionLeft .mainToolbar {
   left: var(--main-left-margin);
 }
 
-#main-toolbar > a {
+.mainToolbar > a {
   margin: 8px;
   cursor: pointer;
 }
 
-#bookmarks-open-button {
+.bookmarksOpenButton {
   fill: #fff;
   visibility: hidden;
 }
 
-.bookmarks-drawer-mode-toggle #bookmarks-open-button {
+.bookmarksDrawerModeToggle .bookmarksOpenButton {
   visibility: visible;
 }
 
-#info-wrapper {
+.infoWrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -119,15 +119,15 @@ x-tooltip {
   transition: right var(--drawer-transition-timing);
 }
 
-.bookmarks-drawer-small.bookmarks-drawer-position-right #info-wrapper {
+.bookmarksDrawerSmall.bookmarksDrawerPositionRight .infoWrapper {
   right: var(--main-right-margin);
 }
 
-.bookmarks-drawer-small.bookmarks-drawer-position-left #info-wrapper {
+.bookmarksDrawerSmall.bookmarksDrawerPositionLeft .infoWrapper {
   left: var(--main-left-margin);
 }
 
-#info-box {
+.infoBox {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -143,33 +143,33 @@ x-tooltip {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.boxed-info #info-box {
+.boxedInfo .infoBox {
   border: 8px solid #fff;
 }
 
-#info-box > * {
+.infoBox > * {
   margin: 8px;
 }
 
-#info-box > a {
+.infoBox > a {
   text-decoration: none;
 }
 
-#time {
+.time {
   font-size: 4rem;
   font-weight: 400;
   line-height: 1;
 }
 
-#weather-wrapper {
+.weatherWrapper {
   font-size: 2rem;
 }
 
-#weather-icon {
+.weatherIcon {
   position: relative;
 }
 
-#weather-icon::after {
+.weatherIcon::after {
   font-family: var(--font-family);
   content: attr(tooltip);
   display: inline-block;
@@ -188,59 +188,59 @@ x-tooltip {
   transition: opacity var(--mouse-effect-transition-timing);
 }
 
-#weather-icon:hover::after {
+.weatherIcon:hover::after {
   opacity: 1;
 }
 
-#bookmarks-drawer {
+.bookmarksDrawer {
   background: #fff;
   will-change: transform;
 }
 
-.bookmarks-drawer-position-right #bookmarks-drawer {
+.bookmarksDrawerPositionRight .bookmarksDrawer {
   right: 0;
   transform: translateX(105%);
 }
 
-.bookmarks-drawer-position-left #bookmarks-drawer {
+.bookmarksDrawerPositionLeft .bookmarksDrawer {
   left: 0;
   transform: translateX(-105%);
 }
 
-.bookmarks-drawer-mode-never #bookmarks-drawer {
+.bookmarksDrawerModeNever .bookmarksDrawer {
   display: none;
 }
 
-.bookmarks-drawer-mode-toggle.bookmarks-drawer-open #bookmarks-drawer,
-.bookmarks-drawer-mode-toggle.dragover #bookmarks-drawer,
-.bookmarks-drawer-mode-always #bookmarks-drawer,
-.bookmarks-drawer-mode-hover #bookmarks-drawer {
+.bookmarksDrawerModeToggle.bookmarksDrawerOpen .bookmarksDrawer,
+.bookmarksDrawerModeToggle.dragover .bookmarksDrawer,
+.bookmarksDrawerModeAlways .bookmarksDrawer,
+.bookmarksDrawerModeHover .bookmarksDrawer {
   transform: translateX(0);
 }
 
-.bookmarks-drawer-mode-always #bookmarks-drawer {
+.bookmarksDrawerModeAlways .bookmarksDrawer {
   opacity: 0.9;
   box-shadow: none;
 }
 
-.bookmarks-drawer-mode-hover #bookmarks-drawer {
+.bookmarksDrawerModeHover .bookmarksDrawer {
   opacity: 0;
 }
 
-.bookmarks-drawer-mode-hover #bookmarks-drawer:hover,
-.bookmarks-drawer-mode-hover #bookmarks-drawer.ctx-menu-active,
-.bookmarks-drawer-mode-hover.dragover #bookmarks-drawer,
-.bookmarks-drawer-mode-always.dragover #bookmarks-drawer {
+.bookmarksDrawerModeHover .bookmarksDrawer:hover,
+.bookmarksDrawerModeHover .bookmarksDrawer:global(.ctx-menu-active),
+.bookmarksDrawerModeHover.dragover .bookmarksDrawer,
+.bookmarksDrawerModeAlways.dragover .bookmarksDrawer {
   opacity: 1;
 }
 
-.dragover #bookmarks-drawer-items::after {
+.dragover .bookmarksDrawerItems::after {
   display: block;
   content: "";
   height: 40px;
 }
 
-#drawer-backdrop {
+.drawerBackdrop {
   z-index: 19;
   pointer-events: none;
   background: var(--backdrop-background);
@@ -249,53 +249,53 @@ x-tooltip {
   will-change: opacity;
 }
 
-.bookmarks-drawer-open #drawer-backdrop {
+.bookmarksDrawerOpen .drawerBackdrop {
   pointer-events: auto;
   opacity: 1;
 }
 
-#bookmarks-drawer x-icon {
+.bookmarksDrawer x-icon {
   fill: #333;
 }
 
-#bookmarks-up-button {
+.bookmarksUpButton {
   transition: transform var(--drag-drop-transition-timing);
 }
 
-#bookmarks-up-button.expand {
+.bookmarksUpButton:global(.expand) {
   transform: scale(1.2);
 }
 
-.bookmarks-drawer-small #bookmarks-up-button {
+.bookmarksDrawerSmall .bookmarksUpButton {
   padding: 4px;
 }
 
-.bookmarks-drawer-small #bookmarks-drawer-title {
+.bookmarksDrawerSmall .bookmarksDrawerTitle {
   display: none;
 }
 
-.bookmarks-drawer-small #bookmarks-close-button,
-.bookmarks-drawer-mode-always #bookmarks-close-button,
-.bookmarks-drawer-mode-hover #bookmarks-close-button {
+.bookmarksDrawerSmall .bookmarksCloseButton,
+.bookmarksDrawerModeAlways .bookmarksCloseButton,
+.bookmarksDrawerModeHover .bookmarksCloseButton {
   display: none;
 }
 
-#bookmarks-edit-dialog {
+.bookmarksEditDialog {
   --x-dialog-width: 350px;
 }
 
-#bookmarks-edit-dialog-name {
+.bookmarksEditDialogName {
   flex-grow: 1;
   flex-basis: 1px;
 }
 
-#bookmarks-edit-dialog-url {
+.bookmarksEditDialogUrl {
   flex-grow: 2;
   flex-basis: 1px;
 }
 
 /* this is just a failsafe. the x-tooltip should hide itself, but if it doesn't,
    no one has to know */
-#bookmarks-drawer:not(:hover) ~ #bookmarks-drawer-tooltip {
+.bookmarksDrawer:not(:hover) ~ .bookmarksDrawer-tooltip {
   opacity: 0;
 }

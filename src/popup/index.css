@@ -1,4 +1,4 @@
-:root {
+html {
   --small-input-size: 14px;
   --small-input-margin: 4px;
 }
@@ -38,39 +38,39 @@ input[disabled] + label {
   color: #545454;
 }
 
-.small-input-container {
+:global .small-input-container {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
 }
 
-.small-input-container.inline {
+:global .small-input-container.inline {
   display: inline-flex;
   margin-right: 8px;
 }
 
-.small-input-container label {
+:global .small-input-container label {
   line-height: 14px;
   margin: 4px;
 }
 
-.child {
+:global .child {
   margin-left: calc(var(--small-input-size) + var(--small-input-margin) * 2);
 }
 
-.header,
-.footer {
+:global .header,
+:global .footer {
   color: #333;
   background-color: #f0f0f0;
   padding: 8px;
   margin: 0;
 }
 
-#settings {
+:global #settings {
   margin: 8px;
 }
 
-#github {
+:global #github {
   display: block;
   font-weight: bold;
   text-align: center;
