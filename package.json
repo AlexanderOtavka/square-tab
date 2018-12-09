@@ -6,9 +6,9 @@
     "parcel": "parcel",
     "build": "rm -rf dist && parcel build --public-url '/dist' src/{background,newtab,popup}/index.html",
     "watch": "parcel watch --public-url '/dist' --no-hmr src/{background,newtab,popup}/index.html",
-    "zip": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
-    "lint": "eslint modules scripts elements",
-    "fix": "eslint --fix modules scripts elements && prettier --write '{modules,scripts,styles,elements}/**/*.{js,css}'"
+    "zip": "zip -FSr square-tab.zip dist public manifest.json",
+    "lint": "eslint src",
+    "fix": "eslint --fix src && prettier --write '{src,public}/**/*.{js,css}'"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
