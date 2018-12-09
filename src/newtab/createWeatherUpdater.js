@@ -6,18 +6,37 @@ import pageStyles from "./Page.css"
 import weatherIconStyles from "./weather-icons/weather-icons.css"
 
 export default function createWeatherUpdater(
-  { $weatherIcon, $temperature },
+  { $weatherWrapper, $weatherIcon, $temperature },
   weatherStore
 ) {
   let data = null
 
   weatherStore.onDataLoad.addListener(newData => {
     data = newData
+
     updateWeather()
+
+    const showWeather = data && Settings.get(Settings.keys.SHOW_WEATHER)
+    updateWeatherVisibility(showWeather)
   })
 
-  return {
+  Settings.onChanged(Settings.keys.SHOW_WEATHER).subscribe(
+    updateWeatherVisibility
+  )
+
+  Settings.onChanged(Settings.keys.TEMPERATURE_UNIT).subscribe(
     updateTempWithUnit
+  )
+
+  function updateWeatherVisibility(showWeather) {
+    if (showWeather) {
+      return weatherStore.load().then(() => {
+        $weatherWrapper.hidden = false
+      })
+    } else {
+      $weatherWrapper.hidden = true
+      return Promise.resolve()
+    }
   }
 
   function updateTempWithUnit(unit) {

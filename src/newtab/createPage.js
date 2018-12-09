@@ -14,7 +14,6 @@ export default function createPage(
     $rawSourceLink,
     $time,
     $greeting,
-    $weatherWrapper,
     $drawerBackdrop,
     $bookmarksOpenButton,
     $bookmarksCloseButton,
@@ -24,8 +23,7 @@ export default function createPage(
   },
   bookmarksNavigator,
   bookmarksEditor,
-  weatherStore,
-  weatherUpdater
+  weatherStore
 ) {
   const backgroundImageReady = Settings.loaded
     .then(() => {
@@ -50,7 +48,6 @@ export default function createPage(
 
   disableDefaultRightClick()
   addSettingsChangeListeners()
-  addWeatherChangeListeners()
   addGlobalDragDropListeners()
   addBookmarksDragDropListeners()
   addBookmarksClickListeners()
@@ -225,14 +222,6 @@ export default function createPage(
     Settings.onChanged(Settings.keys.BOXED_INFO).subscribe(value =>
       updateBoxedInfo(value)
     )
-
-    Settings.onChanged(Settings.keys.SHOW_WEATHER).subscribe(value =>
-      updateWeather(value)
-    )
-
-    Settings.onChanged(Settings.keys.TEMPERATURE_UNIT).subscribe(value =>
-      weatherUpdater.updateTempWithUnit(value)
-    )
   }
 
   function updateBookmarkDrawerMode(mode) {
@@ -286,24 +275,6 @@ export default function createPage(
 
   function updateBoxedInfo(boxedInfo) {
     $root.classList.toggle(styles.boxedInfo, boxedInfo)
-  }
-
-  function addWeatherChangeListeners() {
-    weatherStore.onDataLoad.addListener(data => {
-      const showWeather = data && Settings.get(Settings.keys.SHOW_WEATHER)
-      updateWeather(showWeather)
-    })
-  }
-
-  function updateWeather(showWeather) {
-    if (showWeather) {
-      return weatherStore.load().then(() => {
-        $weatherWrapper.hidden = false
-      })
-    } else {
-      $weatherWrapper.hidden = true
-      return Promise.resolve()
-    }
   }
 
   function addGlobalDragDropListeners() {

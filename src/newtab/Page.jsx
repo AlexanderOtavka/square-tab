@@ -34,7 +34,6 @@ export default function Page(_props) {
   const $rawSourceLink = useRef() //document.querySelector("#sourceLink")
   const $time = useRef() //document.querySelector(".time")
   const $greeting = useRef() //document.querySelector("#greeting")
-  const $weatherWrapper = useRef() //document.querySelector(".weatherWrapper")
   const $drawerBackdrop = useRef() //document.querySelector(".drawerBackdrop")
   const $bookmarksOpenButton = useRef() //document.querySelector(".bookmarksOpenButton")
   const $bookmarksCloseButton = useRef() //document.querySelector( ".bookmarksCloseButton")
@@ -59,6 +58,7 @@ export default function Page(_props) {
   const $bookmarksDrawerTitle = useRef() // document.querySelector(".bookmarksDrawer .title")
   const $drawerTooltip = useRef() //document.querySelector(".bookmarksDrawer-tooltip")
 
+  const $weatherWrapper = useRef() //document.querySelector(".weatherWrapper")
   const $weatherIcon = useRef() // document.querySelector(".weatherIcon")
   const $temperature = useRef() //document.querySelector("#temperature")
 
@@ -96,8 +96,8 @@ export default function Page(_props) {
       bookmarksNavigator
     )
 
-    const weatherUpdater = createWeatherUpdater(
-      unpackRefs({ $weatherIcon, $temperature }),
+    createWeatherUpdater(
+      unpackRefs({ $weatherWrapper, $weatherIcon, $temperature }),
       weatherStore
     )
 
@@ -111,7 +111,6 @@ export default function Page(_props) {
         $rawSourceLink,
         $time,
         $greeting,
-        $weatherWrapper,
         $drawerBackdrop,
         $bookmarksOpenButton,
         $bookmarksCloseButton,
@@ -121,12 +120,9 @@ export default function Page(_props) {
       }),
       bookmarksNavigator,
       bookmarksEditor,
-      weatherStore,
-      weatherUpdater
+      weatherStore
     )
   }, [])
-
-  console.log("styles", styles)
 
   return (
     <>
