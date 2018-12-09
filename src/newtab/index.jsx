@@ -1,12 +1,12 @@
 import React from "react"
 import { render } from "react-dom"
 
-import StorageKeys from "../StorageKeys.js"
-import * as Surprise from "../Surprise.js"
-import * as Settings from "../Settings.js"
-import createWeather from "./Weather.js"
-import createBookmarksNavigator from "./BookmarksNavigator.js"
-import createBookmarksEditor from "./BookmarksEditor.js"
+import StorageKeys from "../StorageKeys"
+import * as Surprise from "../Surprise"
+import * as Settings from "../Settings"
+import createWeather from "./createWeather"
+import createBookmarksNavigator from "./createBookmarksNavigator"
+import createBookmarksEditor from "./createBookmarksEditor"
 
 import "./x-bookmark"
 import "./x-context-menu"

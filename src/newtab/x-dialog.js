@@ -1,5 +1,5 @@
-// import "../x-icon/x-icon.js"
-import html from "../html.js"
+import html from "../html"
+import "./x-icon"
 
 export default class XDialogElement extends HTMLElement {
   constructor() {

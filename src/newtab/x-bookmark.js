@@ -1,4 +1,4 @@
-import html from "../html.js"
+import html from "../html"
 import folderOutlineUri from "./folder-outline.svg"
 
 function addEventListeners(object, listeners) {

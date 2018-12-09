@@ -1,7 +1,7 @@
 import { BehaviorSubject } from "rxjs"
 import { distinctUntilChanged, map } from "rxjs/operators"
 
-import * as Surprise from "./Surprise.js"
+import * as Surprise from "./Surprise"
 
 export const enums = {
   TemperatureUnits: {

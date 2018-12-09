@@ -1,4 +1,4 @@
-import * as BookmarksNavigator from "./BookmarksNavigator.js"
+import * as BookmarksNavigator from "./createBookmarksNavigator"
 import folderOutlineUri from "./folder-outline.svg"
 
 // todo: add undo popup

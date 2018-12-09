@@ -1,5 +1,5 @@
-import * as Surprise from "../Surprise.js"
-import * as Settings from "../Settings.js"
+import * as Surprise from "../Surprise"
+import * as Settings from "../Settings"
 
 bindRadioButtons("BOOKMARKS_DRAWER_MODE", Settings.enums.BookmarkDrawerModes)
 bindRadioButtons(

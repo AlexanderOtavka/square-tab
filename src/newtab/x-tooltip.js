@@ -1,5 +1,5 @@
-import html from "../html.js"
-import * as Settings from "../Settings.js"
+import html from "../html"
+import * as Settings from "../Settings"
 
 export default class XTooltipElement extends HTMLElement {
   constructor() {

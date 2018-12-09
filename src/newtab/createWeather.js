@@ -1,5 +1,5 @@
-import StorageKeys from "../StorageKeys.js"
-import * as Settings from "../Settings.js"
+import StorageKeys from "../StorageKeys"
+import * as Settings from "../Settings"
 
 export default function createWeather({ $weatherIcon, $temperature }) {
   const onDataLoad = new chrome.Event()
