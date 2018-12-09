@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from "react"
 import classnames from "classnames"
 
-import createWeather from "./createWeather"
+import createWeatherStore from "./createWeatherStore"
+import createWeatherUpdater from "./createWeatherUpdater"
 import createBookmarksNavigator from "./createBookmarksNavigator"
 import createBookmarksEditor from "./createBookmarksEditor"
 import createPage from "./createPage"
@@ -93,7 +94,11 @@ export default function Page(_props) {
       bookmarksNavigator
     )
 
-    const weather = createWeather(unpackRefs({ $weatherIcon, $temperature }))
+    const weatherStore = createWeatherStore()
+    const weatherUpdater = createWeatherUpdater(
+      unpackRefs({ $weatherIcon, $temperature }),
+      weatherStore
+    )
 
     createPage(
       unpackRefs({
@@ -115,7 +120,8 @@ export default function Page(_props) {
       }),
       bookmarksNavigator,
       bookmarksEditor,
-      weather
+      weatherStore,
+      weatherUpdater
     )
   }, [])
 
@@ -149,7 +155,7 @@ export default function Page(_props) {
 
         <x-icon
           ref={$bookmarksOpenButton}
-          className={classnames(styles.bookmarksOpenButton, "radial-shadow")}
+          class={classnames(styles.bookmarksOpenButton, "radial-shadow")}
           icon="bookmarks"
           large
           button
@@ -202,7 +208,7 @@ export default function Page(_props) {
         >
           <x-icon
             ref={$bookmarksUpButton}
-            className={styles.bookmarksUpButton}
+            class={styles.bookmarksUpButton}
             large
           />
           <span
@@ -211,7 +217,7 @@ export default function Page(_props) {
           />
           <x-icon
             ref={$bookmarksCloseButton}
-            className={styles.bookmarksCloseButton}
+            class={styles.bookmarksCloseButton}
             icon="close"
             large
             button
@@ -227,7 +233,7 @@ export default function Page(_props) {
         />
       </aside>
 
-      <x-dialog ref={$editDialog} className={styles.bookmarksEditDialog}>
+      <x-dialog ref={$editDialog} class={styles.bookmarksEditDialog}>
         <img slot="title" ref={$editDialogFavicon} />
         <h1 slot="title" ref={$editDialogTitle} />
 

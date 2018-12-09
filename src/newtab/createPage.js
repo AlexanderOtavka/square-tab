@@ -24,7 +24,8 @@ export default function createPage(
   },
   bookmarksNavigator,
   bookmarksEditor,
-  weather
+  weatherStore,
+  weatherUpdater
 ) {
   const backgroundImageReady = Settings.loaded
     .then(() => {
@@ -40,7 +41,7 @@ export default function createPage(
 
   Promise.all([
     Settings.loaded,
-    weather.cacheLoaded,
+    weatherStore.cacheLoaded,
     backgroundImageReady
   ]).then(() => resolveBody())
 
@@ -120,7 +121,7 @@ export default function createPage(
     Settings.loaded
       .then(() => {
         if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-          return weather
+          return weatherStore
             .getSunInfoMS()
             .then(
               ({ now, morningBegins, dayBegins, duskBegins, nightBegins }) => {
@@ -177,20 +178,22 @@ export default function createPage(
       } else if (Settings.get(Settings.keys.SURPRISE)) {
         $greeting.textContent = Surprise.currentImageData.greeting
       } else {
-        weather.getSunInfoMS().then(({ now, duskBegins, morningBegins }) => {
-          const MIDNIGHT = 0
-          const NOON = 12 * 60 * 60 * 1000
+        weatherStore
+          .getSunInfoMS()
+          .then(({ now, duskBegins, morningBegins }) => {
+            const MIDNIGHT = 0
+            const NOON = 12 * 60 * 60 * 1000
 
-          if (MIDNIGHT < now && now <= morningBegins) {
-            $greeting.textContent = "Hello, Night Owl"
-          } else if (morningBegins < now && now <= NOON) {
-            $greeting.textContent = "Good Morning"
-          } else if (NOON < now && now <= duskBegins) {
-            $greeting.textContent = "Good Afternoon"
-          } else {
-            $greeting.textContent = "Good Evening"
-          }
-        })
+            if (MIDNIGHT < now && now <= morningBegins) {
+              $greeting.textContent = "Hello, Night Owl"
+            } else if (morningBegins < now && now <= NOON) {
+              $greeting.textContent = "Good Morning"
+            } else if (NOON < now && now <= duskBegins) {
+              $greeting.textContent = "Good Afternoon"
+            } else {
+              $greeting.textContent = "Good Evening"
+            }
+          })
       }
     })
   }
@@ -228,7 +231,7 @@ export default function createPage(
     )
 
     Settings.onChanged(Settings.keys.TEMPERATURE_UNIT).subscribe(value =>
-      weather.updateTempWithUnit(value)
+      weatherUpdater.updateTempWithUnit(value)
     )
   }
 
@@ -286,7 +289,7 @@ export default function createPage(
   }
 
   function addWeatherChangeListeners() {
-    weather.onDataLoad.addListener(data => {
+    weatherStore.onDataLoad.addListener(data => {
       const showWeather = data && Settings.get(Settings.keys.SHOW_WEATHER)
       updateWeather(showWeather)
     })
@@ -294,7 +297,7 @@ export default function createPage(
 
   function updateWeather(showWeather) {
     if (showWeather) {
-      return weather.load().then(() => {
+      return weatherStore.load().then(() => {
         $weatherWrapper.hidden = false
       })
     } else {
