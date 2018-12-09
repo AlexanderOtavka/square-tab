@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react"
 import classnames from "classnames"
 
-import createWeatherStore from "./createWeatherStore"
+import useWeather from "./useWeather"
 import createWeatherUpdater from "./createWeatherUpdater"
 import createBookmarksNavigator from "./createBookmarksNavigator"
 import createBookmarksEditor from "./createBookmarksEditor"
@@ -62,6 +62,8 @@ export default function Page(_props) {
   const $weatherIcon = useRef() // document.querySelector(".weatherIcon")
   const $temperature = useRef() //document.querySelector("#temperature")
 
+  const weatherStore = useWeather()
+
   useEffect(() => {
     const bookmarksNavigator = createBookmarksNavigator(
       unpackRefs({
@@ -94,7 +96,6 @@ export default function Page(_props) {
       bookmarksNavigator
     )
 
-    const weatherStore = createWeatherStore()
     const weatherUpdater = createWeatherUpdater(
       unpackRefs({ $weatherIcon, $temperature }),
       weatherStore

@@ -1,48 +1,61 @@
+import { useRef, useEffect } from "react"
+
 import StorageKeys from "../StorageKeys"
+import useConst from "../useConst"
 
-export default function createWeatherStore() {
-  const onDataLoad = new chrome.Event()
+export default function useWeather() {
+  const onDataLoad = useConst(new chrome.Event())
 
-  let setStaleData
-  const cacheLoaded = new Promise(resolve => {
-    setStaleData = newStaleData => {
-      staleData = newStaleData
-      resolve()
-    }
-  })
+  const setStaleDataRef = useRef()
+  const cacheLoaded = useConst(
+    new Promise(resolve => {
+      setStaleDataRef.current = newStaleData => {
+        staleDataRef.current = newStaleData
+        resolve()
+      }
+    })
+  )
 
-  let staleData = null
+  const staleDataRef = useRef(null)
 
-  let loadCalled = false
-  let onInitialLoad
-  const initialLoad = new Promise(resolve => {
-    onInitialLoad = () => resolve()
-  })
+  const loadCalledRef = useRef(false)
+  const onInitialLoadRef = useRef()
+  const initialLoad = useConst(
+    new Promise(resolve => {
+      onInitialLoadRef.current = () => resolve()
+    })
+  )
 
-  chrome.storage.onChanged.addListener(
-    ({ [StorageKeys.WEATHER_DATA]: change }, area) => {
+  useEffect(() => {
+    chrome.storage.local.get(
+      StorageKeys.WEATHER_DATA,
+      ({ [StorageKeys.WEATHER_DATA]: data }) =>
+        setStaleDataRef.current(JSON.parse(data || null))
+    )
+
+    const onStorageChange = ({ [StorageKeys.WEATHER_DATA]: change }, area) => {
       if (area === "local" && change) {
         handleWeatherDataLoad(change.newValue)
       }
     }
-  )
 
-  chrome.storage.local.get(
-    StorageKeys.WEATHER_DATA,
-    ({ [StorageKeys.WEATHER_DATA]: data }) =>
-      setStaleData(JSON.parse(data || null))
-  )
+    chrome.storage.onChanged.addListener(onStorageChange)
 
-  return {
+    return () => {
+      chrome.storage.onChanged.removeListener(onStorageChange)
+    }
+  }, [])
+
+  return useConst({
     onDataLoad,
     cacheLoaded,
     load,
     getSunInfoMS
-  }
+  })
 
   function load() {
-    if (!loadCalled) {
-      loadCalled = true
+    if (!loadCalledRef.current) {
+      loadCalledRef.current = true
 
       if (navigator.geolocation) {
         chrome.storage.local.get(
@@ -60,7 +73,7 @@ export default function createWeatherStore() {
   function getSunInfoMS(givenData) {
     return (givenData
       ? Promise.resolve(givenData)
-      : cacheLoaded.then(() => staleData)
+      : cacheLoaded.then(() => staleDataRef.current)
     ).then(data => {
       const HOUR_MS = 60 * 60 * 1000
       const DAY_MS = 24 * HOUR_MS
@@ -95,10 +108,10 @@ export default function createWeatherStore() {
 
   function handleWeatherDataLoad(dataString) {
     const data = JSON.parse(dataString || null)
-    setStaleData(data)
+    setStaleDataRef.current(data)
 
     if (data && Date.now() < data.hardExpiration) {
-      onInitialLoad()
+      onInitialLoadRef.current()
       onDataLoad.dispatch(data)
     } else {
       onDataLoad.dispatch(null)
