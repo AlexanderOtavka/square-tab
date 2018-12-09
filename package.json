@@ -6,7 +6,7 @@
     "parcel": "parcel",
     "build": "rm -rf dist && parcel build --public-url '/dist' src/{background,newtab,popup}/index.html",
     "watch": "parcel watch --public-url '/dist' --no-hmr src/{background,newtab,popup}/index.html",
-    "zip": "zip -FSr square-tab.zip dist public manifest.json",
+    "zip": "zip -FSr square-tab.zip dist public manifest.json -x \\*.map",
     "lint": "eslint src",
     "fix": "eslint --fix src && prettier --write '{src,public}/**/*.{js,css}'"
   },
