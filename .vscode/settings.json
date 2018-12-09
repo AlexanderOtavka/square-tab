@@ -2,5 +2,8 @@
 {
   "editor.rulers": [80],
   "eslint.enable": false,
-  "prettier.eslintIntegration": true
+  "prettier.eslintIntegration": true,
+  "cSpell.words": [
+    "Unsplash"
+  ]
 }
