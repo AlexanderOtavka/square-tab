@@ -2,10 +2,11 @@ import React, { useRef, useEffect } from "react"
 import classnames from "classnames"
 
 import useWeather from "./useWeather"
-import createWeatherUpdater from "./createWeatherUpdater"
+import unpackRefs from "./unpackRefs"
 import createBookmarksNavigator from "./createBookmarksNavigator"
 import createBookmarksEditor from "./createBookmarksEditor"
 import createPage from "./createPage"
+import Weather from "./Weather"
 
 import "./x-bookmark"
 import "./x-context-menu"
@@ -14,16 +15,6 @@ import "./x-icon"
 import "./x-tooltip"
 
 import styles from "./Page.css"
-import weatherIconStyles from "./weather-icons/weather-icons.css"
-
-function unpackRefs(refs) {
-  const unpacked = {}
-  Object.keys(refs).forEach(key => {
-    unpacked[key] = refs[key].current
-  })
-
-  return unpacked
-}
 
 export default function Page(_props) {
   const $root = useRef(document.documentElement)
@@ -58,10 +49,6 @@ export default function Page(_props) {
   const $bookmarksDrawerTitle = useRef() // document.querySelector(".bookmarksDrawer .title")
   const $drawerTooltip = useRef() //document.querySelector(".bookmarksDrawer-tooltip")
 
-  const $weatherWrapper = useRef() //document.querySelector(".weatherWrapper")
-  const $weatherIcon = useRef() // document.querySelector(".weatherIcon")
-  const $temperature = useRef() //document.querySelector("#temperature")
-
   const weatherStore = useWeather()
 
   useEffect(() => {
@@ -94,11 +81,6 @@ export default function Page(_props) {
         $editDialogDone
       }),
       bookmarksNavigator
-    )
-
-    createWeatherUpdater(
-      unpackRefs({ $weatherWrapper, $weatherIcon, $temperature }),
-      weatherStore
     )
 
     createPage(
@@ -170,23 +152,7 @@ export default function Page(_props) {
             href="https://www.google.com/search?q=time"
           />
           <div ref={$greeting} />
-
-          <a
-            ref={$weatherWrapper}
-            className={styles.weatherWrapper}
-            href="https://www.google.com/search?q=weather"
-            hidden
-          >
-            <i
-              ref={$weatherIcon}
-              className={classnames(
-                styles.weatherIcon,
-                weatherIconStyles["wi"],
-                weatherIconStyles["wi-day-sunny"]
-              )}
-            />
-            <span ref={$temperature} />
-          </a>
+          <Weather store={weatherStore} />
         </div>
       </main>
 

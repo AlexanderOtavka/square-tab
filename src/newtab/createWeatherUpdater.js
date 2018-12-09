@@ -2,7 +2,7 @@ import classnames from "classnames"
 
 import * as Settings from "../Settings"
 
-import pageStyles from "./Page.css"
+import weatherStyles from "./Weather.css"
 import weatherIconStyles from "./weather-icons/weather-icons.css"
 
 export default function createWeatherUpdater(
@@ -11,22 +11,32 @@ export default function createWeatherUpdater(
 ) {
   let data = null
 
-  weatherStore.onDataLoad.addListener(newData => {
+  const update = newData => {
     data = newData
 
     updateWeather()
 
-    const showWeather = data && Settings.get(Settings.keys.SHOW_WEATHER)
+    const showWeather = !!data && Settings.get(Settings.keys.SHOW_WEATHER)
     updateWeatherVisibility(showWeather)
-  })
+  }
 
-  Settings.onChanged(Settings.keys.SHOW_WEATHER).subscribe(
-    updateWeatherVisibility
-  )
+  weatherStore.onDataLoad.addListener(update)
 
-  Settings.onChanged(Settings.keys.TEMPERATURE_UNIT).subscribe(
-    updateTempWithUnit
-  )
+  const showSubscription = Settings.onChanged(
+    Settings.keys.SHOW_WEATHER
+  ).subscribe(updateWeatherVisibility)
+
+  const tempUnitSubscription = Settings.onChanged(
+    Settings.keys.TEMPERATURE_UNIT
+  ).subscribe(updateTempWithUnit)
+
+  return {
+    unsubscribe: () => {
+      weatherStore.onDataLoad.removeListener(update)
+      showSubscription.unsubscribe()
+      tempUnitSubscription.unsubscribe()
+    }
+  }
 
   function updateWeatherVisibility(showWeather) {
     if (showWeather) {
@@ -84,7 +94,7 @@ export default function createWeatherUpdater(
       const iconName = getIconName(iconCode, isDay)
       $weatherIcon.className = iconName
         ? classnames(
-            pageStyles.weatherIcon,
+            weatherStyles.weatherIcon,
             weatherIconStyles["wi"],
             weatherIconStyles[`wi-${iconName}`]
           )

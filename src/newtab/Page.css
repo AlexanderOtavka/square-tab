@@ -161,37 +161,6 @@ x-tooltip {
   line-height: 1;
 }
 
-.weatherWrapper {
-  font-size: 2rem;
-}
-
-.weatherIcon {
-  position: relative;
-}
-
-.weatherIcon::after {
-  font-family: var(--font-family);
-  content: attr(tooltip);
-  display: inline-block;
-  position: absolute;
-  white-space: nowrap;
-  font-size: 1rem;
-  background: #333;
-  padding: 8px;
-  border-radius: 2px;
-  margin: 0 8px;
-  right: 100%;
-  box-shadow: var(--shadow-1);
-  user-select: none;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--mouse-effect-transition-timing);
-}
-
-.weatherIcon:hover::after {
-  opacity: 1;
-}
-
 .bookmarksDrawer {
   background: #fff;
   will-change: transform;
