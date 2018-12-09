@@ -1,41 +1,41 @@
 const images = [
   {
-    url: "../images/surprise/hello-there.jpg",
+    url: "/public/images/surprise/hello-there.jpg",
     greeting: "Hello There"
   },
   {
-    url: "../images/surprise/fine-addition.jpg",
+    url: "/public/images/surprise/fine-addition.jpg",
     greeting: "A fine addition to my collection"
   },
   {
-    url: "../images/surprise/reeee.jpg",
+    url: "/public/images/surprise/reeee.jpg",
     greeting: "REEEEEEEEEE!"
   },
   {
-    url: "../images/surprise/good-trick.jpg",
+    url: "/public/images/surprise/good-trick.jpg",
     greeting: "That's a good trick"
   },
   {
-    url: "../images/surprise/the-senate.jpg",
+    url: "/public/images/surprise/the-senate.jpg",
     greeting: "I am The Senate"
   },
   {
-    url: "../images/surprise/tragedy.jpg",
+    url: "/public/images/surprise/tragedy.jpg",
     greeting:
       "Have you ever heard the Tragedy of Darth Plagueis " + '"The Wise"?'
   },
   {
-    url: "../images/surprise/treason.jpg",
+    url: "/public/images/surprise/treason.jpg",
     greeting: "It's treason then"
   },
   {
-    url: "../images/surprise/high-ground.jpg",
+    url: "/public/images/surprise/high-ground.jpg",
     greeting: "Don't try it, Anakin"
   }
 ]
 
 export const initialImageData = {
-  url: "../images/surprise/surprise-to-be-sure.jpg",
+  url: "/public/images/surprise/surprise-to-be-sure.jpg",
   greeting: "...but a welcome one."
 }
 

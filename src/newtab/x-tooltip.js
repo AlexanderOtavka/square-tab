@@ -1,16 +1,14 @@
-import html from "../modules/html.js"
-import * as Settings from "../modules/Settings.js"
+import html from "../html.js"
+import * as Settings from "../Settings.js"
 
 export default class XTooltipElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: "open" }).appendChild(html`
-      <link rel="stylesheet" href="/styles/shared-styles.css" />
-      <link rel="stylesheet" href="/elements/x-tooltip.css" />
+      <link rel="stylesheet" href="/public/styles/shared-styles.css" />
+      <link rel="stylesheet" href="/public/styles/x-tooltip.css" />
 
-      <div class="fullbleed">
-        <div id="tooltip">Tooltip</div>
-      </div>
+      <div class="fullbleed"><div id="tooltip">Tooltip</div></div>
     `)
 
     this.$tooltip = this.shadowRoot.querySelector("#tooltip")

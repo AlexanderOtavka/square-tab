@@ -1,4 +1,4 @@
-import html from "../modules/html.js"
+import html from "../html.js"
 
 const $icons = html`
   <svg id="bookmarks" viewBox="0 0 24 24">
@@ -6,15 +6,21 @@ const $icons = html`
   </svg>
 
   <svg id="folder" viewBox="0 0 24 24">
-    <path d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z" />
+    <path
+      d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z"
+    />
   </svg>
 
   <svg id="folder-up" viewBox="0 0 24 24">
-    <path d="M20,6A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4H10L12,6H20M10.75,13H14V17H16V13H19.25L15,8.75" />
+    <path
+      d="M20,6A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4H10L12,6H20M10.75,13H14V17H16V13H19.25L15,8.75"
+    />
   </svg>
 
   <svg id="close" viewBox="0 0 24 24">
-    <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+    <path
+      d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+    />
   </svg>
 `
 
@@ -22,8 +28,8 @@ export default class XIconElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: "open" }).appendChild(html`
-      <link rel="stylesheet" href="/styles/shared-styles.css" />
-      <link rel="stylesheet" href="/elements/x-icon.css" />
+      <link rel="stylesheet" href="/public/styles/shared-styles.css" />
+      <link rel="stylesheet" href="/public/styles/x-icon.css" />
 
       <div id="button-click-circle"></div>
     `)

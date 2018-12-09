@@ -1,22 +1,22 @@
 import React from "react"
 import { render } from "react-dom"
 
-import StorageKeys from "../modules/StorageKeys.js"
-import * as Surprise from "../modules/Surprise.js"
-import * as Settings from "../modules/Settings.js"
-import createWeather from "../modules/Weather.js"
-import createBookmarksNavigator from "../modules/BookmarksNavigator.js"
-import createBookmarksEditor from "../modules/BookmarksEditor.js"
+import StorageKeys from "../StorageKeys.js"
+import * as Surprise from "../Surprise.js"
+import * as Settings from "../Settings.js"
+import createWeather from "./Weather.js"
+import createBookmarksNavigator from "./BookmarksNavigator.js"
+import createBookmarksEditor from "./BookmarksEditor.js"
 
-import "../elements/x-bookmark"
-import "../elements/x-context-menu"
-import "../elements/x-dialog"
-import "../elements/x-icon"
-import "../elements/x-tooltip"
+import "./x-bookmark"
+import "./x-context-menu"
+import "./x-dialog"
+import "./x-icon"
+import "./x-tooltip"
 
-import "../styles/shared-styles.css"
-import "../styles/newtab.css"
-import "../styles/weather-icons/weather-icons.css"
+import "../../public/styles/shared-styles.css"
+import "./index.css"
+import "./weather-icons/weather-icons.css"
 
 render(
   <>

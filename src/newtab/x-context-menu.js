@@ -1,15 +1,13 @@
-import html from "../modules/html.js"
+import html from "../html.js"
 
 export default class XContextMenuElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: "open" }).appendChild(html`
-      <link rel="stylesheet" href="/styles/shared-styles.css" />
-      <link rel="stylesheet" href="/elements/x-context-menu.css" />
+      <link rel="stylesheet" href="/public/styles/shared-styles.css" />
+      <link rel="stylesheet" href="/public/styles/x-context-menu.css" />
 
-      <div id="wrapper">
-        <slot></slot>
-      </div>
+      <div id="wrapper"><slot></slot></div>
     `)
 
     this.$wrapper = this.shadowRoot.querySelector("#wrapper")

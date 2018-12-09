@@ -510,7 +510,7 @@ export default function createBookmarksEditor(
         $editDialogFavicon.src = `chrome://favicon/size/16@8x/${url}`
       } else {
         $editDialogURL.hidden = true
-        $editDialogFavicon.src = "/images/folder-outline.svg"
+        $editDialogFavicon.src = "/public/images/folder-outline.svg"
       }
     })
 
@@ -529,7 +529,7 @@ export default function createBookmarksEditor(
     $editDialogURL.value = ""
     $editDialogURL.hidden = isFolder
     $editDialogFavicon.src = isFolder
-      ? "/images/folder-outline.svg"
+      ? "/public/images/folder-outline.svg"
       : "chrome://favicon/size/16@8x/"
 
     $editDialogDone.onclick = () => {

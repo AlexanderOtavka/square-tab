@@ -1,12 +1,12 @@
 // import "../x-icon/x-icon.js"
-import html from "../modules/html.js"
+import html from "../html.js"
 
 export default class XDialogElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: "open" }).appendChild(html`
-      <link rel="stylesheet" href="/styles/shared-styles.css" />
-      <link rel="stylesheet" href="/elements/x-dialog.css" />
+      <link rel="stylesheet" href="/public/styles/shared-styles.css" />
+      <link rel="stylesheet" href="/public/styles/x-dialog.css" />
 
       <section id="box">
         <header id="header" class="toolbar">
@@ -15,8 +15,7 @@ export default class XDialogElement extends HTMLElement {
         </header>
         <slot name="content"></slot>
         <footer id="footer" class="row">
-          <slot name="cancel"></slot>
-          <slot name="confirm"></slot>
+          <slot name="cancel"></slot> <slot name="confirm"></slot>
         </footer>
       </section>
 

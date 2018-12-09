@@ -1,4 +1,4 @@
-import html from "../modules/html.js"
+import html from "../html.js"
 
 function addEventListeners(object, listeners) {
   for (const eventName of Object.keys(listeners)) {
@@ -16,8 +16,8 @@ export default class XBookmarkElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: "open" }).appendChild(html`
-      <link rel="stylesheet" href="/styles/shared-styles.css" />
-      <link rel="stylesheet" href="/elements/x-bookmark.css" />
+      <link rel="stylesheet" href="/public/styles/shared-styles.css" />
+      <link rel="stylesheet" href="/public/styles/x-bookmark.css" />
 
       <a id="link">
         <img id="image" />
@@ -171,7 +171,7 @@ export default class XBookmarkElement extends HTMLElement {
 
   _updateImage() {
     if (this.node && !this.node.url) {
-      this.$image.src = "/images/folder-outline.svg"
+      this.$image.src = "/public/images/folder-outline.svg"
     } else {
       this.$image.src = `chrome://favicon/size/16@8x/${this.url}`
     }

@@ -4,8 +4,8 @@
   "license": "GPL-3.0",
   "scripts": {
     "parcel": "parcel",
-    "build": "rm -rf dist && parcel build --public-url '.' entry/*",
-    "watch": "parcel watch --public-url '.' --no-hmr entry/*",
+    "build": "rm -rf dist && parcel build --public-url '/dist' src/{background,newtab,popup}/index.html",
+    "watch": "parcel watch --public-url '/dist' --no-hmr src/{background,newtab,popup}/index.html",
     "zip": "zip -FSr square-tab.zip elements images scripts styles views manifest.json",
     "lint": "eslint modules scripts elements",
     "fix": "eslint --fix modules scripts elements && prettier --write '{modules,scripts,styles,elements}/**/*.{js,css}'"

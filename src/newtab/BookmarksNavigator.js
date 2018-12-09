@@ -1,4 +1,4 @@
-import * as Settings from "./Settings.js"
+import * as Settings from "../Settings.js"
 
 export const ROOT_ID = "0"
 export const BOOKMARKS_BAR_ID = "1"

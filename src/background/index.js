@@ -1,4 +1,4 @@
-import StorageKeys from "../modules/StorageKeys.js"
+import StorageKeys from "../StorageKeys.js"
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.clear(() => {
