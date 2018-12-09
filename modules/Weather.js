@@ -163,8 +163,8 @@ function updateWeather() {
 }
 
 function fetchAndCacheWeatherData() {
-  chrome.runtime.getBackgroundPage(({ EventPage }) => {
-    EventPage.fetchAndCacheWeatherData()
+  chrome.runtime.getBackgroundPage(page => {
+    page.fetchAndCacheWeatherData()
   })
 }
 
