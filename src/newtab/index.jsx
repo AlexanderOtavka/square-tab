@@ -113,7 +113,7 @@ render(
       </div>
     </x-context-menu>
   </>,
-  document.body
+  document.getElementById("react-root")
 )
 
 const $root = document.documentElement

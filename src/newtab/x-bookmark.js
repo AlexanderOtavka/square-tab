@@ -1,4 +1,5 @@
 import html from "../html.js"
+import folderOutlineUri from "./folder-outline.svg"
 
 function addEventListeners(object, listeners) {
   for (const eventName of Object.keys(listeners)) {
@@ -171,7 +172,7 @@ export default class XBookmarkElement extends HTMLElement {
 
   _updateImage() {
     if (this.node && !this.node.url) {
-      this.$image.src = "/public/images/folder-outline.svg"
+      this.$image.src = folderOutlineUri
     } else {
       this.$image.src = `chrome://favicon/size/16@8x/${this.url}`
     }

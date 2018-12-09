@@ -1,4 +1,5 @@
 import * as BookmarksNavigator from "./BookmarksNavigator.js"
+import folderOutlineUri from "./folder-outline.svg"
 
 // todo: add undo popup
 
@@ -510,7 +511,7 @@ export default function createBookmarksEditor(
         $editDialogFavicon.src = `chrome://favicon/size/16@8x/${url}`
       } else {
         $editDialogURL.hidden = true
-        $editDialogFavicon.src = "/public/images/folder-outline.svg"
+        $editDialogFavicon.src = folderOutlineUri
       }
     })
 
@@ -529,7 +530,7 @@ export default function createBookmarksEditor(
     $editDialogURL.value = ""
     $editDialogURL.hidden = isFolder
     $editDialogFavicon.src = isFolder
-      ? "/public/images/folder-outline.svg"
+      ? folderOutlineUri
       : "chrome://favicon/size/16@8x/"
 
     $editDialogDone.onclick = () => {
