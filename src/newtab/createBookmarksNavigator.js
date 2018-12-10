@@ -72,18 +72,43 @@ export default function createBookmarksNavigator({
     }
   })
 
+  // Drawer Click Listeners
+
+  $upButton.addEventListener("click", () => {
+    ascend()
+  })
+
+  $drawerItems.addEventListener(
+    "x-bookmark-click",
+    ev => {
+      openBookmark(ev.detail.nodeId)
+    },
+    true
+  )
+
+  // Add settings listeners
+
+  Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).subscribe(updateSize)
+
+  // Add Tooltip Listeners
+
+  $drawerItems.addEventListener(
+    "x-bookmark-mouseover",
+    onBookmarkMouseOver,
+    true
+  )
+  $drawerItems.addEventListener("x-bookmark-mouseleave", hideTooltip, true)
+
+  $header.addEventListener("mouseover", onHeaderMouseOver)
+  $header.addEventListener("mouseleave", hideTooltip)
+
   return {
     getCurrentFolder,
     getParentFolder,
     maybeShowTooltipForBookmark,
     hideTooltip,
-    onBookmarkMouseOver,
-    onHeaderMouseOver,
     getNodeTitle,
-    nodeIsEditable,
-    openBookmark,
-    ascend,
-    updateSize
+    nodeIsEditable
   }
 
   function getCurrentFolder() {

@@ -84,18 +84,6 @@ export default function createBookmarksEditor(
 
   // Drawer Click Listeners
 
-  $upButton.addEventListener("click", () => {
-    bookmarksNavigator.ascend()
-  })
-
-  $drawerItems.addEventListener(
-    "x-bookmark-click",
-    ev => {
-      bookmarksNavigator.openBookmark(ev.detail.nodeId)
-    },
-    true
-  )
-
   $drawerHeader.addEventListener("contextmenu", ev => {
     let nodeId
     if (ev.target === $upButton) {

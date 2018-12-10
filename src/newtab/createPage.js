@@ -16,11 +16,8 @@ export default function createPage(
     $greeting,
     $drawerBackdrop,
     $bookmarksOpenButton,
-    $bookmarksCloseButton,
-    $bookmarksDrawerHeader,
-    $bookmarksDrawerItems
+    $bookmarksCloseButton
   },
-  bookmarksNavigator,
   weatherStore,
   bookmarksDrawerOpenSubject,
   bookmarksDrawerModeSubject,
@@ -51,7 +48,6 @@ export default function createPage(
   addSettingsChangeListeners()
   addGlobalDragDropListeners()
   addBookmarksDrawerListeners()
-  addBookmarksTooltipListeners()
 
   if (Surprise.isTime()) {
     $surpriseLink.hidden = false
@@ -208,10 +204,7 @@ export default function createPage(
     )
 
     Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).subscribe(
-      value => {
-        updateBookmarkDrawerSmall(value)
-        bookmarksNavigator.updateSize(value)
-      }
+      updateBookmarkDrawerSmall
     )
 
     Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE).subscribe(value =>
@@ -309,25 +302,5 @@ export default function createPage(
   function closeBookmarks() {
     $root.classList.remove(styles.bookmarksDrawerOpen)
     bookmarksDrawerOpenSubject.next(false)
-  }
-
-  function addBookmarksTooltipListeners() {
-    $bookmarksDrawerItems.addEventListener(
-      "x-bookmark-mouseover",
-      ev => bookmarksNavigator.onBookmarkMouseOver(ev),
-      true
-    )
-    $bookmarksDrawerItems.addEventListener(
-      "x-bookmark-mouseleave",
-      () => bookmarksNavigator.hideTooltip(),
-      true
-    )
-
-    $bookmarksDrawerHeader.addEventListener("mouseover", () =>
-      bookmarksNavigator.onHeaderMouseOver()
-    )
-    $bookmarksDrawerHeader.addEventListener("mouseleave", () =>
-      bookmarksNavigator.hideTooltip()
-    )
   }
 }

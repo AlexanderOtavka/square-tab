@@ -103,11 +103,8 @@ export default function Page({ weatherStore }) {
         $greeting,
         $drawerBackdrop,
         $bookmarksOpenButton,
-        $bookmarksCloseButton,
-        $bookmarksDrawerHeader,
-        $bookmarksDrawerItems
+        $bookmarksCloseButton
       }),
-      bookmarksNavigator,
       weatherStore,
       bookmarksDrawerOpenSubject,
       bookmarksDrawerModeSubject,
