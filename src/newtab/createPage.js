@@ -18,11 +18,9 @@ export default function createPage(
     $bookmarksOpenButton,
     $bookmarksCloseButton,
     $bookmarksDrawerHeader,
-    $bookmarksUpButton,
     $bookmarksDrawerItems
   },
   bookmarksNavigator,
-  bookmarksEditor,
   weatherStore,
   bookmarksDrawerOpenSubject,
   bookmarksDrawerModeSubject,
@@ -52,8 +50,6 @@ export default function createPage(
   disableDefaultRightClick()
   addSettingsChangeListeners()
   addGlobalDragDropListeners()
-  addBookmarksDragDropListeners()
-  addBookmarksClickListeners()
   addBookmarksDrawerListeners()
   addBookmarksTooltipListeners()
 
@@ -297,92 +293,6 @@ export default function createPage(
         $root.classList.remove("dragover")
       }, 100)
     })
-  }
-
-  function addBookmarksDragDropListeners() {
-    $bookmarksDrawerItems.addEventListener(
-      "x-bookmark-drag-start",
-      ev => bookmarksEditor.onBookmarkDragStart(ev),
-      true
-    )
-    $bookmarksDrawerItems.addEventListener(
-      "x-bookmark-drag-over",
-      ev => bookmarksEditor.onBookmarkDragOver(ev),
-      true
-    )
-    $bookmarksDrawerItems.addEventListener(
-      "x-bookmark-drop",
-      ev => bookmarksEditor.onBookmarkDrop(ev),
-      true
-    )
-
-    $bookmarksDrawerItems.addEventListener("dragover", ev =>
-      bookmarksEditor.onItemsDragOver(ev)
-    )
-    $bookmarksDrawerItems.addEventListener("drop", ev =>
-      bookmarksEditor.onItemsDrop(ev)
-    )
-
-    $bookmarksUpButton.addEventListener("dragover", ev =>
-      bookmarksEditor.onUpButtonDragOver(ev)
-    )
-    $bookmarksUpButton.addEventListener("dragleave", ev =>
-      bookmarksEditor.onUpButtonDragLeave(ev)
-    )
-    $bookmarksUpButton.addEventListener("drop", ev =>
-      bookmarksEditor.onUpButtonDrop(ev)
-    )
-
-    $bookmarksDrawerItems.addEventListener(
-      "dragleave",
-      ev => bookmarksEditor.onDragLeave(ev),
-      true
-    )
-    $bookmarksDrawerItems.addEventListener(
-      "dragend",
-      ev => bookmarksEditor.onDragEnd(ev),
-      true
-    )
-  }
-
-  function addBookmarksClickListeners() {
-    $bookmarksUpButton.addEventListener("click", () => {
-      bookmarksNavigator.ascend()
-    })
-
-    $bookmarksDrawerItems.addEventListener(
-      "x-bookmark-click",
-      ev => {
-        bookmarksNavigator.openBookmark(ev.detail.nodeId)
-      },
-      true
-    )
-
-    $bookmarksDrawerHeader.addEventListener("contextmenu", ev => {
-      let nodeId
-      if (ev.target === $bookmarksUpButton) {
-        nodeId = bookmarksNavigator.getParentFolder()
-      } else {
-        nodeId = bookmarksNavigator.getCurrentFolder()
-      }
-
-      bookmarksEditor.openCtxMenu(ev.x, ev.y, nodeId)
-    })
-
-    $bookmarksDrawerItems.addEventListener("contextmenu", ev => {
-      if (ev.target !== $bookmarksDrawerItems) {
-        return
-      }
-      bookmarksEditor.openCtxMenu(ev.x, ev.y, null)
-    })
-
-    $bookmarksDrawerItems.addEventListener(
-      "x-bookmark-ctx-menu",
-      ev => {
-        bookmarksEditor.openCtxMenu(ev.detail.x, ev.detail.y, ev.target.node.id)
-      },
-      true
-    )
   }
 
   function addBookmarksDrawerListeners() {

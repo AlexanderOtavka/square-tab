@@ -6,6 +6,7 @@ import folderOutlineUri from "./folder-outline.svg"
 export default function createBookmarksEditor(
   {
     $drawer,
+    $drawerHeader,
     $upButton,
     $drawerItems,
     $ctxMenu,
@@ -53,19 +54,73 @@ export default function createBookmarksEditor(
     $editDialogURL.value = fixUrl($editDialogURL.value)
   })
 
-  return {
-    onBookmarkDragStart,
-    onBookmarkDragOver,
-    onBookmarkDrop,
-    onItemsDragOver,
-    onItemsDrop,
-    onUpButtonDragOver,
-    onUpButtonDragLeave,
-    onUpButtonDrop,
-    onDragLeave,
-    onDragEnd,
-    openCtxMenu
-  }
+  // Drag and Drop Listeners
+
+  $drawerItems.addEventListener(
+    "x-bookmark-drag-start",
+    ev => onBookmarkDragStart(ev),
+    true
+  )
+  $drawerItems.addEventListener(
+    "x-bookmark-drag-over",
+    ev => onBookmarkDragOver(ev),
+    true
+  )
+  $drawerItems.addEventListener(
+    "x-bookmark-drop",
+    ev => onBookmarkDrop(ev),
+    true
+  )
+
+  $drawerItems.addEventListener("dragover", ev => onItemsDragOver(ev))
+  $drawerItems.addEventListener("drop", ev => onItemsDrop(ev))
+
+  $upButton.addEventListener("dragover", ev => onUpButtonDragOver(ev))
+  $upButton.addEventListener("dragleave", ev => onUpButtonDragLeave(ev))
+  $upButton.addEventListener("drop", ev => onUpButtonDrop(ev))
+
+  $drawerItems.addEventListener("dragleave", ev => onDragLeave(ev), true)
+  $drawerItems.addEventListener("dragend", ev => onDragEnd(ev), true)
+
+  // Drawer Click Listeners
+
+  $upButton.addEventListener("click", () => {
+    bookmarksNavigator.ascend()
+  })
+
+  $drawerItems.addEventListener(
+    "x-bookmark-click",
+    ev => {
+      bookmarksNavigator.openBookmark(ev.detail.nodeId)
+    },
+    true
+  )
+
+  $drawerHeader.addEventListener("contextmenu", ev => {
+    let nodeId
+    if (ev.target === $upButton) {
+      nodeId = bookmarksNavigator.getParentFolder()
+    } else {
+      nodeId = bookmarksNavigator.getCurrentFolder()
+    }
+
+    openCtxMenu(ev.x, ev.y, nodeId)
+  })
+
+  $drawerItems.addEventListener("contextmenu", ev => {
+    if (ev.target !== $drawerItems) {
+      return
+    }
+    openCtxMenu(ev.x, ev.y, null)
+  })
+
+  $drawerItems.addEventListener(
+    "x-bookmark-ctx-menu",
+    ev => {
+      openCtxMenu(ev.detail.x, ev.detail.y, ev.target.node.id)
+    },
+    true
+  )
 
   function onBookmarkDragStart(ev) {
     currentDraggedBookmark = ev.target

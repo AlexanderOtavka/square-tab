@@ -69,9 +69,10 @@ export default function Page({ weatherStore }) {
       })
     )
 
-    const bookmarksEditor = createBookmarksEditor(
+    createBookmarksEditor(
       unpackRefs({
         $drawer,
+        $drawerHeader: $bookmarksDrawerHeader,
         $upButton: $bookmarksUpButton,
         $drawerItems: $bookmarksDrawerItems,
         $ctxMenu,
@@ -104,11 +105,9 @@ export default function Page({ weatherStore }) {
         $bookmarksOpenButton,
         $bookmarksCloseButton,
         $bookmarksDrawerHeader,
-        $bookmarksUpButton,
         $bookmarksDrawerItems
       }),
       bookmarksNavigator,
-      bookmarksEditor,
       weatherStore,
       bookmarksDrawerOpenSubject,
       bookmarksDrawerModeSubject,
