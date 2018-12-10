@@ -1,13 +1,17 @@
 import React, { useRef, useEffect } from "react"
 import classnames from "classnames"
+import { BehaviorSubject } from "rxjs"
 
-import useWeather from "./useWeather"
 import unpackRefs from "./unpackRefs"
 import createBookmarksNavigator from "./createBookmarksNavigator"
 import createBookmarksEditor from "./createBookmarksEditor"
 import createPage from "./createPage"
+
 import Weather from "./Weather"
 import Drawer from "./Drawer"
+
+import useConst from "../useConst"
+import useBehaviorSubject from "../useBehaviorSubject"
 
 import "./x-bookmark"
 import "./x-context-menu"
@@ -17,7 +21,7 @@ import "./x-tooltip"
 
 import styles from "./Page.css"
 
-export default function Page(_props) {
+export default function Page({ weatherStore }) {
   const $root = useRef(document.documentElement)
   const $body = useRef(document.body)
   const $backgroundImage = useRef() // document.querySelector("#background-image")
@@ -50,7 +54,9 @@ export default function Page(_props) {
   const $bookmarksDrawerTitle = useRef() // document.querySelector(".bookmarksDrawer .title")
   const $drawerTooltip = useRef() //document.querySelector(".bookmarksDrawer-tooltip")
 
-  const weatherStore = useWeather()
+  const bookmarksDrawerOpenSubject = useConst(new BehaviorSubject(false))
+  const bookmarksDrawerModeSubject = useConst(new BehaviorSubject("toggle"))
+  const bookmarksDrawerPositionSubject = useConst(new BehaviorSubject("right"))
 
   useEffect(() => {
     const bookmarksNavigator = createBookmarksNavigator(
@@ -103,9 +109,18 @@ export default function Page(_props) {
       }),
       bookmarksNavigator,
       bookmarksEditor,
-      weatherStore
+      weatherStore,
+      bookmarksDrawerOpenSubject,
+      bookmarksDrawerModeSubject,
+      bookmarksDrawerPositionSubject
     )
   }, [])
+
+  const bookmarksDrawerIsOpen = useBehaviorSubject(bookmarksDrawerOpenSubject)
+  const bookmarksDrawerMode = useBehaviorSubject(bookmarksDrawerModeSubject)
+  const bookmarksDrawerPosition = useBehaviorSubject(
+    bookmarksDrawerPositionSubject
+  )
 
   return (
     <>
@@ -165,6 +180,9 @@ export default function Page(_props) {
       <Drawer
         ref={$drawer}
         className={styles.bookmarksDrawer}
+        isOpen={bookmarksDrawerIsOpen}
+        mode={bookmarksDrawerMode}
+        position={bookmarksDrawerPosition}
         renderHeader={className => (
           <header
             ref={$bookmarksDrawerHeader}

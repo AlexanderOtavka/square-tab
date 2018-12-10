@@ -137,47 +137,9 @@ x-tooltip {
 
 .bookmarksDrawer {
   background: #fff;
-  will-change: transform;
 }
 
-.bookmarksDrawerPositionRight .bookmarksDrawer {
-  right: 0;
-  transform: translateX(105%);
-}
-
-.bookmarksDrawerPositionLeft .bookmarksDrawer {
-  left: 0;
-  transform: translateX(-105%);
-}
-
-.bookmarksDrawerModeNever .bookmarksDrawer {
-  display: none;
-}
-
-.bookmarksDrawerModeToggle.bookmarksDrawerOpen .bookmarksDrawer,
-.bookmarksDrawerModeToggle.dragover .bookmarksDrawer,
-.bookmarksDrawerModeAlways .bookmarksDrawer,
-.bookmarksDrawerModeHover .bookmarksDrawer {
-  transform: translateX(0);
-}
-
-.bookmarksDrawerModeAlways .bookmarksDrawer {
-  opacity: 0.9;
-  box-shadow: none;
-}
-
-.bookmarksDrawerModeHover .bookmarksDrawer {
-  opacity: 0;
-}
-
-.bookmarksDrawerModeHover .bookmarksDrawer:hover,
-.bookmarksDrawerModeHover .bookmarksDrawer:global(.ctx-menu-active),
-.bookmarksDrawerModeHover.dragover .bookmarksDrawer,
-.bookmarksDrawerModeAlways.dragover .bookmarksDrawer {
-  opacity: 1;
-}
-
-.dragover .bookmarksDrawerItems::after {
+:global(.dragover) .bookmarksDrawerItems::after {
   display: block;
   content: "";
   height: 40px;

@@ -4,5 +4,11 @@ import { render } from "react-dom"
 import "../shared-styles.css"
 
 import Page from "./Page"
+import createWeatherStore from "./createWeatherStore"
 
-render(<Page />, document.getElementById("react-root"))
+const weatherStore = createWeatherStore()
+
+render(
+  <Page weatherStore={weatherStore} />,
+  document.getElementById("react-root")
+)

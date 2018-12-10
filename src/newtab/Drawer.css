@@ -5,7 +5,46 @@
   bottom: 0;
   width: var(--drawer-width);
   box-shadow: -2px 0 12px rgba(0, 0, 0, 0.4);
-  transition: all var(--drawer-transition-timing);
+  will-change: transform;
+  transition: transform var(--drawer-transition-timing);
+}
+
+.drawer.positionRight {
+  right: 0;
+  transform: translateX(105%);
+}
+
+.drawer.positionLeft {
+  left: 0;
+  transform: translateX(-105%);
+}
+
+.drawer.modeNever {
+  display: none;
+}
+
+.drawer.modeToggle.isOpen,
+.drawer.modeToggle:global(.dragover),
+.drawer.modeAlways,
+.drawer.modeHover {
+  transform: translateX(0);
+}
+
+.drawer.modeAlways {
+  opacity: 0.9;
+  box-shadow: none;
+}
+
+.drawer.modeHover {
+  opacity: 0;
+}
+
+.drawer.modeHover:hover,
+/* TODO: replace these cases with .isOpen class */
+.drawer.modeHover:global(.ctx-menu-active),
+.drawer.modeHover:global(.dragover),
+.drawer.modeAlways:global(.dragover) {
+  opacity: 1;
 }
 
 .header {

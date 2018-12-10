@@ -1,15 +1,11 @@
 import { useState, useEffect, useMemo } from "react"
-import { distinctUntilChanged, drop } from "rxjs/operators"
+import { distinctUntilChanged } from "rxjs/operators"
 
 export default function useBehaviorSubject(subject) {
   const [value, setValue] = useState(() => subject.getValue())
 
   const distinctObservable = useMemo(
-    () =>
-      subject.pipe(
-        distinctUntilChanged(),
-        drop(1)
-      ),
+    () => subject.pipe(distinctUntilChanged()),
     [subject]
   )
 

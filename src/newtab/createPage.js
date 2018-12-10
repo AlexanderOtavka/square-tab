@@ -23,7 +23,10 @@ export default function createPage(
   },
   bookmarksNavigator,
   bookmarksEditor,
-  weatherStore
+  weatherStore,
+  bookmarksDrawerOpenSubject,
+  bookmarksDrawerModeSubject,
+  bookmarksDrawerPositionSubject
 ) {
   const backgroundImageReady = Settings.loaded
     .then(() => {
@@ -234,15 +237,19 @@ export default function createPage(
     switch (mode) {
       case Settings.enums.BookmarkDrawerModes.TOGGLE:
         $root.classList.add(TOGGLE)
+        bookmarksDrawerModeSubject.next("toggle")
         break
       case Settings.enums.BookmarkDrawerModes.ALWAYS:
         $root.classList.add(ALWAYS)
+        bookmarksDrawerModeSubject.next("always")
         break
       case Settings.enums.BookmarkDrawerModes.HOVER:
         $root.classList.add(HOVER)
+        bookmarksDrawerModeSubject.next("hover")
         break
       case Settings.enums.BookmarkDrawerModes.NEVER:
         $root.classList.add(NEVER)
+        bookmarksDrawerModeSubject.next("never")
         break
       default:
         console.error("Invalid bookmark drawer mode.")
@@ -256,9 +263,11 @@ export default function createPage(
     switch (position) {
       case Settings.enums.BookmarkDrawerPositions.RIGHT:
         $root.classList.add(RIGHT)
+        bookmarksDrawerPositionSubject.next("right")
         break
       case Settings.enums.BookmarkDrawerPositions.LEFT:
         $root.classList.add(LEFT)
+        bookmarksDrawerPositionSubject.next("left")
         break
       default:
         console.error("Invalid bookmark drawer position")
@@ -281,11 +290,11 @@ export default function createPage(
     let removeClassTimeout
 
     window.addEventListener("dragover", () => {
-      $root.classList.add(styles.dragover)
+      $root.classList.add("dragover")
 
       clearTimeout(removeClassTimeout)
       removeClassTimeout = setTimeout(() => {
-        $root.classList.remove(styles.dragover)
+        $root.classList.remove("dragover")
       }, 100)
     })
   }
@@ -384,10 +393,12 @@ export default function createPage(
 
   function openBookmarks() {
     $root.classList.add(styles.bookmarksDrawerOpen)
+    bookmarksDrawerOpenSubject.next(true)
   }
 
   function closeBookmarks() {
     $root.classList.remove(styles.bookmarksDrawerOpen)
+    bookmarksDrawerOpenSubject.next(false)
   }
 
   function addBookmarksTooltipListeners() {
