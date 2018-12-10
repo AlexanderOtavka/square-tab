@@ -7,6 +7,7 @@ import createBookmarksNavigator from "./createBookmarksNavigator"
 import createBookmarksEditor from "./createBookmarksEditor"
 import createPage from "./createPage"
 import Weather from "./Weather"
+import Drawer from "./Drawer"
 
 import "./x-bookmark"
 import "./x-context-menu"
@@ -161,40 +162,39 @@ export default function Page(_props) {
         className={classnames(styles.drawerBackdrop, "fullbleed backdrop")}
       />
 
-      <aside
+      <Drawer
         ref={$drawer}
-        className={classnames(styles.bookmarksDrawer, styles.drawer)}
-      >
-        <header
-          ref={$bookmarksDrawerHeader}
-          className={classnames(styles.drawerHeader, "toolbar")}
-        >
-          <x-icon
-            ref={$bookmarksUpButton}
-            class={styles.bookmarksUpButton}
-            large
+        className={styles.bookmarksDrawer}
+        renderHeader={className => (
+          <header
+            ref={$bookmarksDrawerHeader}
+            className={classnames(className, "toolbar")}
+          >
+            <x-icon
+              ref={$bookmarksUpButton}
+              class={styles.bookmarksUpButton}
+              large
+            />
+            <span
+              ref={$bookmarksDrawerTitle}
+              className={classnames(styles.bookmarksDrawerTitle, "title")}
+            />
+            <x-icon
+              ref={$bookmarksCloseButton}
+              class={styles.bookmarksCloseButton}
+              icon="close"
+              large
+              button
+            />
+          </header>
+        )}
+        renderContents={className => (
+          <nav
+            ref={$bookmarksDrawerItems}
+            className={classnames(className, styles.bookmarksDrawerItems)}
           />
-          <span
-            ref={$bookmarksDrawerTitle}
-            className={classnames(styles.bookmarksDrawerTitle, "title")}
-          />
-          <x-icon
-            ref={$bookmarksCloseButton}
-            class={styles.bookmarksCloseButton}
-            icon="close"
-            large
-            button
-          />
-        </header>
-
-        <nav
-          ref={$bookmarksDrawerItems}
-          className={classnames(
-            styles.bookmarksDrawerItems,
-            styles.drawerContent
-          )}
-        />
-      </aside>
+        )}
+      />
 
       <x-dialog ref={$editDialog} class={styles.bookmarksEditDialog}>
         <img slot="title" ref={$editDialogFavicon} />

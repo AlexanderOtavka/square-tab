@@ -45,32 +45,6 @@ x-tooltip {
   display: block;
 }
 
-.drawer {
-  position: fixed;
-  z-index: 20;
-  top: 0;
-  bottom: 0;
-  width: var(--drawer-width);
-  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.4);
-  transition: all var(--drawer-transition-timing);
-}
-
-.drawerHeader {
-  height: var(--toolbar-height);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-}
-
-.drawerContent {
-  display: block;
-  position: absolute;
-  top: var(--toolbar-height);
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
 .backgroundImage {
   z-index: -999;
   object-fit: cover;
