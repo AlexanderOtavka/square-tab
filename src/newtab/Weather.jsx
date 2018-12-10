@@ -4,7 +4,7 @@ import classnames from "classnames"
 import createUpdater from "./createWeatherUpdater"
 import unpackRefs from "./unpackRefs"
 
-import weatherIconStyles from "./weather-icons/weather-icons.css"
+import weatherIconStyles from "../weather-icons/weather-icons.css"
 import styles from "./Weather.css"
 
 export default function Weather({ store }) {
