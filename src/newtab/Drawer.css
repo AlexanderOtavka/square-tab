@@ -24,7 +24,7 @@
 }
 
 .drawer.modeToggle.isOpen,
-.drawer.modeToggle:global(.dragover),
+:global(.dragover) .drawer.modeToggle,
 .drawer.modeAlways,
 .drawer.modeHover {
   transform: translateX(0);
@@ -42,8 +42,8 @@
 .drawer.modeHover:hover,
 /* TODO: replace these cases with .isOpen class */
 .drawer.modeHover:global(.ctx-menu-active),
-.drawer.modeHover:global(.dragover),
-.drawer.modeAlways:global(.dragover) {
+:global(.dragover) .drawer.modeHover,
+:global(.dragover) .drawer.modeAlways {
   opacity: 1;
 }
 
