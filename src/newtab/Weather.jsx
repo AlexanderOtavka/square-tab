@@ -8,8 +8,8 @@ import weatherIconStyles from "./weather-icons/weather-icons.css"
 import styles from "./Weather.css"
 
 export default function Weather({ store }) {
-  const $weatherWrapper = useRef() //document.querySelector(".weatherWrapper")
-  const $weatherIcon = useRef() // document.querySelector(".weatherIcon")
+  const $weatherWrapper = useRef() //document.querySelector(".wrapper")
+  const $weatherIcon = useRef() // document.querySelector(".icon")
   const $temperature = useRef() //document.querySelector("#temperature")
 
   useEffect(
@@ -27,14 +27,14 @@ export default function Weather({ store }) {
   return (
     <a
       ref={$weatherWrapper}
-      className={styles.weatherWrapper}
+      className={styles.wrapper}
       href="https://www.google.com/search?q=weather"
       hidden
     >
       <i
         ref={$weatherIcon}
         className={classnames(
-          styles.weatherIcon,
+          styles.icon,
           weatherIconStyles["wi"],
           weatherIconStyles["wi-day-sunny"]
         )}

@@ -1,13 +1,13 @@
-.weatherWrapper {
+.wrapper {
   font-size: 2rem;
 }
 
-.weatherIcon {
+.icon {
   position: relative;
   margin-right: 10px;
 }
 
-.weatherIcon::after {
+.icon::after {
   font-family: var(--font-family);
   content: attr(tooltip);
   display: inline-block;
@@ -26,6 +26,6 @@
   transition: opacity var(--mouse-effect-transition-timing);
 }
 
-.weatherIcon:hover::after {
+.icon:hover::after {
   opacity: 1;
 }

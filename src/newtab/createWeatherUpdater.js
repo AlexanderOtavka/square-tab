@@ -94,7 +94,7 @@ export default function createWeatherUpdater(
       const iconName = getIconName(iconCode, isDay)
       $weatherIcon.className = iconName
         ? classnames(
-            weatherStyles.weatherIcon,
+            weatherStyles.icon,
             weatherIconStyles["wi"],
             weatherIconStyles[`wi-${iconName}`]
           )
