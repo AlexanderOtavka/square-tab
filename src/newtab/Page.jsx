@@ -54,7 +54,6 @@ export default function Page({ weatherStore }) {
   const $bookmarksDrawerTitle = useRef() // document.querySelector(".bookmarksDrawer .title")
   const $drawerTooltip = useRef() //document.querySelector(".bookmarksDrawer-tooltip")
 
-  const bookmarksDrawerOpenSubject = useConst(new BehaviorSubject(false))
   const bookmarksDrawerModeSubject = useConst(new BehaviorSubject("toggle"))
   const bookmarksDrawerPositionSubject = useConst(new BehaviorSubject("right"))
 
@@ -106,13 +105,11 @@ export default function Page({ weatherStore }) {
         $bookmarksCloseButton
       }),
       weatherStore,
-      bookmarksDrawerOpenSubject,
       bookmarksDrawerModeSubject,
       bookmarksDrawerPositionSubject
     )
   }, [])
 
-  const bookmarksDrawerIsOpen = useBehaviorSubject(bookmarksDrawerOpenSubject)
   const bookmarksDrawerMode = useBehaviorSubject(bookmarksDrawerModeSubject)
   const bookmarksDrawerPosition = useBehaviorSubject(
     bookmarksDrawerPositionSubject
@@ -176,7 +173,6 @@ export default function Page({ weatherStore }) {
       <Drawer
         ref={$drawer}
         className={styles.bookmarksDrawer}
-        isOpen={bookmarksDrawerIsOpen}
         mode={bookmarksDrawerMode}
         position={bookmarksDrawerPosition}
         renderHeader={className => (

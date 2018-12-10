@@ -5,7 +5,9 @@ import styles from "./Drawer.css"
 
 const modeToClassName = mode => {
   switch (mode) {
-    case "toggle":
+    case "toggleOpen":
+      return classnames(styles.modeToggle, styles.isOpen)
+    case "toggleClosed":
       return styles.modeToggle
     case "always":
       return styles.modeAlways
@@ -27,8 +29,7 @@ const positionToClassName = position => {
 
 export default React.forwardRef(function Drawer(
   {
-    isOpen,
-    mode = "toggle",
+    mode = "toggleClosed",
     position = "right",
     className,
     renderHeader,
@@ -42,7 +43,6 @@ export default React.forwardRef(function Drawer(
       className={classnames(
         className,
         styles.drawer,
-        isOpen && styles.isOpen,
         modeToClassName(mode),
         positionToClassName(position)
       )}

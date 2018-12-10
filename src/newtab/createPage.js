@@ -19,7 +19,6 @@ export default function createPage(
     $bookmarksCloseButton
   },
   weatherStore,
-  bookmarksDrawerOpenSubject,
   bookmarksDrawerModeSubject,
   bookmarksDrawerPositionSubject
 ) {
@@ -221,12 +220,17 @@ export default function createPage(
     const HOVER = styles.bookmarksDrawerModeHover
     const ALWAYS = styles.bookmarksDrawerModeAlways
     const NEVER = styles.bookmarksDrawerModeNever
-    closeBookmarks()
-    $root.classList.remove(TOGGLE, HOVER, ALWAYS, NEVER)
+    $root.classList.remove(
+      TOGGLE,
+      HOVER,
+      ALWAYS,
+      NEVER,
+      styles.bookmarksDrawerOpen
+    )
     switch (mode) {
       case Settings.enums.BookmarkDrawerModes.TOGGLE:
         $root.classList.add(TOGGLE)
-        bookmarksDrawerModeSubject.next("toggle")
+        bookmarksDrawerModeSubject.next("toggleClosed")
         break
       case Settings.enums.BookmarkDrawerModes.ALWAYS:
         $root.classList.add(ALWAYS)
@@ -296,11 +300,11 @@ export default function createPage(
 
   function openBookmarks() {
     $root.classList.add(styles.bookmarksDrawerOpen)
-    bookmarksDrawerOpenSubject.next(true)
+    bookmarksDrawerModeSubject.next("toggleOpen")
   }
 
   function closeBookmarks() {
     $root.classList.remove(styles.bookmarksDrawerOpen)
-    bookmarksDrawerOpenSubject.next(false)
+    bookmarksDrawerModeSubject.next("toggleClosed")
   }
 }
