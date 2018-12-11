@@ -14,20 +14,11 @@ export default function Weather({ store }) {
   const data = useBehaviorSubject(store.dataSubject)
   const isVisible = useObservable(
     useConst(Settings.onChanged(Settings.keys.SHOW_WEATHER)),
-    false
+    Settings.get(Settings.keys.SHOW_WEATHER)
   )
   const temperatureUnit = useObservable(
     useConst(Settings.onChanged(Settings.keys.TEMPERATURE_UNIT)),
     Settings.get(Settings.keys.TEMPERATURE_UNIT)
-  )
-
-  useEffect(
-    () => {
-      if (isVisible) {
-        store.load()
-      }
-    },
-    [isVisible, store]
   )
 
   if (data && isVisible) {
