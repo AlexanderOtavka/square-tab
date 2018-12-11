@@ -1,6 +1,7 @@
 import storageKeys from "../util/storageKeys"
 import * as Surprise from "../Surprise"
 import * as Settings from "../Settings"
+import getSunInfoMs from "./getSunInfoMs"
 
 import styles from "./Page.css"
 
@@ -112,8 +113,8 @@ export default function createPage(
     Settings.loaded
       .then(() => {
         if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-          return weatherStore
-            .getSunInfoMS()
+          return weatherStore.cacheLoaded
+            .then(getSunInfoMs)
             .then(
               ({ now, morningBegins, dayBegins, duskBegins, nightBegins }) => {
                 if (nightBegins < now || now <= morningBegins) {
@@ -169,8 +170,8 @@ export default function createPage(
       } else if (Settings.get(Settings.keys.SURPRISE)) {
         $greeting.textContent = Surprise.currentImageData.greeting
       } else {
-        weatherStore
-          .getSunInfoMS()
+        weatherStore.cacheLoaded
+          .then(getSunInfoMs)
           .then(({ now, duskBegins, morningBegins }) => {
             const MIDNIGHT = 0
             const NOON = 12 * 60 * 60 * 1000

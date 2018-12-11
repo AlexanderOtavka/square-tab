@@ -9,7 +9,7 @@
 
 .icon::after {
   font-family: var(--font-family);
-  content: attr(tooltip);
+  content: attr(data-tooltip);
   display: inline-block;
   position: absolute;
   white-space: nowrap;
