@@ -14,13 +14,12 @@ export default function createPage(
     $rawSourceLink,
     $time,
     $greeting,
-    $drawerBackdrop,
-    $bookmarksOpenButton,
-    $bookmarksCloseButton
+    $bookmarksOpenButton
   },
   weatherStore,
   bookmarksDrawerModeSubject,
   bookmarksDrawerPositionSubject,
+  bookmarksDrawerIsSmallSubject,
   bookmarksDrawerCloseSubject
 ) {
   const backgroundImageReady = Settings.loaded
@@ -270,6 +269,7 @@ export default function createPage(
 
   function updateBookmarkDrawerSmall(drawerSmall) {
     $root.classList.toggle(styles.bookmarksDrawerSmall, drawerSmall)
+    bookmarksDrawerIsSmallSubject.next(drawerSmall)
   }
 
   function updateShowPhotoSource(show) {
