@@ -1,4 +1,4 @@
-import html from "../html"
+import html from "../util/html"
 import "./x-icon"
 
 export default class XDialogElement extends HTMLElement {

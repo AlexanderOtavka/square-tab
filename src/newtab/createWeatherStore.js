@@ -1,4 +1,4 @@
-import StorageKeys from "../StorageKeys"
+import storageKeys from "../util/storageKeys"
 
 export default function createWeatherStore() {
   const onDataLoad = new chrome.Event()
@@ -20,7 +20,7 @@ export default function createWeatherStore() {
   })
 
   chrome.storage.onChanged.addListener(
-    ({ [StorageKeys.WEATHER_DATA]: change }, area) => {
+    ({ [storageKeys.WEATHER_DATA]: change }, area) => {
       if (area === "local" && change) {
         handleWeatherDataLoad(change.newValue)
       }
@@ -28,8 +28,8 @@ export default function createWeatherStore() {
   )
 
   chrome.storage.local.get(
-    StorageKeys.WEATHER_DATA,
-    ({ [StorageKeys.WEATHER_DATA]: data }) =>
+    storageKeys.WEATHER_DATA,
+    ({ [storageKeys.WEATHER_DATA]: data }) =>
       setStaleData(JSON.parse(data || null))
   )
 
@@ -46,8 +46,8 @@ export default function createWeatherStore() {
 
       if (navigator.geolocation) {
         chrome.storage.local.get(
-          StorageKeys.WEATHER_DATA,
-          ({ [StorageKeys.WEATHER_DATA]: data }) => handleWeatherDataLoad(data)
+          storageKeys.WEATHER_DATA,
+          ({ [storageKeys.WEATHER_DATA]: data }) => handleWeatherDataLoad(data)
         )
       } else {
         return Promise.reject(new Error("Geolocation is not supported."))

@@ -1,4 +1,4 @@
-import html from "../html"
+import html from "../util/html"
 
 export default class XContextMenuElement extends HTMLElement {
   constructor() {

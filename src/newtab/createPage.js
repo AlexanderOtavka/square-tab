@@ -1,4 +1,4 @@
-import StorageKeys from "../StorageKeys"
+import storageKeys from "../util/storageKeys"
 import * as Surprise from "../Surprise"
 import * as Settings from "../Settings"
 
@@ -92,11 +92,11 @@ export default function createPage(
   function loadImage() {
     return new Promise(resolve => {
       chrome.storage.local.get(
-        [StorageKeys.IMAGE_DATA_URL, StorageKeys.IMAGE_SOURCE_URL],
+        [storageKeys.IMAGE_DATA_URL, storageKeys.IMAGE_SOURCE_URL],
         data => {
           resolve({
-            dataUrl: data[StorageKeys.IMAGE_DATA_URL],
-            sourceUrl: data[StorageKeys.IMAGE_SOURCE_URL]
+            dataUrl: data[storageKeys.IMAGE_DATA_URL],
+            sourceUrl: data[storageKeys.IMAGE_SOURCE_URL]
           })
         }
       )

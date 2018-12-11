@@ -1,4 +1,4 @@
-import StorageKeys from "../StorageKeys.js"
+import storageKeys from "../util/storageKeys.js"
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.clear(() => {
@@ -22,8 +22,8 @@ function fetchAndCacheImage(resourceURI) {
         const data = encodeUint8Array(blob)
         const dataUrl = `data:${contentType};base64,${data}`
         chrome.storage.local.set({
-          [StorageKeys.IMAGE_DATA_URL]: dataUrl,
-          [StorageKeys.IMAGE_SOURCE_URL]: resp.url
+          [storageKeys.IMAGE_DATA_URL]: dataUrl,
+          [storageKeys.IMAGE_SOURCE_URL]: resp.url
         })
       })
     } else {
@@ -74,7 +74,7 @@ function fetchAndCacheWeatherData() {
       data.sunExpiration = Date.now() + SUN_DATA_LIFETIME_MS
 
       chrome.storage.local.set({
-        [StorageKeys.WEATHER_DATA]: JSON.stringify(data)
+        [storageKeys.WEATHER_DATA]: JSON.stringify(data)
       })
     })
 }

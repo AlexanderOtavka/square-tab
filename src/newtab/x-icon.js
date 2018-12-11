@@ -1,4 +1,4 @@
-import html from "../html"
+import html from "../util/html"
 
 const $icons = html`
   <svg id="bookmarks" viewBox="0 0 24 24">

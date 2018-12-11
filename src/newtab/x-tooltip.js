@@ -1,4 +1,4 @@
-import html from "../html"
+import html from "../util/html"
 import * as Settings from "../Settings"
 
 export default class XTooltipElement extends HTMLElement {

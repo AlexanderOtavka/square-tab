@@ -4,12 +4,12 @@ import { BehaviorSubject } from "rxjs"
 
 import unpackRefs from "./unpackRefs"
 import createPage from "./createPage"
-import CallbackSubject from "../CallbackSubject"
+import CallbackSubject from "../util/CallbackSubject"
 
 import Weather from "./Weather"
 
-import useConst from "../useConst"
-import useBehaviorSubject from "../useBehaviorSubject"
+import useConst from "../util/useConst"
+import useBehaviorSubject from "../util/useBehaviorSubject"
 
 import "./x-bookmark"
 import "./x-context-menu"
