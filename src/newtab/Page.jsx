@@ -15,7 +15,6 @@ import "./x-bookmark"
 import "./x-context-menu"
 import "./x-dialog"
 import "./x-icon"
-import "./x-tooltip"
 
 import styles from "./Page.css"
 import BookmarksDrawer from "./BookmarksDrawer"

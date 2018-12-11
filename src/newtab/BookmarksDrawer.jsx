@@ -6,6 +6,7 @@ import createBookmarksEditor from "./createBookmarksEditor"
 import unpackRefs from "./unpackRefs"
 
 import Drawer from "./Drawer"
+import Tooltip from "./Tooltip"
 
 import styles from "./BookmarksDrawer.css"
 
@@ -156,7 +157,7 @@ export default function BookmarksDrawer({
         </button>
       </x-dialog>
 
-      <x-tooltip ref={$drawerTooltip} class={styles.tooltip} />
+      <Tooltip ref={$drawerTooltip} className={styles.tooltip} />
 
       <x-context-menu ref={$ctxMenu}>
         <div ref={$ctxMenuName} className="menu-item disabled line-below" />

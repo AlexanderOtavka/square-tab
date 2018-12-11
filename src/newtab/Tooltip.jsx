@@ -1,7 +1,27 @@
-import html from "../util/html"
-import * as Settings from "../Settings"
+import React, { useEffect } from "react"
 
-export default class XTooltipElement extends HTMLElement {
+import html from "../util/html"
+import * as Settings from "../createSettingsStore"
+
+export default React.forwardRef(function Tooltip(
+  { className, name = "", showOnElement = null },
+  ref
+) {
+  useEffect(
+    () => {
+      if (showOnElement) {
+        ref.current.show(showOnElement, name)
+      } else {
+        ref.current.hide()
+      }
+    },
+    [name, showOnElement]
+  )
+
+  return <x-tooltip ref={ref} class={className} />
+})
+
+class XTooltipElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: "open" }).appendChild(html`
