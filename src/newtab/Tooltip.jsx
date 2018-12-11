@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 
 import html from "../util/html"
-import * as Settings from "../createSettingsStore"
+import * as Settings from "../Settings"
 
 export default React.forwardRef(function Tooltip(
   { className, name = "", showOnElement = null },
