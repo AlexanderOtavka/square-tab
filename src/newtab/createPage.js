@@ -20,7 +20,8 @@ export default function createPage(
   },
   weatherStore,
   bookmarksDrawerModeSubject,
-  bookmarksDrawerPositionSubject
+  bookmarksDrawerPositionSubject,
+  bookmarksDrawerCloseSubject
 ) {
   const backgroundImageReady = Settings.loaded
     .then(() => {
@@ -293,9 +294,8 @@ export default function createPage(
   }
 
   function addBookmarksDrawerListeners() {
-    $bookmarksOpenButton.addEventListener("click", () => openBookmarks())
-    $bookmarksCloseButton.addEventListener("click", () => closeBookmarks())
-    $drawerBackdrop.addEventListener("click", () => closeBookmarks())
+    $bookmarksOpenButton.addEventListener("click", openBookmarks)
+    bookmarksDrawerCloseSubject.subscribe(closeBookmarks)
   }
 
   function openBookmarks() {

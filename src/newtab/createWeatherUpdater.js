@@ -3,7 +3,7 @@ import classnames from "classnames"
 import * as Settings from "../Settings"
 
 import weatherStyles from "./Weather.css"
-import weatherIconStyles from "./weather-icons/weather-icons.css"
+import weatherIconStyles from "../weather-icons/weather-icons.css"
 
 export default function createWeatherUpdater(
   { $weatherWrapper, $weatherIcon, $temperature },

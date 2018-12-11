@@ -145,20 +145,6 @@ x-tooltip {
   height: 40px;
 }
 
-.drawerBackdrop {
-  z-index: 19;
-  pointer-events: none;
-  background: var(--backdrop-background);
-  opacity: 0;
-  transition: opacity var(--drawer-transition-timing);
-  will-change: opacity;
-}
-
-.bookmarksDrawerOpen .drawerBackdrop {
-  pointer-events: auto;
-  opacity: 1;
-}
-
 .bookmarksDrawer x-icon {
   fill: #333;
 }

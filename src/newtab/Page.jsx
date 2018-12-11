@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useCallback } from "react"
 import classnames from "classnames"
 import { BehaviorSubject } from "rxjs"
 
@@ -6,6 +6,7 @@ import unpackRefs from "./unpackRefs"
 import createBookmarksNavigator from "./createBookmarksNavigator"
 import createBookmarksEditor from "./createBookmarksEditor"
 import createPage from "./createPage"
+import CallbackSubject from "../CallbackSubject"
 
 import Weather from "./Weather"
 import Drawer from "./Drawer"
@@ -30,7 +31,6 @@ export default function Page({ weatherStore }) {
   const $rawSourceLink = useRef() //document.querySelector("#sourceLink")
   const $time = useRef() //document.querySelector(".time")
   const $greeting = useRef() //document.querySelector("#greeting")
-  const $drawerBackdrop = useRef() //document.querySelector(".drawerBackdrop")
   const $bookmarksOpenButton = useRef() //document.querySelector(".bookmarksOpenButton")
   const $bookmarksCloseButton = useRef() //document.querySelector( ".bookmarksCloseButton")
   const $bookmarksDrawerHeader = useRef() //document.querySelector( ".bookmarksDrawer .drawerHeader")
@@ -56,6 +56,7 @@ export default function Page({ weatherStore }) {
 
   const bookmarksDrawerModeSubject = useConst(new BehaviorSubject("toggle"))
   const bookmarksDrawerPositionSubject = useConst(new BehaviorSubject("right"))
+  const bookmarksDrawerCloseSubject = useConst(new CallbackSubject())
 
   useEffect(() => {
     const bookmarksNavigator = createBookmarksNavigator(
@@ -100,13 +101,12 @@ export default function Page({ weatherStore }) {
         $rawSourceLink,
         $time,
         $greeting,
-        $drawerBackdrop,
-        $bookmarksOpenButton,
-        $bookmarksCloseButton
+        $bookmarksOpenButton
       }),
       weatherStore,
       bookmarksDrawerModeSubject,
-      bookmarksDrawerPositionSubject
+      bookmarksDrawerPositionSubject,
+      bookmarksDrawerCloseSubject
     )
   }, [])
 
@@ -165,16 +165,12 @@ export default function Page({ weatherStore }) {
         </div>
       </main>
 
-      <div
-        ref={$drawerBackdrop}
-        className={classnames(styles.drawerBackdrop, "fullbleed backdrop")}
-      />
-
       <Drawer
         ref={$drawer}
         className={styles.bookmarksDrawer}
         mode={bookmarksDrawerMode}
         position={bookmarksDrawerPosition}
+        onClose={bookmarksDrawerCloseSubject.callback}
         renderHeader={className => (
           <header
             ref={$bookmarksDrawerHeader}

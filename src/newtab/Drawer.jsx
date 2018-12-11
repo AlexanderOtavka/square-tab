@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback } from "react"
 import classnames from "classnames"
 
 import styles from "./Drawer.css"
@@ -29,26 +29,40 @@ const positionToClassName = position => {
 
 export default React.forwardRef(function Drawer(
   {
+    className,
     mode = "toggleClosed",
     position = "right",
-    className,
+    onClose = () => {},
     renderHeader,
     renderContents
   },
   ref
 ) {
+  const onBackdropClick = useCallback(() => onClose(), [onClose])
+
   return (
-    <aside
-      ref={ref}
-      className={classnames(
-        className,
-        styles.drawer,
-        modeToClassName(mode),
-        positionToClassName(position)
-      )}
-    >
-      {renderHeader(styles.header)}
-      {renderContents(styles.contents)}
-    </aside>
+    <>
+      <div
+        onClick={onBackdropClick}
+        className={classnames(
+          styles.backdrop,
+          modeToClassName(mode),
+          "fullbleed backdrop foo"
+        )}
+      />
+
+      <aside
+        ref={ref}
+        className={classnames(
+          className,
+          styles.drawer,
+          modeToClassName(mode),
+          positionToClassName(position)
+        )}
+      >
+        {renderHeader(styles.header)}
+        {renderContents(styles.contents)}
+      </aside>
+    </>
   )
 })

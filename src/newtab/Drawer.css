@@ -1,3 +1,18 @@
+.backdrop {
+  /* HACK: magic z-index */
+  z-index: 19;
+  pointer-events: none;
+  background: var(--backdrop-background);
+  opacity: 0;
+  transition: opacity var(--drawer-transition-timing);
+  will-change: opacity;
+}
+
+.backdrop.modeToggle.isOpen {
+  pointer-events: auto;
+  opacity: 1;
+}
+
 .drawer {
   position: fixed;
   z-index: 20;
@@ -40,7 +55,7 @@
 }
 
 .drawer.modeHover:hover,
-/* TODO: replace these cases with .isOpen class */
+/* TODO: replace these cases with .forceOpen class */
 .drawer.modeHover:global(.ctx-menu-active),
 :global(.dragover) .drawer.modeHover,
 :global(.dragover) .drawer.modeAlways {
