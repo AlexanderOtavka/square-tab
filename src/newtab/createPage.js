@@ -11,14 +11,9 @@ export default function createPage(
   bookmarksDrawerIsSmallSubject,
   bookmarksDrawerCloseSubject
 ) {
-  disableDefaultRightClick()
   addSettingsChangeListeners()
   addGlobalDragDropListeners()
   addBookmarksDrawerListeners()
-
-  function disableDefaultRightClick() {
-    $root.addEventListener("contextmenu", ev => ev.preventDefault(), true)
-  }
 
   function addSettingsChangeListeners() {
     Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE).subscribe(value =>
