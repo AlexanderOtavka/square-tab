@@ -1,19 +1,19 @@
-html {
+.page {
   --drawer-width: 300px;
   --drawer-transition-timing: 200ms cubic-bezier(0, 0, 0.3, 1);
   --main-left-margin: 0;
   --main-right-margin: 0;
 }
 
-html.bookmarksDrawerSmall {
+.page.bookmarksDrawerIsSmall {
   --drawer-width: 64px;
 }
 
-html.bookmarksDrawerModeAlways.bookmarksDrawerSmall.bookmarksDrawerPositionLeft {
+.page.bookmarksDrawerModeAlways.bookmarksDrawerIsSmall.bookmarksDrawerPositionLeft {
   --main-left-margin: var(--drawer-width);
 }
 
-html.bookmarksDrawerModeAlways.bookmarksDrawerSmall.bookmarksDrawerPositionRight {
+.page.bookmarksDrawerModeAlways.bookmarksDrawerIsSmall.bookmarksDrawerPositionRight {
   --main-right-margin: var(--drawer-width);
 }
 
@@ -23,14 +23,6 @@ header {
   left: 0;
   right: 0;
   z-index: 1;
-}
-
-.bookmarksDrawerPositionLeft .mainToolbar {
-  flex-direction: row-reverse;
-}
-
-.bookmarksDrawerModeAlways.bookmarksDrawerPositionLeft .mainToolbar {
-  left: var(--drawer-width);
 }
 
 x-tooltip {
@@ -51,11 +43,12 @@ x-tooltip {
   text-transform: uppercase;
   color: #fff;
   transition: right var(--drawer-transition-timing);
-}
-
-.mainToolbar {
   left: var(--main-left-margin);
   right: var(--main-right-margin);
+}
+
+.bookmarksDrawerPositionLeft .mainToolbar {
+  flex-direction: row-reverse;
 }
 
 .mainToolbar > a {

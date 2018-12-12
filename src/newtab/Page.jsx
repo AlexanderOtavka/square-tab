@@ -1,8 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from "react"
 import classnames from "classnames"
 
-import unpackRefs from "./unpackRefs"
-import createPage from "./createPage"
 import * as Settings from "../Settings"
 
 import Weather from "./Weather"
@@ -19,7 +17,7 @@ import "./x-icon"
 
 import styles from "./Page.css"
 
-const mapSettingToMode = setting => {
+const settingToMode = setting => {
   switch (setting) {
     case Settings.enums.BookmarkDrawerModes.TOGGLE:
       return "toggle"
@@ -32,14 +30,31 @@ const mapSettingToMode = setting => {
   }
 }
 
+const modeToClassName = mode => {
+  switch (mode) {
+    case Settings.enums.BookmarkDrawerModes.TOGGLE:
+      return styles.bookmarksDrawerModeToggle
+    case Settings.enums.BookmarkDrawerModes.ALWAYS:
+      return styles.bookmarksDrawerModeAlways
+    case Settings.enums.BookmarkDrawerModes.HOVER:
+      return styles.bookmarksDrawerModeHover
+    case Settings.enums.BookmarkDrawerModes.NEVER:
+      return styles.bookmarksDrawerModeNever
+  }
+}
+
+const positionToClassName = position => {
+  switch (position) {
+    case Settings.enums.BookmarkDrawerPositions.LEFT:
+      return styles.bookmarksDrawerPositionLeft
+    case Settings.enums.BookmarkDrawerPositions.RIGHT:
+      return styles.bookmarksDrawerPositionRight
+  }
+}
+
 export default function Page({ weatherStore }) {
-  const $root = useRef(document.documentElement)
   const $body = useRef(document.body)
   const $bookmarksOpenButton = useRef() //document.querySelector(".bookmarksOpenButton")
-
-  useEffect(() => {
-    createPage(unpackRefs({ $root }))
-  }, [])
 
   // Settings
 
@@ -124,7 +139,15 @@ export default function Page({ weatherStore }) {
   )
 
   return (
-    <>
+    <div
+      className={classnames(
+        styles.page,
+        modeToClassName(bookmarksDrawerMode),
+        positionToClassName(bookmarksDrawerPosition),
+        bookmarksDrawerIsSmall && styles.bookmarksDrawerIsSmall,
+        "fullbleed"
+      )}
+    >
       <img
         className={classnames(styles.backgroundImage, "fullbleed")}
         src={backgroundImage.dataUrl}
@@ -172,12 +195,12 @@ export default function Page({ weatherStore }) {
       </main>
 
       <BookmarksDrawer
-        mode={mapSettingToMode(bookmarksDrawerMode)}
+        mode={settingToMode(bookmarksDrawerMode)}
         position={bookmarksDrawerPosition}
         isSmall={bookmarksDrawerIsSmall}
         isOpen={bookmarksDrawerIsOpen}
         onClose={onBookmarksDrawerClose}
       />
-    </>
+    </div>
   )
 }
