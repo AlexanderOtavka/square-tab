@@ -13,27 +13,27 @@ function getImageUrl(search = "") {
   )
 }
 
-export default function useBackgroundImage() {
+export default function useBackgroundImage({
+  now,
+  morningBegins,
+  dayBegins,
+  duskBegins,
+  nightBegins
+}) {
   // Fetch and cache next image
   useEffect(() => {
     Settings.loaded
       .then(() => {
         if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-          return weatherStore.cacheLoaded
-            .then(getSunInfoMs)
-            .then(
-              ({ now, morningBegins, dayBegins, duskBegins, nightBegins }) => {
-                if (nightBegins < now || now <= morningBegins) {
-                  return getImageUrl("night")
-                } else if (morningBegins < now && now <= dayBegins) {
-                  return getImageUrl("morning")
-                } else if (duskBegins < now && now <= nightBegins) {
-                  return getImageUrl("evening")
-                } else {
-                  return getImageUrl()
-                }
-              }
-            )
+          if (nightBegins < now || now <= morningBegins) {
+            return getImageUrl("night")
+          } else if (morningBegins < now && now <= dayBegins) {
+            return getImageUrl("morning")
+          } else if (duskBegins < now && now <= nightBegins) {
+            return getImageUrl("evening")
+          } else {
+            return getImageUrl()
+          }
         } else {
           return getImageUrl()
         }

@@ -6,6 +6,7 @@ import unpackRefs from "./unpackRefs"
 import createPage from "./createPage"
 import CallbackSubject from "../util/CallbackSubject"
 import * as Settings from "../Settings"
+import getSunInfoMs from "./getSunInfoMs"
 
 import Weather from "./Weather"
 import BookmarksDrawer from "./BookmarksDrawer"
@@ -49,17 +50,24 @@ export default function Page({ weatherStore }) {
     )
   }, [])
 
+  // Weather data
+
+  const weatherData = useBehaviorSubject(weatherStore.dataSubject)
+  const sunInfoMs = getSunInfoMs(weatherData)
+  const [weatherCacheIsLoaded, setWeatherCacheLoaded] = useState(false)
+  useEffect(() => {
+    weatherStore.cacheLoaded.then(() => setWeatherCacheLoaded(true))
+  }, [])
+
   // Background image
 
-  const backgroundImage = useBackgroundImage()
+  const backgroundImage = useBackgroundImage(sunInfoMs)
 
   // Resolve the body when everything is ready
 
   const [settingsAreLoaded, setSettingsLoaded] = useState(false)
-  const [weatherCacheIsLoaded, setWeatherCacheLoaded] = useState(false)
   useEffect(() => {
     Settings.loaded.then(() => setSettingsLoaded(true))
-    weatherStore.cacheLoaded.then(() => setWeatherCacheLoaded(true))
   }, [])
 
   const ready =
