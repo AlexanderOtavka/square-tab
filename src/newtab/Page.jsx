@@ -7,7 +7,6 @@ import Weather from "./Weather"
 import BookmarksDrawer from "./BookmarksDrawer"
 
 import useBackgroundImage from "./useBackgroundImage"
-import useClock from "./useClock"
 import useWeather from "./useWeather"
 
 import "./x-bookmark"
@@ -16,6 +15,7 @@ import "./x-dialog"
 import "./x-icon"
 
 import styles from "./Page.css"
+import Clock from "./Clock"
 
 const settingToMode = setting => {
   switch (setting) {
@@ -95,10 +95,6 @@ export default function Page({ weatherStore }) {
     },
     [ready]
   )
-
-  // Time
-
-  const { timeString, greeting } = useClock(weather.getSunInfo)
 
   // Bookmarks drawer mode
 
@@ -183,13 +179,7 @@ export default function Page({ weatherStore }) {
             infoIsBoxed && styles.hasBorder
           )}
         >
-          <a
-            className={styles.time}
-            href="https://www.google.com/search?q=time"
-          >
-            {timeString}
-          </a>
-          <div>{greeting}</div>
+          <Clock getSunInfo={weather.getSunInfo} />
           <Weather data={weather.data} getSunInfo={weather.getSunInfo} />
         </div>
       </main>

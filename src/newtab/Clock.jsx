@@ -1,7 +1,9 @@
-import { useEffect, useState, useCallback } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import { useSetting, keys as settingKeys } from "../Settings"
 
-export default function useClock(getSunInfoMs) {
+import styles from "./Clock.css"
+
+export default function Clock({ getSunInfo }) {
   const timeIs24Hour = useSetting(settingKeys.TWENTY_FOUR_HOUR_TIME)
 
   const [timeString, setTimeString] = useState("")
@@ -21,7 +23,7 @@ export default function useClock(getSunInfoMs) {
       const hoursStr = String(timeIs24Hour ? hours : hours % 12 || 12)
       setTimeString(`${hoursStr}:${minutesStr}`)
 
-      const { now, duskBegins, morningBegins } = getSunInfoMs(date)
+      const { now, duskBegins, morningBegins } = getSunInfo(date)
       const MIDNIGHT = 0
       const NOON = 12 * 60 * 60 * 1000
 
@@ -35,7 +37,7 @@ export default function useClock(getSunInfoMs) {
           : "Good Evening"
       )
     },
-    [timeIs24Hour, getSunInfoMs]
+    [timeIs24Hour, getSunInfo]
   )
 
   useEffect(
@@ -47,5 +49,12 @@ export default function useClock(getSunInfoMs) {
     [updateTime]
   )
 
-  return { timeString, greeting }
+  return (
+    <>
+      <a className={styles.time} href="https://www.google.com/search?q=time">
+        {timeString}
+      </a>
+      <div>{greeting}</div>
+    </>
+  )
 }
