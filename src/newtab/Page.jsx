@@ -62,13 +62,11 @@ export default function Page({ weatherStore }) {
     weatherStore.cacheLoaded.then(() => setWeatherCacheLoaded(true))
   }, [])
 
+  const ready =
+    settingsAreLoaded && weatherCacheIsLoaded && backgroundImage.cacheIsLoaded
   useEffect(
     () => {
-      if (
-        settingsAreLoaded &&
-        weatherCacheIsLoaded &&
-        backgroundImage.cacheIsLoaded
-      ) {
+      if (ready) {
         $body.current.removeAttribute("unresolved")
         $body.current.animate([{ opacity: 0 }, { opacity: 1 }], {
           duration: 200,
@@ -76,7 +74,7 @@ export default function Page({ weatherStore }) {
         })
       }
     },
-    [settingsAreLoaded && weatherCacheIsLoaded && backgroundImage.cacheIsLoaded]
+    [ready]
   )
 
   // Bookmarks drawer mode
