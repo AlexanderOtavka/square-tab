@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react"
+import React, { useRef, useEffect, useState, useMemo } from "react"
 import classnames from "classnames"
 import { BehaviorSubject } from "rxjs"
 
@@ -14,6 +14,7 @@ import BookmarksDrawer from "./BookmarksDrawer"
 import useConst from "../util/useConst"
 import useBehaviorSubject from "../util/useBehaviorSubject"
 import useBackgroundImage from "./useBackgroundImage"
+import useClock from "./useClock"
 
 import "./x-bookmark"
 import "./x-context-menu"
@@ -25,8 +26,6 @@ import styles from "./Page.css"
 export default function Page({ weatherStore }) {
   const $root = useRef(document.documentElement)
   const $body = useRef(document.body)
-  const $time = useRef() //document.querySelector(".time")
-  const $greeting = useRef() //document.querySelector("#greeting")
   const $bookmarksOpenButton = useRef() //document.querySelector(".bookmarksOpenButton")
 
   const bookmarksDrawerModeSubject = useConst(new BehaviorSubject("toggle"))
@@ -38,11 +37,8 @@ export default function Page({ weatherStore }) {
     createPage(
       unpackRefs({
         $root,
-        $time,
-        $greeting,
         $bookmarksOpenButton
       }),
-      weatherStore,
       bookmarksDrawerModeSubject,
       bookmarksDrawerPositionSubject,
       bookmarksDrawerIsSmallSubject,
@@ -53,7 +49,7 @@ export default function Page({ weatherStore }) {
   // Weather data
 
   const weatherData = useBehaviorSubject(weatherStore.dataSubject)
-  const sunInfoMs = getSunInfoMs(weatherData)
+  const sunInfoMs = useMemo(() => getSunInfoMs(weatherData), [weatherData])
   const [weatherCacheIsLoaded, setWeatherCacheLoaded] = useState(false)
   useEffect(() => {
     weatherStore.cacheLoaded.then(() => setWeatherCacheLoaded(true))
@@ -84,6 +80,10 @@ export default function Page({ weatherStore }) {
     },
     [ready]
   )
+
+  // Time
+
+  const { timeString, greeting } = useClock(settingsAreLoaded, sunInfoMs)
 
   // Bookmarks drawer mode
 
@@ -132,11 +132,12 @@ export default function Page({ weatherStore }) {
       <main className={classnames(styles.infoWrapper, "fullbleed")}>
         <div className={styles.infoBox}>
           <a
-            ref={$time}
             className={styles.time}
             href="https://www.google.com/search?q=time"
-          />
-          <div ref={$greeting} />
+          >
+            {timeString}
+          </a>
+          <div>{greeting}</div>
           <Weather store={weatherStore} />
         </div>
       </main>

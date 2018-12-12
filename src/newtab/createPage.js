@@ -5,57 +5,16 @@ import getSunInfoMs from "./getSunInfoMs"
 import styles from "./Page.css"
 
 export default function createPage(
-  { $root, $time, $greeting, $bookmarksOpenButton },
-  weatherStore,
+  { $root, $bookmarksOpenButton },
   bookmarksDrawerModeSubject,
   bookmarksDrawerPositionSubject,
   bookmarksDrawerIsSmallSubject,
   bookmarksDrawerCloseSubject
 ) {
-  updateTime()
-  setInterval(() => updateTime(), 1000)
-
   disableDefaultRightClick()
   addSettingsChangeListeners()
   addGlobalDragDropListeners()
   addBookmarksDrawerListeners()
-
-  function updateTime() {
-    const date = new Date()
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
-
-    let minutesStr = String(minutes)
-    if (minutesStr.length === 1) {
-      minutesStr = `0${minutesStr}`
-    }
-
-    Settings.loaded.then(() => {
-      const hoursStr = String(
-        Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME)
-          ? hours
-          : hours % 12 || 12
-      )
-      $time.textContent = `${hoursStr}:${minutesStr}`
-
-      weatherStore.cacheLoaded
-        .then(getSunInfoMs)
-        .then(({ now, duskBegins, morningBegins }) => {
-          const MIDNIGHT = 0
-          const NOON = 12 * 60 * 60 * 1000
-
-          if (MIDNIGHT < now && now <= morningBegins) {
-            $greeting.textContent = "Hello, Night Owl"
-          } else if (morningBegins < now && now <= NOON) {
-            $greeting.textContent = "Good Morning"
-          } else if (NOON < now && now <= duskBegins) {
-            $greeting.textContent = "Good Afternoon"
-          } else {
-            $greeting.textContent = "Good Evening"
-          }
-        })
-    })
-  }
 
   function disableDefaultRightClick() {
     $root.addEventListener("contextmenu", ev => ev.preventDefault(), true)
