@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from "react"
+import React, { useRef, useEffect, useState } from "react"
 import classnames from "classnames"
 import { BehaviorSubject } from "rxjs"
 
@@ -6,7 +6,6 @@ import unpackRefs from "./unpackRefs"
 import createPage from "./createPage"
 import CallbackSubject from "../util/CallbackSubject"
 import * as Settings from "../Settings"
-import getSunInfoMs from "./getSunInfoMs"
 
 import Weather from "./Weather"
 import BookmarksDrawer from "./BookmarksDrawer"
@@ -15,6 +14,7 @@ import useConst from "../util/useConst"
 import useBehaviorSubject from "../util/useBehaviorSubject"
 import useBackgroundImage from "./useBackgroundImage"
 import useClock from "./useClock"
+import useWeather from "./useWeather"
 
 import "./x-bookmark"
 import "./x-context-menu"
@@ -55,27 +55,19 @@ export default function Page({ weatherStore }) {
 
   // Weather data
 
-  const weatherData = useBehaviorSubject(weatherStore.dataSubject)
-  const getSunInfoFromDate = useCallback(
-    date => getSunInfoMs(weatherData, date),
-    [weatherData]
-  )
-  const [weatherCacheIsLoaded, setWeatherCacheLoaded] = useState(false)
-  useEffect(() => {
-    weatherStore.cacheLoaded.then(() => setWeatherCacheLoaded(true))
-  }, [])
+  const weather = useWeather(weatherStore)
 
   // Background image
 
   const backgroundImage = useBackgroundImage(
-    settingsAreLoaded && weatherCacheIsLoaded,
-    getSunInfoFromDate
+    settingsAreLoaded && weather.cacheIsLoaded,
+    weather.getSunInfo
   )
 
   // Resolve the body when everything is ready
 
   const ready =
-    settingsAreLoaded && weatherCacheIsLoaded && backgroundImage.cacheIsLoaded
+    settingsAreLoaded && weather.cacheIsLoaded && backgroundImage.cacheIsLoaded
   useEffect(
     () => {
       if (ready) {
@@ -93,7 +85,7 @@ export default function Page({ weatherStore }) {
 
   const { timeString, greeting } = useClock(
     settingsAreLoaded,
-    getSunInfoFromDate
+    weather.getSunInfo
   )
 
   // Bookmarks drawer mode
@@ -149,7 +141,7 @@ export default function Page({ weatherStore }) {
             {timeString}
           </a>
           <div>{greeting}</div>
-          <Weather store={weatherStore} />
+          <Weather data={weather.data} getSunInfo={weather.getSunInfo} />
         </div>
       </main>
 

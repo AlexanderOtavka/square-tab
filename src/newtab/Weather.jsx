@@ -1,25 +1,22 @@
-import React, { useEffect, useRef } from "react"
+import React, { useMemo } from "react"
 import classnames from "classnames"
 
-import getSunInfoMs from "./getSunInfoMs"
-import useBehaviorSubject from "../util/useBehaviorSubject"
 import * as Settings from "../Settings"
+import useObservable from "../util/useObservable"
 
 import weatherIconStyles from "../weather-icons/weather-icons.css"
 import styles from "./Weather.css"
-import useConst from "../util/useConst"
-import useObservable from "../util/useObservable"
 
-export default function Weather({ store }) {
-  const data = useBehaviorSubject(store.dataSubject)
-  const isVisible = useObservable(
-    useConst(Settings.onChanged(Settings.keys.SHOW_WEATHER)),
-    Settings.get(Settings.keys.SHOW_WEATHER)
+function useSetting(key) {
+  return useObservable(
+    useMemo(() => Settings.onChanged(key), [key]),
+    Settings.get(key)
   )
-  const temperatureUnit = useObservable(
-    useConst(Settings.onChanged(Settings.keys.TEMPERATURE_UNIT)),
-    Settings.get(Settings.keys.TEMPERATURE_UNIT)
-  )
+}
+
+export default function Weather({ data, getSunInfo }) {
+  const isVisible = useSetting(Settings.keys.SHOW_WEATHER)
+  const temperatureUnit = useSetting(Settings.keys.TEMPERATURE_UNIT)
 
   if (data && isVisible) {
     const description = data.weather
@@ -31,7 +28,7 @@ export default function Weather({ store }) {
         txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
       )
 
-    const { isDay } = getSunInfoMs(data, new Date())
+    const { isDay } = getSunInfo(new Date())
     const iconName = getIconName(data.weather[0].id, isDay)
 
     return (
