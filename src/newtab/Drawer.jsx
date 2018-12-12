@@ -5,9 +5,7 @@ import styles from "./Drawer.css"
 
 const modeToClassName = mode => {
   switch (mode) {
-    case "toggleOpen":
-      return classnames(styles.modeToggle, styles.isOpen)
-    case "toggleClosed":
+    case "toggle":
       return styles.modeToggle
     case "always":
       return styles.modeAlways
@@ -30,8 +28,9 @@ const positionToClassName = position => {
 export default React.forwardRef(function Drawer(
   {
     className,
-    mode = "toggleClosed",
+    mode = "toggle",
     position = "right",
+    isOpen = false,
     onClose = () => {},
     renderHeader,
     renderContents
@@ -40,14 +39,19 @@ export default React.forwardRef(function Drawer(
 ) {
   const onBackdropClick = useCallback(() => onClose(), [onClose])
 
+  const sharedClassName = classnames(
+    isOpen && styles.isOpen,
+    modeToClassName(mode)
+  )
+
   return (
     <>
       <div
         onClick={onBackdropClick}
         className={classnames(
           styles.backdrop,
-          modeToClassName(mode),
-          "fullbleed backdrop foo"
+          sharedClassName,
+          "fullbleed backdrop"
         )}
       />
 
@@ -56,7 +60,7 @@ export default React.forwardRef(function Drawer(
         className={classnames(
           className,
           styles.drawer,
-          modeToClassName(mode),
+          sharedClassName,
           positionToClassName(position)
         )}
       >

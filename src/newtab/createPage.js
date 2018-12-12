@@ -1,32 +1,19 @@
-import * as Surprise from "../Surprise"
 import * as Settings from "../Settings"
-import getSunInfoMs from "./getSunInfoMs"
 
 import styles from "./Page.css"
 
-export default function createPage(
-  { $root, $bookmarksOpenButton },
-  bookmarksDrawerModeSubject,
-  bookmarksDrawerPositionSubject,
-  bookmarksDrawerIsSmallSubject,
-  bookmarksDrawerCloseSubject
-) {
-  addSettingsChangeListeners()
-  addBookmarksDrawerListeners()
+export default function createPage({ $root }) {
+  Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE).subscribe(
+    updateBookmarkDrawerMode
+  )
 
-  function addSettingsChangeListeners() {
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_MODE).subscribe(value =>
-      updateBookmarkDrawerMode(value)
-    )
+  Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_POSITION).subscribe(
+    updateBookmarkDrawerPosition
+  )
 
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_POSITION).subscribe(
-      value => updateBookmarkDrawerPosition(value)
-    )
-
-    Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).subscribe(
-      updateBookmarkDrawerSmall
-    )
-  }
+  Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).subscribe(
+    updateBookmarkDrawerSmall
+  )
 
   function updateBookmarkDrawerMode(mode) {
     const TOGGLE = styles.bookmarksDrawerModeToggle
@@ -43,19 +30,15 @@ export default function createPage(
     switch (mode) {
       case Settings.enums.BookmarkDrawerModes.TOGGLE:
         $root.classList.add(TOGGLE)
-        bookmarksDrawerModeSubject.next("toggleClosed")
         break
       case Settings.enums.BookmarkDrawerModes.ALWAYS:
         $root.classList.add(ALWAYS)
-        bookmarksDrawerModeSubject.next("always")
         break
       case Settings.enums.BookmarkDrawerModes.HOVER:
         $root.classList.add(HOVER)
-        bookmarksDrawerModeSubject.next("hover")
         break
       case Settings.enums.BookmarkDrawerModes.NEVER:
         $root.classList.add(NEVER)
-        bookmarksDrawerModeSubject.next("never")
         break
       default:
         console.error("Invalid bookmark drawer mode.")
@@ -69,11 +52,9 @@ export default function createPage(
     switch (position) {
       case Settings.enums.BookmarkDrawerPositions.RIGHT:
         $root.classList.add(RIGHT)
-        bookmarksDrawerPositionSubject.next("right")
         break
       case Settings.enums.BookmarkDrawerPositions.LEFT:
         $root.classList.add(LEFT)
-        bookmarksDrawerPositionSubject.next("left")
         break
       default:
         console.error("Invalid bookmark drawer position")
@@ -82,21 +63,5 @@ export default function createPage(
 
   function updateBookmarkDrawerSmall(drawerSmall) {
     $root.classList.toggle(styles.bookmarksDrawerSmall, drawerSmall)
-    bookmarksDrawerIsSmallSubject.next(drawerSmall)
-  }
-
-  function addBookmarksDrawerListeners() {
-    $bookmarksOpenButton.addEventListener("click", openBookmarks)
-    bookmarksDrawerCloseSubject.subscribe(closeBookmarks)
-  }
-
-  function openBookmarks() {
-    $root.classList.add(styles.bookmarksDrawerOpen)
-    bookmarksDrawerModeSubject.next("toggleOpen")
-  }
-
-  function closeBookmarks() {
-    $root.classList.remove(styles.bookmarksDrawerOpen)
-    bookmarksDrawerModeSubject.next("toggleClosed")
   }
 }

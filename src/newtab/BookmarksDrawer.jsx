@@ -94,7 +94,7 @@ export default function BookmarksDrawer({
         $closeButton.current.removeEventListener("click", onClick)
       }
     },
-    [$closeButton.current, drawerProps.onClose]
+    [drawerProps.onClose]
   )
 
   return (

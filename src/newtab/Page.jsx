@@ -1,17 +1,13 @@
-import React, { useRef, useEffect, useState } from "react"
+import React, { useRef, useEffect, useState, useCallback } from "react"
 import classnames from "classnames"
-import { BehaviorSubject } from "rxjs"
 
 import unpackRefs from "./unpackRefs"
 import createPage from "./createPage"
-import CallbackSubject from "../util/CallbackSubject"
 import * as Settings from "../Settings"
 
 import Weather from "./Weather"
 import BookmarksDrawer from "./BookmarksDrawer"
 
-import useConst from "../util/useConst"
-import useBehaviorSubject from "../util/useBehaviorSubject"
 import useBackgroundImage from "./useBackgroundImage"
 import useClock from "./useClock"
 import useWeather from "./useWeather"
@@ -23,27 +19,26 @@ import "./x-icon"
 
 import styles from "./Page.css"
 
+const mapSettingToMode = setting => {
+  switch (setting) {
+    case Settings.enums.BookmarkDrawerModes.TOGGLE:
+      return "toggle"
+    case Settings.enums.BookmarkDrawerModes.ALWAYS:
+      return "always"
+    case Settings.enums.BookmarkDrawerModes.HOVER:
+      return "hover"
+    case Settings.enums.BookmarkDrawerModes.NEVER:
+      return "never"
+  }
+}
+
 export default function Page({ weatherStore }) {
   const $root = useRef(document.documentElement)
   const $body = useRef(document.body)
   const $bookmarksOpenButton = useRef() //document.querySelector(".bookmarksOpenButton")
 
-  const bookmarksDrawerModeSubject = useConst(new BehaviorSubject("toggle"))
-  const bookmarksDrawerPositionSubject = useConst(new BehaviorSubject("right"))
-  const bookmarksDrawerIsSmallSubject = useConst(new BehaviorSubject(false))
-  const bookmarksDrawerCloseSubject = useConst(new CallbackSubject())
-
   useEffect(() => {
-    createPage(
-      unpackRefs({
-        $root,
-        $bookmarksOpenButton
-      }),
-      bookmarksDrawerModeSubject,
-      bookmarksDrawerPositionSubject,
-      bookmarksDrawerIsSmallSubject,
-      bookmarksDrawerCloseSubject
-    )
+    createPage(unpackRefs({ $root }))
   }, [])
 
   // Settings
@@ -92,12 +87,40 @@ export default function Page({ weatherStore }) {
 
   // Bookmarks drawer mode
 
-  const bookmarksDrawerMode = useBehaviorSubject(bookmarksDrawerModeSubject)
-  const bookmarksDrawerPosition = useBehaviorSubject(
-    bookmarksDrawerPositionSubject
+  const bookmarksDrawerMode = Settings.useSetting(
+    Settings.keys.BOOKMARKS_DRAWER_MODE
   )
-  const bookmarksDrawerIsSmall = useBehaviorSubject(
-    bookmarksDrawerIsSmallSubject
+  const bookmarksDrawerPosition = Settings.useSetting(
+    Settings.keys.BOOKMARKS_DRAWER_POSITION
+  )
+  const bookmarksDrawerIsSmall = Settings.useSetting(
+    Settings.keys.BOOKMARKS_DRAWER_SMALL
+  )
+
+  const [bookmarksDrawerIsOpen, setBookmarksDrawerOpen] = useState(false)
+  const onBookmarksDrawerOpen = useCallback(
+    () => setBookmarksDrawerOpen(true),
+    []
+  )
+  const onBookmarksDrawerClose = useCallback(
+    () => setBookmarksDrawerOpen(false),
+    []
+  )
+
+  useEffect(
+    () => {
+      $bookmarksOpenButton.current.addEventListener(
+        "click",
+        onBookmarksDrawerOpen
+      )
+      return () => {
+        $bookmarksOpenButton.current.removeEventListener(
+          "click",
+          onBookmarksDrawerOpen
+        )
+      }
+    },
+    [onBookmarksDrawerOpen]
   )
 
   return (
@@ -149,10 +172,11 @@ export default function Page({ weatherStore }) {
       </main>
 
       <BookmarksDrawer
-        mode={bookmarksDrawerMode}
+        mode={mapSettingToMode(bookmarksDrawerMode)}
         position={bookmarksDrawerPosition}
         isSmall={bookmarksDrawerIsSmall}
-        onClose={bookmarksDrawerCloseSubject.callback}
+        isOpen={bookmarksDrawerIsOpen}
+        onClose={onBookmarksDrawerClose}
       />
     </>
   )
