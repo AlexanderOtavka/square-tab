@@ -21,9 +21,10 @@ function fetchAndCacheImage(resourceURI) {
         const contentType = resp.headers.get("content-type")
         const data = encodeUint8Array(blob)
         const dataUrl = `data:${contentType};base64,${data}`
+        const plainSourceUrl = resp.url.match(/^[^\?]+/)[0] // Match url up to query
         chrome.storage.local.set({
           [storageKeys.IMAGE_DATA_URL]: dataUrl,
-          [storageKeys.IMAGE_SOURCE_URL]: resp.url
+          [storageKeys.IMAGE_SOURCE_URL]: plainSourceUrl
         })
       })
     } else {
