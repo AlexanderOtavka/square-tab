@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react"
 import * as Settings from "../Settings"
 
-export default function useClock(settingsAreLoaded, sunInfoMs) {
+export default function useClock(settingsAreLoaded, getSunInfoMs) {
   const [timeIs24Hour, setTime24Hour] = useState(
     Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME)
   )
@@ -29,7 +29,7 @@ export default function useClock(settingsAreLoaded, sunInfoMs) {
       const hoursStr = String(timeIs24Hour ? hours : hours % 12 || 12)
       setTimeString(`${hoursStr}:${minutesStr}`)
 
-      const { now, duskBegins, morningBegins } = sunInfoMs
+      const { now, duskBegins, morningBegins } = getSunInfoMs(date)
       const MIDNIGHT = 0
       const NOON = 12 * 60 * 60 * 1000
 
@@ -43,7 +43,7 @@ export default function useClock(settingsAreLoaded, sunInfoMs) {
           : "Good Evening"
       )
     },
-    [timeIs24Hour, sunInfoMs]
+    [timeIs24Hour, getSunInfoMs]
   )
 
   useEffect(

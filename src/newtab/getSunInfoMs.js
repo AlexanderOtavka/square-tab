@@ -3,9 +3,9 @@ const DAY_MS = 24 * HOUR_MS
 const DEFAULT_SUNRISE = 6 * HOUR_MS // 6am
 const DEFAULT_SUNSET = 18 * HOUR_MS // 6pm
 
-export default function getSunInfoMs(data) {
-  const tzOffset = new Date().getTimezoneOffset() * 60 * 1000
-  const now = (Date.now() - tzOffset) % DAY_MS
+export default function getSunInfoMs(data, date) {
+  const tzOffset = date.getTimezoneOffset() * 60 * 1000
+  const now = (date.valueOf() - tzOffset) % DAY_MS
 
   let sunrise
   let sunset

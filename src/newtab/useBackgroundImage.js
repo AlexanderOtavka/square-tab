@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 import storageKeys from "../util/storageKeys"
 import * as Settings from "../Settings"
-import getSunInfoMs from "./getSunInfoMs"
 
 function getImageUrl(search = "") {
   const screenPxWidth = window.screen.availWidth * window.devicePixelRatio
@@ -13,37 +12,39 @@ function getImageUrl(search = "") {
   )
 }
 
-export default function useBackgroundImage({
-  now,
-  morningBegins,
-  dayBegins,
-  duskBegins,
-  nightBegins
-}) {
+export default function useBackgroundImage(readyToFetch, getSunInfoMs) {
   // Fetch and cache next image
-  useEffect(() => {
-    Settings.loaded
-      .then(() => {
-        if (Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)) {
-          if (nightBegins < now || now <= morningBegins) {
-            return getImageUrl("night")
-          } else if (morningBegins < now && now <= dayBegins) {
-            return getImageUrl("morning")
-          } else if (duskBegins < now && now <= nightBegins) {
-            return getImageUrl("evening")
-          } else {
-            return getImageUrl()
-          }
-        } else {
-          return getImageUrl()
-        }
-      })
-      .then(imageResourceURI => {
+  const imageWasFetched = useRef(false)
+  useEffect(
+    () => {
+      if (readyToFetch && !!getSunInfoMs && !imageWasFetched.current) {
+        imageWasFetched.current = true
+
+        const {
+          now,
+          morningBegins,
+          dayBegins,
+          duskBegins,
+          nightBegins
+        } = getSunInfoMs(new Date())
+
+        const url = Settings.get(Settings.keys.USE_TIME_OF_DAY_IMAGES)
+          ? nightBegins < now || now <= morningBegins
+            ? getImageUrl("night")
+            : morningBegins < now && now <= dayBegins
+            ? getImageUrl("morning")
+            : duskBegins < now && now <= nightBegins
+            ? getImageUrl("evening")
+            : getImageUrl()
+          : getImageUrl()
+
         chrome.runtime.getBackgroundPage(page => {
-          page.fetchAndCacheImage(imageResourceURI)
+          page.fetchAndCacheImage(url)
         })
-      })
-  }, [])
+      }
+    },
+    [readyToFetch, getSunInfoMs]
+  )
 
   const [dataUrl, setDataUrl] = useState("")
   const [sourceUrl, setSourceUrl] = useState("")

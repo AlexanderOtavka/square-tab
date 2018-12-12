@@ -31,7 +31,8 @@ export default function Weather({ store }) {
         txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
       )
 
-    const iconName = getIconName(data.weather[0].id, getSunInfoMs(data).isDay)
+    const { isDay } = getSunInfoMs(data, new Date())
+    const iconName = getIconName(data.weather[0].id, isDay)
 
     return (
       <a

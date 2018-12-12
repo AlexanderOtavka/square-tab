@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from "react"
+import React, { useRef, useEffect, useState, useCallback } from "react"
 import classnames from "classnames"
 import { BehaviorSubject } from "rxjs"
 
@@ -46,10 +46,20 @@ export default function Page({ weatherStore }) {
     )
   }, [])
 
+  // Settings
+
+  const [settingsAreLoaded, setSettingsLoaded] = useState(false)
+  useEffect(() => {
+    Settings.loaded.then(() => setSettingsLoaded(true))
+  }, [])
+
   // Weather data
 
   const weatherData = useBehaviorSubject(weatherStore.dataSubject)
-  const sunInfoMs = useMemo(() => getSunInfoMs(weatherData), [weatherData])
+  const getSunInfoFromDate = useCallback(
+    date => getSunInfoMs(weatherData, date),
+    [weatherData]
+  )
   const [weatherCacheIsLoaded, setWeatherCacheLoaded] = useState(false)
   useEffect(() => {
     weatherStore.cacheLoaded.then(() => setWeatherCacheLoaded(true))
@@ -57,14 +67,12 @@ export default function Page({ weatherStore }) {
 
   // Background image
 
-  const backgroundImage = useBackgroundImage(sunInfoMs)
+  const backgroundImage = useBackgroundImage(
+    settingsAreLoaded && weatherCacheIsLoaded,
+    getSunInfoFromDate
+  )
 
   // Resolve the body when everything is ready
-
-  const [settingsAreLoaded, setSettingsLoaded] = useState(false)
-  useEffect(() => {
-    Settings.loaded.then(() => setSettingsLoaded(true))
-  }, [])
 
   const ready =
     settingsAreLoaded && weatherCacheIsLoaded && backgroundImage.cacheIsLoaded
@@ -83,7 +91,10 @@ export default function Page({ weatherStore }) {
 
   // Time
 
-  const { timeString, greeting } = useClock(settingsAreLoaded, sunInfoMs)
+  const { timeString, greeting } = useClock(
+    settingsAreLoaded,
+    getSunInfoFromDate
+  )
 
   // Bookmarks drawer mode
 
