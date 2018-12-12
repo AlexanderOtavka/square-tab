@@ -1,20 +1,20 @@
 html {
   --drawer-width: 300px;
   --drawer-transition-timing: 200ms cubic-bezier(0, 0, 0.3, 1);
-  --main-right-margin: 0;
   --main-left-margin: 0;
+  --main-right-margin: 0;
 }
 
 html.bookmarksDrawerSmall {
   --drawer-width: 64px;
 }
 
-html.bookmarksDrawerModeAlways.bookmarksDrawerPositionRight {
-  --main-right-margin: var(--drawer-width);
+html.bookmarksDrawerModeAlways.bookmarksDrawerSmall.bookmarksDrawerPositionLeft {
+  --main-left-margin: var(--drawer-width);
 }
 
-html.bookmarksDrawerModeAlways.bookmarksDrawerPositionLeft {
-  --main-left-margin: var(--drawer-width);
+html.bookmarksDrawerModeAlways.bookmarksDrawerSmall.bookmarksDrawerPositionRight {
+  --main-right-margin: var(--drawer-width);
 }
 
 header {
@@ -61,12 +61,9 @@ x-tooltip {
   transition: right var(--drawer-transition-timing);
 }
 
-.bookmarksDrawerSmall.bookmarksDrawerPositionRight .mainToolbar {
-  right: var(--main-right-margin);
-}
-
-.bookmarksDrawerSmall.bookmarksDrawerPositionLeft .mainToolbar {
+.mainToolbar {
   left: var(--main-left-margin);
+  right: var(--main-right-margin);
 }
 
 .mainToolbar > a {
@@ -93,12 +90,9 @@ x-tooltip {
   transition: right var(--drawer-transition-timing);
 }
 
-.bookmarksDrawerSmall.bookmarksDrawerPositionRight .infoWrapper {
-  right: var(--main-right-margin);
-}
-
-.bookmarksDrawerSmall.bookmarksDrawerPositionLeft .infoWrapper {
+.infoWrapper {
   left: var(--main-left-margin);
+  right: var(--main-right-margin);
 }
 
 .infoBox {

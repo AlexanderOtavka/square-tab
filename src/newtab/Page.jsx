@@ -1,15 +1,18 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useState } from "react"
 import classnames from "classnames"
 import { BehaviorSubject } from "rxjs"
 
 import unpackRefs from "./unpackRefs"
 import createPage from "./createPage"
 import CallbackSubject from "../util/CallbackSubject"
+import * as Settings from "../Settings"
 
 import Weather from "./Weather"
+import BookmarksDrawer from "./BookmarksDrawer"
 
 import useConst from "../util/useConst"
 import useBehaviorSubject from "../util/useBehaviorSubject"
+import useBackgroundImage from "./useBackgroundImage"
 
 import "./x-bookmark"
 import "./x-context-menu"
@@ -17,15 +20,10 @@ import "./x-dialog"
 import "./x-icon"
 
 import styles from "./Page.css"
-import BookmarksDrawer from "./BookmarksDrawer"
 
 export default function Page({ weatherStore }) {
   const $root = useRef(document.documentElement)
   const $body = useRef(document.body)
-  const $backgroundImage = useRef() // document.querySelector("#background-image")
-  const $surpriseLink = useRef() // document.querySelector("#surprise-link")
-  const $unsplashLink = useRef() //document.querySelector("#unsplash-link")
-  const $rawSourceLink = useRef() //document.querySelector("#sourceLink")
   const $time = useRef() //document.querySelector(".time")
   const $greeting = useRef() //document.querySelector("#greeting")
   const $bookmarksOpenButton = useRef() //document.querySelector(".bookmarksOpenButton")
@@ -39,11 +37,6 @@ export default function Page({ weatherStore }) {
     createPage(
       unpackRefs({
         $root,
-        $body,
-        $backgroundImage,
-        $surpriseLink,
-        $unsplashLink,
-        $rawSourceLink,
         $time,
         $greeting,
         $bookmarksOpenButton
@@ -56,6 +49,38 @@ export default function Page({ weatherStore }) {
     )
   }, [])
 
+  // Background image
+
+  const backgroundImage = useBackgroundImage()
+
+  // Resolve the body when everything is ready
+
+  const [settingsAreLoaded, setSettingsAreLoaded] = useState(false)
+  const [weatherCacheIsLoaded, setWeatherCacheIsLoaded] = useState(false)
+  useEffect(() => {
+    Settings.loaded.then(() => setSettingsAreLoaded(true))
+    weatherStore.cacheLoaded.then(() => setWeatherCacheIsLoaded(true))
+  }, [])
+
+  useEffect(
+    () => {
+      if (
+        settingsAreLoaded &&
+        weatherCacheIsLoaded &&
+        backgroundImage.cacheIsLoaded
+      ) {
+        $body.current.removeAttribute("unresolved")
+        $body.current.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: 200,
+          easing: "cubic-bezier(0.215, 0.61, 0.355, 1)"
+        })
+      }
+    },
+    [settingsAreLoaded && weatherCacheIsLoaded && backgroundImage.cacheIsLoaded]
+  )
+
+  // Bookmarks drawer mode
+
   const bookmarksDrawerMode = useBehaviorSubject(bookmarksDrawerModeSubject)
   const bookmarksDrawerPosition = useBehaviorSubject(
     bookmarksDrawerPositionSubject
@@ -67,24 +92,23 @@ export default function Page({ weatherStore }) {
   return (
     <>
       <img
-        ref={$backgroundImage}
         className={classnames(styles.backgroundImage, "fullbleed")}
+        src={backgroundImage.dataUrl}
       />
 
-      <header
-        id="main-toolbar"
-        className={classnames(styles.mainToolbar, "toolbar")}
-      >
-        <a ref={$surpriseLink} hidden />
+      <header className={classnames(styles.mainToolbar, "toolbar")}>
         <a
-          ref={$unsplashLink}
           className={styles.sourceLink}
           target="_blank"
           href="https://unsplash.com/"
         >
           Unsplash
         </a>
-        <a ref={$rawSourceLink} className={styles.sourceLink} target="_blank">
+        <a
+          className={styles.sourceLink}
+          target="_blank"
+          href={backgroundImage.sourceUrl}
+        >
           Photo
         </a>
 
@@ -99,11 +123,8 @@ export default function Page({ weatherStore }) {
         />
       </header>
 
-      <main
-        id="info-wrapper"
-        className={classnames(styles.infoWrapper, "fullbleed")}
-      >
-        <div id="info-box" className={styles.infoBox}>
+      <main className={classnames(styles.infoWrapper, "fullbleed")}>
+        <div className={styles.infoBox}>
           <a
             ref={$time}
             className={styles.time}
