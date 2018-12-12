@@ -55,11 +55,11 @@ export default function Page({ weatherStore }) {
 
   // Resolve the body when everything is ready
 
-  const [settingsAreLoaded, setSettingsAreLoaded] = useState(false)
-  const [weatherCacheIsLoaded, setWeatherCacheIsLoaded] = useState(false)
+  const [settingsAreLoaded, setSettingsLoaded] = useState(false)
+  const [weatherCacheIsLoaded, setWeatherCacheLoaded] = useState(false)
   useEffect(() => {
-    Settings.loaded.then(() => setSettingsAreLoaded(true))
-    weatherStore.cacheLoaded.then(() => setWeatherCacheIsLoaded(true))
+    Settings.loaded.then(() => setSettingsLoaded(true))
+    weatherStore.cacheLoaded.then(() => setWeatherCacheLoaded(true))
   }, [])
 
   useEffect(
