@@ -53,6 +53,11 @@ export default function Page({ weatherStore }) {
     Settings.loaded.then(() => setSettingsLoaded(true))
   }, [])
 
+  const photoSourceIsShown = Settings.useSetting(
+    Settings.keys.SHOW_PHOTO_SOURCE
+  )
+  const infoIsBoxed = Settings.useSetting(Settings.keys.BOXED_INFO)
+
   // Weather data
 
   const weather = useWeather(weatherStore)
@@ -103,20 +108,16 @@ export default function Page({ weatherStore }) {
       />
 
       <header className={classnames(styles.mainToolbar, "toolbar")}>
-        <a
-          className={styles.sourceLink}
-          target="_blank"
-          href="https://unsplash.com/"
-        >
-          Unsplash
-        </a>
-        <a
-          className={styles.sourceLink}
-          target="_blank"
-          href={backgroundImage.sourceUrl}
-        >
-          Photo
-        </a>
+        {photoSourceIsShown && (
+          <>
+            <a target="_blank" href="https://unsplash.com/">
+              Unsplash
+            </a>
+            <a target="_blank" href={backgroundImage.sourceUrl}>
+              Photo
+            </a>
+          </>
+        )}
 
         <span className="title" />
 
@@ -130,7 +131,12 @@ export default function Page({ weatherStore }) {
       </header>
 
       <main className={classnames(styles.infoWrapper, "fullbleed")}>
-        <div className={styles.infoBox}>
+        <div
+          className={classnames(
+            styles.infoBox,
+            infoIsBoxed && styles.hasBorder
+          )}
+        >
           <a
             className={styles.time}
             href="https://www.google.com/search?q=time"

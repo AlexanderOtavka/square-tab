@@ -32,14 +32,6 @@ export default function createPage(
     Settings.onChanged(Settings.keys.BOOKMARKS_DRAWER_SMALL).subscribe(
       updateBookmarkDrawerSmall
     )
-
-    Settings.onChanged(Settings.keys.SHOW_PHOTO_SOURCE).subscribe(value =>
-      updateShowPhotoSource(value)
-    )
-
-    Settings.onChanged(Settings.keys.BOXED_INFO).subscribe(value =>
-      updateBoxedInfo(value)
-    )
   }
 
   function updateBookmarkDrawerMode(mode) {
@@ -97,14 +89,6 @@ export default function createPage(
   function updateBookmarkDrawerSmall(drawerSmall) {
     $root.classList.toggle(styles.bookmarksDrawerSmall, drawerSmall)
     bookmarksDrawerIsSmallSubject.next(drawerSmall)
-  }
-
-  function updateShowPhotoSource(show) {
-    $root.classList.toggle(styles.showPhotoSource, show)
-  }
-
-  function updateBoxedInfo(boxedInfo) {
-    $root.classList.toggle(styles.boxedInfo, boxedInfo)
   }
 
   function addGlobalDragDropListeners() {

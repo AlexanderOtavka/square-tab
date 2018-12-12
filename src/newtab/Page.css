@@ -37,14 +37,6 @@ x-tooltip {
   z-index: 30;
 }
 
-.sourceLink {
-  display: none;
-}
-
-.showPhotoSource .sourceLink {
-  display: block;
-}
-
 .backgroundImage {
   z-index: -999;
   object-fit: cover;
@@ -111,7 +103,7 @@ x-tooltip {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.boxedInfo .infoBox {
+.infoBox.hasBorder {
   border: 8px solid #fff;
 }
 
