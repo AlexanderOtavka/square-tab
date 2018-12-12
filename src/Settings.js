@@ -1,6 +1,8 @@
 import { BehaviorSubject } from "rxjs"
 import { distinctUntilChanged, map } from "rxjs/operators"
+import { useMemo } from "react"
 
+import useObservable from "./util/useObservable"
 import * as Surprise from "./Surprise"
 
 export const enums = {
@@ -94,6 +96,10 @@ Object.keys(overrides)
       onChanged(storageKey).subscribe(overrides[storageKey])
     }
   })
+
+export function useSetting(key) {
+  return useObservable(useMemo(() => onChanged(key), [key]), get(key))
+}
 
 export const loaded = new Promise(resolve => {
   chrome.storage.sync.get(storageKeysArray, data => resolve(data))

@@ -83,10 +83,7 @@ export default function Page({ weatherStore }) {
 
   // Time
 
-  const { timeString, greeting } = useClock(
-    settingsAreLoaded,
-    weather.getSunInfo
-  )
+  const { timeString, greeting } = useClock(weather.getSunInfo)
 
   // Bookmarks drawer mode
 

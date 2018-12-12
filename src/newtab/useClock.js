@@ -1,16 +1,8 @@
 import { useEffect, useState, useCallback } from "react"
-import * as Settings from "../Settings"
+import { useSetting, keys as settingKeys } from "../Settings"
 
-export default function useClock(settingsAreLoaded, getSunInfoMs) {
-  const [timeIs24Hour, setTime24Hour] = useState(
-    Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME)
-  )
-  useEffect(
-    () => {
-      setTime24Hour(Settings.get(Settings.keys.TWENTY_FOUR_HOUR_TIME))
-    },
-    [settingsAreLoaded]
-  )
+export default function useClock(getSunInfoMs) {
+  const timeIs24Hour = useSetting(settingKeys.TWENTY_FOUR_HOUR_TIME)
 
   const [timeString, setTimeString] = useState("")
   const [greeting, setGreeting] = useState("")

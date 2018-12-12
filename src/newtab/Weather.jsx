@@ -1,22 +1,18 @@
-import React, { useMemo } from "react"
+import React from "react"
 import classnames from "classnames"
 
-import * as Settings from "../Settings"
-import useObservable from "../util/useObservable"
+import {
+  useSetting,
+  keys as settingKeys,
+  enums as settingEnums
+} from "../Settings"
 
 import weatherIconStyles from "../weather-icons/weather-icons.css"
 import styles from "./Weather.css"
 
-function useSetting(key) {
-  return useObservable(
-    useMemo(() => Settings.onChanged(key), [key]),
-    Settings.get(key)
-  )
-}
-
 export default function Weather({ data, getSunInfo }) {
-  const isVisible = useSetting(Settings.keys.SHOW_WEATHER)
-  const temperatureUnit = useSetting(Settings.keys.TEMPERATURE_UNIT)
+  const isVisible = useSetting(settingKeys.SHOW_WEATHER)
+  const temperatureUnit = useSetting(settingKeys.TEMPERATURE_UNIT)
 
   if (data && isVisible) {
     const description = data.weather
@@ -54,11 +50,11 @@ export default function Weather({ data, getSunInfo }) {
 
 function getTemperatureText(temperatureC, unit) {
   switch (unit) {
-    case Settings.enums.TemperatureUnits.CELSIUS: {
+    case settingEnums.TemperatureUnits.CELSIUS: {
       const roundedTempC = Math.round(temperatureC)
       return ` ${roundedTempC} °C`
     }
-    case Settings.enums.TemperatureUnits.FAHRENHEIT: {
+    case settingEnums.TemperatureUnits.FAHRENHEIT: {
       const temperatureF = Math.round((temperatureC * 9) / 5 + 32)
       return ` ${temperatureF} °F`
     }
