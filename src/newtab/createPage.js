@@ -12,7 +12,6 @@ export default function createPage(
   bookmarksDrawerCloseSubject
 ) {
   addSettingsChangeListeners()
-  addGlobalDragDropListeners()
   addBookmarksDrawerListeners()
 
   function addSettingsChangeListeners() {
@@ -84,19 +83,6 @@ export default function createPage(
   function updateBookmarkDrawerSmall(drawerSmall) {
     $root.classList.toggle(styles.bookmarksDrawerSmall, drawerSmall)
     bookmarksDrawerIsSmallSubject.next(drawerSmall)
-  }
-
-  function addGlobalDragDropListeners() {
-    let removeClassTimeout
-
-    window.addEventListener("dragover", () => {
-      $root.classList.add("dragover")
-
-      clearTimeout(removeClassTimeout)
-      removeClassTimeout = setTimeout(() => {
-        $root.classList.remove("dragover")
-      }, 100)
-    })
   }
 
   function addBookmarksDrawerListeners() {
