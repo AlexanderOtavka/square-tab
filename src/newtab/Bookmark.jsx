@@ -1,13 +1,37 @@
-import React from "react"
+import React, { useCallback } from "react"
 import cn from "classnames"
 
 import FolderOutlineSvg from "./icons/FolderOutlineSvg"
 
 import styles from "./Bookmark.css"
 
-export default function Bookmark({ className, url, title, isSmall }) {
+export default function Bookmark({
+  className,
+  id,
+  url,
+  title,
+  isSmall,
+  onOpenFolder,
+  onClick,
+  ...linkProps
+}) {
+  const onLinkClick = useCallback(
+    ev => {
+      if (onClick) onClick(ev)
+      if (!url) {
+        onOpenFolder(id)
+      }
+    },
+    [id, url, onClick, onOpenFolder]
+  )
+
   return (
-    <a className={cn(className, styles.link, isSmall && styles.isSmall)}>
+    <a
+      {...linkProps}
+      className={cn(className, styles.link, isSmall && styles.isSmall)}
+      href={url}
+      onClick={onLinkClick}
+    >
       {url ? (
         <img
           className={styles.image}

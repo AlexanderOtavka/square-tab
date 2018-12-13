@@ -45,26 +45,44 @@ export default function BookmarksDrawer({
   className,
   ...drawerProps
 }) {
+  // Current folder
+
   const [currentFolder, setCurrentFolder] = useState({
-    id: BOOKMARKS_BAR_ID,
+    id: "",
     parentId: "",
     title: ""
   })
+
+  const onOpenFolder = useCallback(id => {
+    chrome.bookmarks.get(id, ([node]) => {
+      setCurrentFolder(node)
+    })
+  }, [])
+
+  const onUpClick = useCallback(
+    () => {
+      onOpenFolder(currentFolder.parentId)
+    },
+    [onOpenFolder, currentFolder.parentId]
+  )
+
+  useEffect(() => {
+    onOpenFolder(BOOKMARKS_BAR_ID)
+  }, [])
+
   useEffect(
     () => {
-      chrome.bookmarks.get(currentFolder.id, ([node]) => {
-        setCurrentFolder(node)
-      })
-
-      const onChange = (id, changes) => {
-        if (id === currentFolder.id) {
-          setCurrentFolder({ ...currentFolder, ...changes })
+      if (currentFolder.id) {
+        const onChange = (id, changes) => {
+          if (id === currentFolder.id) {
+            setCurrentFolder(folder => ({ ...folder, ...changes }))
+          }
         }
-      }
 
-      chrome.bookmarks.onChanged.addListener(onChange)
-      return () => {
-        chrome.bookmarks.onChanged.removeListener(onChange)
+        chrome.bookmarks.onChanged.addListener(onChange)
+        return () => {
+          chrome.bookmarks.onChanged.removeListener(onChange)
+        }
       }
     },
     [currentFolder.id]
@@ -72,22 +90,19 @@ export default function BookmarksDrawer({
 
   const isAtRoot = currentFolder.id === ROOT_ID
 
+  // Current folder contents
+
   const [items, setItems] = useState([])
   useEffect(
     () => {
-      chrome.bookmarks.getChildren(currentFolder.id, setItems)
+      if (currentFolder.id) {
+        chrome.bookmarks.getChildren(currentFolder.id, setItems)
+      }
     },
     [currentFolder.id]
   )
 
-  const onUpClick = useCallback(
-    () => {
-      chrome.bookmarks.get(currentFolder.parentId, ([node]) => {
-        setCurrentFolder(node)
-      })
-    },
-    [currentFolder.parentId]
-  )
+  // Other callbacks
 
   const onClose = useCallback(() => drawerProps.onClose(), [
     drawerProps.onClose
@@ -126,9 +141,11 @@ export default function BookmarksDrawer({
             {items.map(item => (
               <Bookmark
                 key={item.id}
+                id={item.id}
                 title={item.title}
                 url={item.url}
                 isSmall={isSmall}
+                onOpenFolder={onOpenFolder}
               />
             ))}
           </nav>
