@@ -4,6 +4,7 @@ import classnames from "classnames"
 import Drawer from "./Drawer"
 import Tooltip from "./Tooltip"
 import IconButton from "./IconButton"
+import Bookmark from "./Bookmark"
 import CloseSvg from "./icons/CloseSvg"
 import FolderSvg from "./icons/FolderSvg"
 import FolderUpSvg from "./icons/FolderUpSvg"
@@ -57,7 +58,7 @@ export default function BookmarksDrawer({
 
       const onChange = (id, changes) => {
         if (id === currentFolder.id) {
-          setFolderTitle(changes.title)
+          setCurrentFolder({ ...currentFolder, ...changes })
         }
       }
 
@@ -123,13 +124,11 @@ export default function BookmarksDrawer({
         renderContents={className => (
           <nav className={classnames(className, styles.bookmarksDrawerItems)}>
             {items.map(item => (
-              <x-bookmark
+              <Bookmark
                 key={item.id}
-                ref={bookmarkElement =>
-                  bookmarkElement &&
-                  ((bookmarkElement.node = item),
-                  (bookmarkElement.small = isSmall))
-                }
+                title={item.title}
+                url={item.url}
+                isSmall={isSmall}
               />
             ))}
           </nav>

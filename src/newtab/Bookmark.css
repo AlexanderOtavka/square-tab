@@ -1,0 +1,81 @@
+.link,
+.link:hover {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+  color: #000;
+  text-decoration: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  user-select: none;
+  background: #fff;
+  transition: transform var(--drag-drop-transition-timing);
+  z-index: 1;
+}
+
+:global(.no-animate-translate) .link {
+  transition: none;
+}
+
+:global(.drag-over) .link {
+  pointer-events: none;
+}
+
+.link.translateUp {
+  transform: translateY(-100%);
+  z-index: 2;
+}
+
+.link.translateDown {
+  transform: translateY(100%);
+  z-index: 2;
+}
+
+.link.expand {
+  transform: scale(1.2) translate(6%, 0);
+  z-index: 2;
+}
+
+.link.isSmall.expand {
+  transform: scale(1.2);
+}
+
+.link.dragging {
+  opacity: 0;
+  z-index: 0;
+}
+
+.link::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--mouse-effect-transition-timing);
+}
+
+.link:active::after {
+  opacity: 1;
+}
+
+.image {
+  width: 16px;
+  height: 16px;
+  margin: 8px 16px;
+}
+
+.title {
+  flex-grow: 1;
+  flex-basis: 1px;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: var(--x-bookmark-font-weight);
+}
