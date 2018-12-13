@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useState, useCallback } from "react"
+import React, {
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useCallback
+} from "react"
 import classnames from "classnames"
 
 import * as Settings from "../Settings"
@@ -53,7 +59,6 @@ const positionToClassName = position => {
 }
 
 export default function Page({ weatherStore }) {
-  const $body = useRef(document.body)
   const $bookmarksOpenButton = useRef() //document.querySelector(".bookmarksOpenButton")
 
   // Settings
@@ -68,11 +73,9 @@ export default function Page({ weatherStore }) {
   )
   const infoIsBoxed = Settings.useSetting(Settings.keys.BOXED_INFO)
 
-  // Weather data
+  // Weather and background
 
   const weather = useWeather(weatherStore)
-
-  // Background image
 
   const backgroundImage = useBackgroundImage(
     settingsAreLoaded && weather.cacheIsLoaded,
@@ -83,11 +86,11 @@ export default function Page({ weatherStore }) {
 
   const ready =
     settingsAreLoaded && weather.cacheIsLoaded && backgroundImage.cacheIsLoaded
-  useEffect(
+  const pageRef = useRef()
+  useLayoutEffect(
     () => {
       if (ready) {
-        $body.current.removeAttribute("unresolved")
-        $body.current.animate([{ opacity: 0 }, { opacity: 1 }], {
+        pageRef.current.animate([{ opacity: 0 }, { opacity: 1 }], {
           duration: 200,
           easing: "cubic-bezier(0.215, 0.61, 0.355, 1)"
         })
@@ -96,7 +99,7 @@ export default function Page({ weatherStore }) {
     [ready]
   )
 
-  // Bookmarks drawer mode
+  // Bookmarks drawer
 
   const bookmarksDrawerMode = Settings.useSetting(
     Settings.keys.BOOKMARKS_DRAWER_MODE
@@ -120,15 +123,17 @@ export default function Page({ weatherStore }) {
 
   useEffect(
     () => {
-      $bookmarksOpenButton.current.addEventListener(
-        "click",
-        onBookmarksDrawerOpen
-      )
-      return () => {
-        $bookmarksOpenButton.current.removeEventListener(
+      if ($bookmarksOpenButton.current) {
+        $bookmarksOpenButton.current.addEventListener(
           "click",
           onBookmarksDrawerOpen
         )
+        return () => {
+          $bookmarksOpenButton.current.removeEventListener(
+            "click",
+            onBookmarksDrawerOpen
+          )
+        }
       }
     },
     [onBookmarksDrawerOpen]
@@ -136,8 +141,10 @@ export default function Page({ weatherStore }) {
 
   return (
     <div
+      ref={pageRef}
       className={classnames(
         styles.page,
+        ready && styles.ready,
         modeToClassName(bookmarksDrawerMode),
         positionToClassName(bookmarksDrawerPosition),
         bookmarksDrawerIsSmall && styles.bookmarksDrawerIsSmall,
