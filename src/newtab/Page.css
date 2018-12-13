@@ -64,11 +64,6 @@ x-tooltip {
 
 .bookmarksOpenButton {
   fill: #fff;
-  visibility: hidden;
-}
-
-.bookmarksDrawerModeToggle .bookmarksOpenButton {
-  visibility: visible;
 }
 
 .infoWrapper {

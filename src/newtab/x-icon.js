@@ -69,7 +69,7 @@ export default class XIconElement extends HTMLElement {
   }
 
   get button() {
-    return this.hasAttribute("large")
+    return this.hasAttribute("button")
   }
 
   set button(button) {

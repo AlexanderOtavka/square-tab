@@ -11,6 +11,9 @@ import * as Settings from "../Settings"
 
 import Weather from "./Weather"
 import BookmarksDrawer from "./BookmarksDrawer"
+import Clock from "./Clock"
+import IconButton from "./IconButton"
+import BookmarksSvg from "./icons/BookmarksSvg"
 
 import useBackgroundImage from "./useBackgroundImage"
 import useWeather from "./useWeather"
@@ -21,7 +24,6 @@ import "./x-dialog"
 import "./x-icon"
 
 import styles from "./Page.css"
-import Clock from "./Clock"
 
 const settingToMode = setting => {
   switch (setting) {
@@ -170,13 +172,13 @@ export default function Page({ weatherStore }) {
 
         <span className="title" />
 
-        <x-icon
-          ref={$bookmarksOpenButton}
-          class={classnames(styles.bookmarksOpenButton, "radial-shadow")}
-          icon="bookmarks"
-          large
-          button
-        />
+        {bookmarksDrawerMode === Settings.enums.BookmarkDrawerModes.TOGGLE && (
+          <IconButton
+            className={classnames(styles.bookmarksOpenButton, "radial-shadow")}
+            icon={<BookmarksSvg />}
+            onClick={onBookmarksDrawerOpen}
+          />
+        )}
       </header>
 
       <main className={classnames(styles.infoWrapper, "fullbleed")}>

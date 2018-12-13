@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useCallback } from "react"
 import classnames from "classnames"
 
 import createBookmarksNavigator from "./createBookmarksNavigator"
@@ -7,6 +7,8 @@ import unpackRefs from "./unpackRefs"
 
 import Drawer from "./Drawer"
 import Tooltip from "./Tooltip"
+import IconButton from "./IconButton"
+import CloseSvg from "./icons/CloseSvg"
 
 import styles from "./BookmarksDrawer.css"
 
@@ -85,17 +87,9 @@ export default function BookmarksDrawer({
     )
   }, [])
 
-  const $closeButton = useRef()
-  useEffect(
-    () => {
-      const onClick = () => drawerProps.onClose()
-      $closeButton.current.addEventListener("click", onClick)
-      return () => {
-        $closeButton.current.removeEventListener("click", onClick)
-      }
-    },
-    [drawerProps.onClose]
-  )
+  const onClose = useCallback(() => drawerProps.onClose(), [
+    drawerProps.onClose
+  ])
 
   return (
     <>
@@ -115,12 +109,10 @@ export default function BookmarksDrawer({
               ref={$title}
               className={classnames(styles.bookmarksDrawerTitle, "title")}
             />
-            <x-icon
-              ref={$closeButton}
-              class={styles.bookmarksCloseButton}
-              icon="close"
-              large
-              button
+            <IconButton
+              className={styles.bookmarksCloseButton}
+              icon={<CloseSvg />}
+              onClick={onClose}
             />
           </header>
         )}
