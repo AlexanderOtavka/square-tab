@@ -1,5 +1,9 @@
+// @ts-check
+
 import * as Settings from "../Settings"
-import { bookmarksUpButton as upButtonClassName } from "./Page.css"
+
+// @ts-ignore
+import { bookmarksUpButton as upButtonClassName } from "./BookmarksDrawer.css"
 
 export const ROOT_ID = "0"
 export const BOOKMARKS_BAR_ID = "1"
@@ -13,7 +17,7 @@ export default function createBookmarksNavigator({
   $drawerItems,
   $drawerTooltip
 }) {
-  const stack = [ROOT_ID, BOOKMARKS_BAR_ID]
+  let stack = [ROOT_ID, BOOKMARKS_BAR_ID]
 
   openBookmark(getCurrentFolder())
 
@@ -122,7 +126,7 @@ export default function createBookmarksNavigator({
   /**
    * Show the tooltip over given bookmark if the drawer is small.
    *
-   * @param {XBookmarkElement} bookmark
+   * @param bookmark The bookmark node
    */
   function maybeShowTooltipForBookmark(bookmark) {
     if (Settings.get(Settings.keys.BOOKMARKS_DRAWER_SMALL)) {
@@ -173,6 +177,7 @@ export default function createBookmarksNavigator({
 
     chrome.bookmarks.get(id, ([node]) => {
       if (!node.url) {
+        // @ts-ignore
         const title = getNodeTitle(node)
         $title.textContent = title
         $title.title = title
