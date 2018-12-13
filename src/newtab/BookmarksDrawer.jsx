@@ -1,16 +1,19 @@
-import React, { useRef, useEffect, useCallback } from "react"
+import React, { useRef, useEffect, useCallback, useState } from "react"
 import classnames from "classnames"
-
-import createBookmarksNavigator from "./createBookmarksNavigator"
-import createBookmarksEditor from "./createBookmarksEditor"
-import unpackRefs from "./unpackRefs"
 
 import Drawer from "./Drawer"
 import Tooltip from "./Tooltip"
 import IconButton from "./IconButton"
 import CloseSvg from "./icons/CloseSvg"
+import FolderSvg from "./icons/FolderSvg"
+import FolderUpSvg from "./icons/FolderUpSvg"
 
 import styles from "./BookmarksDrawer.css"
+
+const ROOT_ID = "0"
+const BOOKMARKS_BAR_ID = "1"
+const OTHER_BOOKMARKS_ID = "2"
+const MOBILE_BOOKMARKS_ID = "2"
 
 const modeToClassName = mode => {
   switch (mode) {
@@ -26,66 +29,64 @@ const modeToClassName = mode => {
   }
 }
 
+const getNodeTitle = ({ id, url, title }) => {
+  if (title || url) {
+    return title || url
+  } else if (id === ROOT_ID) {
+    return "Bookmarks"
+  } else {
+    return "(Untitled Folder)"
+  }
+}
+
 export default function BookmarksDrawer({
   isSmall,
   className,
   ...drawerProps
 }) {
-  const $drawer = useRef() // document.querySelector(".bookmarksDrawer")
-  const $header = useRef() //document.querySelector( ".bookmarksDrawer .drawerHeader")
-  const $upButton = useRef() //document.querySelector(".bookmarksUpButton")
-  const $drawerItems = useRef() //document.querySelector( ".bookmarksDrawer-items")
-  const $title = useRef() // document.querySelector(".bookmarksDrawer .title")
-
-  const $ctxMenu = useRef() // document.querySelector("#bookmarks-ctx-menu")
-  const $ctxMenuName = useRef() //document.querySelector("#bookmarks-ctx-menu-name")
-  const $ctxMenuEdit = useRef() //document.querySelector("#bookmarks-ctx-menu-edit")
-  const $ctxMenuDelete = useRef() //document.querySelector("#bookmarks-ctx-menu-delete")
-  const $ctxMenuAddPage = useRef() //document.querySelector( "#bookmarks-ctx-menu-add-page")
-  const $ctxMenuAddFolder = useRef() // document.querySelector( "#bookmarks-ctx-menu-add-folder")
-
-  const $editDialog = useRef() // document.querySelector("#bookmarks-edit-dialog")
-  const $editDialogFavicon = useRef() // document.querySelector( "#bookmarks-edit-dialog-favicon")
-  const $editDialogTitle = useRef() // document.querySelector( "#bookmarks-edit-dialog-title")
-  const $editDialogName = useRef() // document.querySelector(".bookmarksEditDialogName")
-  const $editDialogURL = useRef() // document.querySelector(".bookmarksEditDialogUrl")
-  const $editDialogDone = useRef() // document.querySelector( "#bookmarks-edit-dialog-done")
-
-  const $drawerTooltip = useRef() //document.querySelector(".bookmarksDrawer-tooltip")
-
-  useEffect(() => {
-    const bookmarksNavigator = createBookmarksNavigator(
-      unpackRefs({
-        $header: $header,
-        $upButton: $upButton,
-        $title: $title,
-        $drawerItems: $drawerItems,
-        $drawerTooltip
+  const [currentFolder, setCurrentFolder] = useState({
+    id: BOOKMARKS_BAR_ID,
+    parentId: "",
+    title: ""
+  })
+  useEffect(
+    () => {
+      chrome.bookmarks.get(currentFolder.id, ([node]) => {
+        setCurrentFolder(node)
       })
-    )
 
-    createBookmarksEditor(
-      unpackRefs({
-        $drawer,
-        $drawerHeader: $header,
-        $upButton: $upButton,
-        $drawerItems: $drawerItems,
-        $ctxMenu,
-        $ctxMenuName,
-        $ctxMenuEdit,
-        $ctxMenuDelete,
-        $ctxMenuAddPage,
-        $ctxMenuAddFolder,
-        $editDialog,
-        $editDialogFavicon,
-        $editDialogTitle,
-        $editDialogName,
-        $editDialogURL,
-        $editDialogDone
-      }),
-      bookmarksNavigator
-    )
-  }, [])
+      const onChange = (id, changes) => {
+        if (id === currentFolder.id) {
+          setFolderTitle(changes.title)
+        }
+      }
+
+      chrome.bookmarks.onChanged.addListener(onChange)
+      return () => {
+        chrome.bookmarks.onChanged.removeListener(onChange)
+      }
+    },
+    [currentFolder.id]
+  )
+
+  const isAtRoot = currentFolder.id === ROOT_ID
+
+  const [items, setItems] = useState([])
+  useEffect(
+    () => {
+      chrome.bookmarks.getChildren(currentFolder.id, setItems)
+    },
+    [currentFolder.id]
+  )
+
+  const onUpClick = useCallback(
+    () => {
+      chrome.bookmarks.get(currentFolder.parentId, ([node]) => {
+        setCurrentFolder(node)
+      })
+    },
+    [currentFolder.parentId]
+  )
 
   const onClose = useCallback(() => drawerProps.onClose(), [
     drawerProps.onClose
@@ -95,7 +96,6 @@ export default function BookmarksDrawer({
     <>
       <Drawer
         {...drawerProps}
-        ref={$drawer}
         className={classnames(
           className,
           styles.bookmarksDrawer,
@@ -103,12 +103,16 @@ export default function BookmarksDrawer({
           modeToClassName(drawerProps.mode)
         )}
         renderHeader={className => (
-          <header ref={$header} className={classnames(className, "toolbar")}>
-            <x-icon ref={$upButton} class={styles.bookmarksUpButton} large />
-            <span
-              ref={$title}
-              className={classnames(styles.bookmarksDrawerTitle, "title")}
+          <header className={classnames(className, "toolbar")}>
+            <IconButton
+              className={styles.bookmarksUpButton}
+              icon={isAtRoot ? <FolderSvg /> : <FolderUpSvg />}
+              disabled={isAtRoot}
+              onClick={onUpClick}
             />
+            <span className={classnames(styles.bookmarksDrawerTitle, "title")}>
+              {getNodeTitle(currentFolder)}
+            </span>
             <IconButton
               className={styles.bookmarksCloseButton}
               icon={<CloseSvg />}
@@ -117,26 +121,32 @@ export default function BookmarksDrawer({
           </header>
         )}
         renderContents={className => (
-          <nav
-            ref={$drawerItems}
-            className={classnames(className, styles.bookmarksDrawerItems)}
-          />
+          <nav className={classnames(className, styles.bookmarksDrawerItems)}>
+            {items.map(item => (
+              <x-bookmark
+                key={item.id}
+                ref={bookmarkElement =>
+                  bookmarkElement &&
+                  ((bookmarkElement.node = item),
+                  (bookmarkElement.small = isSmall))
+                }
+              />
+            ))}
+          </nav>
         )}
       />
 
-      <x-dialog ref={$editDialog} class={styles.bookmarksEditDialog}>
-        <img slot="title" ref={$editDialogFavicon} />
-        <h1 slot="title" ref={$editDialogTitle} />
+      <x-dialog class={styles.bookmarksEditDialog}>
+        <img slot="title" />
+        <h1 slot="title" />
 
         <div slot="content" className="row">
           <input
-            ref={$editDialogName}
             className={styles.bookmarksEditDialogName}
             type="text"
             placeholder="Name"
           />
           <input
-            ref={$editDialogURL}
             className={styles.bookmarksEditDialogUrl}
             type="url"
             placeholder="URL"
@@ -144,29 +154,19 @@ export default function BookmarksDrawer({
         </div>
 
         <button slot="cancel">Cancel</button>
-        <button slot="confirm" ref={$editDialogDone}>
-          Done
-        </button>
+        <button slot="confirm">Done</button>
       </x-dialog>
 
-      <Tooltip ref={$drawerTooltip} className={styles.tooltip} />
+      {/* <Tooltip className={styles.tooltip} /> */}
 
-      <x-context-menu ref={$ctxMenu}>
-        <div ref={$ctxMenuName} className="menu-item disabled line-below" />
+      <x-context-menu>
+        <div className="menu-item disabled line-below" />
 
-        <div ref={$ctxMenuEdit} className="menu-item">
-          Edit
-        </div>
-        <div ref={$ctxMenuDelete} className="menu-item">
-          Delete
-        </div>
+        <div className="menu-item">Edit</div>
+        <div className="menu-item">Delete</div>
         <hr />
-        <div ref={$ctxMenuAddPage} className="menu-item">
-          Add Page
-        </div>
-        <div ref={$ctxMenuAddFolder} className="menu-item">
-          Add Folder
-        </div>
+        <div className="menu-item">Add Page</div>
+        <div className="menu-item">Add Folder</div>
       </x-context-menu>
     </>
   )
