@@ -25,18 +25,15 @@ const positionToClassName = position => {
   }
 }
 
-export default React.forwardRef(function Drawer(
-  {
-    className,
-    mode = "toggle",
-    position = "right",
-    isOpen = false,
-    onClose = () => {},
-    renderHeader,
-    renderContents
-  },
-  ref
-) {
+export default function Drawer({
+  className,
+  mode = "toggle",
+  position = "right",
+  isOpen = false,
+  onClose = () => {},
+  renderHeader,
+  renderContents
+}) {
   const onBackdropClick = useCallback(() => onClose(), [onClose])
 
   const sharedClassName = classnames(
@@ -56,7 +53,6 @@ export default React.forwardRef(function Drawer(
       />
 
       <aside
-        ref={ref}
         className={classnames(
           className,
           styles.drawer,
@@ -69,4 +65,4 @@ export default React.forwardRef(function Drawer(
       </aside>
     </>
   )
-})
+}
