@@ -40,6 +40,14 @@ const getNodeTitle = ({ id, url, title }) => {
   }
 }
 
+const getBookmark = id =>
+  new Promise((resolve, reject) =>
+    chrome.bookmarks.get(id, nodes => {
+      if (chrome.runtime.lastError) reject(chrome.runtime.lastError)
+      else resolve(nodes[0])
+    })
+  )
+
 export default function BookmarksDrawer({
   isSmall,
   className,
@@ -54,9 +62,7 @@ export default function BookmarksDrawer({
   })
 
   const onOpenFolder = useCallback(id => {
-    chrome.bookmarks.get(id, ([node]) => {
-      setCurrentFolder(node)
-    })
+    getBookmark(id).then(setCurrentFolder)
   }, [])
 
   const onUpClick = useCallback(
@@ -70,6 +76,7 @@ export default function BookmarksDrawer({
     onOpenFolder(BOOKMARKS_BAR_ID)
   }, [])
 
+  // Changes to the current folder
   useEffect(
     () => {
       if (currentFolder.id) {
@@ -79,27 +86,99 @@ export default function BookmarksDrawer({
           }
         }
 
+        const onMoveOrRemove = () => {
+          getBookmark(currentFolder.id).catch(() => {
+            onOpenFolder(BOOKMARKS_BAR_ID)
+          })
+        }
+
         chrome.bookmarks.onChanged.addListener(onChange)
+        chrome.bookmarks.onRemoved.addListener(onMoveOrRemove)
+        chrome.bookmarks.onMoved.addListener(onMoveOrRemove)
         return () => {
           chrome.bookmarks.onChanged.removeListener(onChange)
+          chrome.bookmarks.onRemoved.removeListener(onMoveOrRemove)
+          chrome.bookmarks.onMoved.removeListener(onMoveOrRemove)
         }
       }
     },
     [currentFolder.id]
   )
 
-  const isAtRoot = currentFolder.id === ROOT_ID
+  const isAtRoot = !currentFolder.parentId
 
   // Current folder contents
 
   const [items, setItems] = useState([])
+
+  // Changes involving the current folder and affecting the contents
   useEffect(
     () => {
       if (currentFolder.id) {
-        chrome.bookmarks.getChildren(currentFolder.id, setItems)
+        const reloadChildren = () =>
+          chrome.bookmarks.getChildren(currentFolder.id, children => {
+            if (chrome.runtime.lastError)
+              console.error(chrome.runtime.lastError)
+            else setItems(children)
+          })
+
+        reloadChildren()
+
+        const onCreateOrRemove = (_id, { parentId }) => {
+          if (parentId === currentFolder.id) {
+            reloadChildren()
+          }
+        }
+
+        const onMove = (_id, { parentId, oldParentId }) => {
+          if (
+            parentId === currentFolder.id ||
+            oldParentId === currentFolder.id
+          ) {
+            reloadChildren()
+          }
+        }
+
+        const onChildrenReordered = id => {
+          if (id === currentFolder.id) {
+            reloadChildren()
+          }
+        }
+
+        chrome.bookmarks.onCreated.addListener(onCreateOrRemove)
+        chrome.bookmarks.onRemoved.addListener(onCreateOrRemove)
+        chrome.bookmarks.onMoved.addListener(onMove)
+        chrome.bookmarks.onChildrenReordered.addListener(onChildrenReordered)
+        return () => {
+          chrome.bookmarks.onCreated.removeListener(onCreateOrRemove)
+          chrome.bookmarks.onRemoved.removeListener(onCreateOrRemove)
+          chrome.bookmarks.onMoved.removeListener(onMove)
+          chrome.bookmarks.onChildrenReordered.removeListener(
+            onChildrenReordered
+          )
+        }
       }
     },
     [currentFolder.id]
+  )
+
+  // Changes of individual items
+  useEffect(
+    () => {
+      const onChange = (id, changes) => {
+        if (items.some(item => item.id === id)) {
+          setItems(items =>
+            items.map(item => (item.id === id ? { ...item, ...changes } : item))
+          )
+        }
+      }
+
+      chrome.bookmarks.onChanged.addListener(onChange)
+      return () => {
+        chrome.bookmarks.onChanged.removeListener(onChange)
+      }
+    },
+    [items]
   )
 
   // Other callbacks
