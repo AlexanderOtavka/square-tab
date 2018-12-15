@@ -1,12 +1,11 @@
-import React, { useEffect } from "react"
+import React, { useRef, useEffect } from "react"
 
 import html from "../util/html"
 import * as Settings from "../Settings"
 
-export default React.forwardRef(function Tooltip(
-  { className, name = "", showOnElement = null },
-  ref
-) {
+export default function Tooltip({ className, name, showOnElement }) {
+  const ref = useRef()
+
   useEffect(
     () => {
       if (showOnElement) {
@@ -19,7 +18,7 @@ export default React.forwardRef(function Tooltip(
   )
 
   return <x-tooltip ref={ref} class={className} />
-})
+}
 
 class XTooltipElement extends HTMLElement {
   constructor() {
@@ -45,7 +44,7 @@ class XTooltipElement extends HTMLElement {
     this._x = 0
     this._y = 0
 
-    this._hideFrame = null
+    this._hideTimeout = null
     this._updateTransformFrame = null
   }
 
@@ -65,9 +64,9 @@ class XTooltipElement extends HTMLElement {
   }
 
   show(element, name = this.name) {
-    if (this._hideFrame !== null) {
-      cancelAnimationFrame(this._hideFrame)
-      this._hideFrame = null
+    if (this._hideTimeout !== null) {
+      clearTimeout(this._hideTimeout)
+      this._hideTimeout = null
     }
 
     const wasHidden = this._hidden
@@ -83,7 +82,7 @@ class XTooltipElement extends HTMLElement {
   }
 
   hide() {
-    this._hideFrame = requestAnimationFrame(() => {
+    this._hideTimeout = setTimeout(() => {
       this._hidden = true
       cancelAnimationFrame(this._updateTransformFrame)
       this.classList.toggle("show", !this._hidden)

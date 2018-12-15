@@ -30,7 +30,7 @@ const modeToClassName = mode => {
   }
 }
 
-const getNodeTitle = ({ id, url, title }) => {
+const getBookmarkTitle = ({ id, url, title }) => {
   if (title || url) {
     return title || url
   } else if (id === ROOT_ID) {
@@ -181,6 +181,27 @@ export default function BookmarksDrawer({
     [items]
   )
 
+  // Hover state
+
+  const [currentHoveredElement, setHoveredElement] = useState(null)
+  const [currentTooltipText, setTooltipText] = useState("")
+
+  const onTooltipMouseOver = useCallback(ev => {
+    const el = ev.currentTarget
+    if (el && el.dataset.tooltip) {
+      setHoveredElement(el)
+      setTooltipText(el.dataset.tooltip)
+    }
+  }, [])
+
+  const onTooltipMouseLeave = useCallback(ev => {
+    const el = ev.currentTarget
+    if (el && el.dataset.tooltip) {
+      setHoveredElement(null)
+      setTooltipText("")
+    }
+  }, [])
+
   // Other callbacks
 
   const onClose = useCallback(() => drawerProps.onClose(), [
@@ -198,7 +219,12 @@ export default function BookmarksDrawer({
           modeToClassName(drawerProps.mode)
         )}
         renderHeader={className => (
-          <header className={classnames(className, "toolbar")}>
+          <header
+            className={classnames(className, "toolbar")}
+            data-tooltip={getBookmarkTitle(currentFolder)}
+            onMouseOver={onTooltipMouseOver}
+            onMouseLeave={onTooltipMouseLeave}
+          >
             <IconButton
               className={styles.bookmarksUpButton}
               icon={isAtRoot ? <FolderSvg /> : <FolderUpSvg />}
@@ -206,7 +232,7 @@ export default function BookmarksDrawer({
               onClick={onUpClick}
             />
             <span className={classnames(styles.bookmarksDrawerTitle, "title")}>
-              {getNodeTitle(currentFolder)}
+              {getBookmarkTitle(currentFolder)}
             </span>
             <IconButton
               className={styles.bookmarksCloseButton}
@@ -221,10 +247,13 @@ export default function BookmarksDrawer({
               <Bookmark
                 key={item.id}
                 id={item.id}
-                title={item.title}
+                title={getBookmarkTitle(item)}
+                data-tooltip={getBookmarkTitle(item)}
                 url={item.url}
                 isSmall={isSmall}
                 onOpenFolder={onOpenFolder}
+                onMouseOver={onTooltipMouseOver}
+                onMouseLeave={onTooltipMouseLeave}
               />
             ))}
           </nav>
@@ -252,7 +281,13 @@ export default function BookmarksDrawer({
         <button slot="confirm">Done</button>
       </x-dialog>
 
-      {/* <Tooltip className={styles.tooltip} /> */}
+      {isSmall && (
+        <Tooltip
+          className={styles.tooltip}
+          name={currentTooltipText}
+          showOnElement={currentHoveredElement}
+        />
+      )}
 
       <x-context-menu>
         <div className="menu-item disabled line-below" />
