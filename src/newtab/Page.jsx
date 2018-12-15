@@ -18,7 +18,6 @@ import BookmarksSvg from "./icons/BookmarksSvg"
 import useBackgroundImage from "./useBackgroundImage"
 import useWeather from "./useWeather"
 
-import "./x-bookmark"
 import "./x-context-menu"
 import "./x-dialog"
 import "./x-icon"
