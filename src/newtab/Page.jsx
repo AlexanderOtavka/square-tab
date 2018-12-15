@@ -86,19 +86,19 @@ export default function Page({ weatherStore }) {
 
   // Resolve the body when everything is ready
 
-  const ready =
+  const isReady =
     settingsAreLoaded && weather.cacheIsLoaded && backgroundImage.cacheIsLoaded
   const pageRef = useRef()
   useLayoutEffect(
     () => {
-      if (ready) {
+      if (isReady) {
         pageRef.current.animate([{ opacity: 0 }, { opacity: 1 }], {
           duration: 200,
           easing: "cubic-bezier(0.215, 0.61, 0.355, 1)"
         })
       }
     },
-    [ready]
+    [isReady]
   )
 
   // Bookmarks drawer
@@ -146,7 +146,7 @@ export default function Page({ weatherStore }) {
       ref={pageRef}
       className={classnames(
         styles.page,
-        ready && styles.ready,
+        isReady && styles.isReady,
         modeToClassName(bookmarksDrawerMode),
         positionToClassName(bookmarksDrawerPosition),
         bookmarksDrawerIsSmall && styles.bookmarksDrawerIsSmall,

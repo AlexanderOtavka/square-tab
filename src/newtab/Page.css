@@ -7,7 +7,7 @@
   display: none;
 }
 
-.page.ready {
+.page.isReady {
   display: block;
 }
 
