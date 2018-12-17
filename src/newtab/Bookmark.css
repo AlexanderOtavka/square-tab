@@ -10,40 +10,6 @@
   cursor: pointer;
   user-select: none;
   background: #fff;
-  transition: transform var(--drag-drop-transition-timing);
-  z-index: 1;
-}
-
-:global(.no-animate-translate) .link {
-  transition: none;
-}
-
-:global(.drag-over) .link {
-  pointer-events: none;
-}
-
-.link.translateUp {
-  transform: translateY(-100%);
-  z-index: 2;
-}
-
-.link.translateDown {
-  transform: translateY(100%);
-  z-index: 2;
-}
-
-.link.expand {
-  transform: scale(1.2) translate(6%, 0);
-  z-index: 2;
-}
-
-.link.isSmall.expand {
-  transform: scale(1.2);
-}
-
-.link.dragging {
-  opacity: 0;
-  z-index: 0;
 }
 
 .link::after {

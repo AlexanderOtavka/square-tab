@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useState } from "react"
+import React, { useMemo, useEffect, useCallback, useState } from "react"
 import classnames from "classnames"
 
 import Drawer from "./Drawer"
@@ -202,6 +202,103 @@ export default function BookmarksDrawer({
     }
   }, [])
 
+  // Drag and drop
+
+  const [draggedId, setDraggedId] = useState(null)
+  const [draggedOverId, setDraggedOverId] = useState(null)
+
+  const onBookmarkPickUp = useCallback(id => {
+    setDraggedId(id)
+  }, [])
+
+  const getYFraction = ev => {
+    const rect = ev.currentTarget.getBoundingClientRect()
+    return (rect.top - ev.y) / rect.height
+  }
+
+  const onBookmarkDragOver = useCallback(
+    ev => {
+      ev.preventDefault()
+
+      ev.dataTransfer.dropEffect = "move"
+
+      const { id } = ev.currentTarget.dataset
+      if (id !== draggedOverId) {
+        setDraggedOverId(id)
+      }
+    },
+    [draggedOverId]
+  )
+
+  const dropBookmark = useCallback((id, index) => {
+    // if (draggedId) {
+    //   chrome.bookmarks.move(draggedId, {
+    //     parentId: currentFolder.id,
+    //     index: items.findIndex(x => x.id === id)
+    //   })
+    // }
+
+    setDraggedId(null)
+    setDraggedOverId(null)
+  }, [])
+
+  const onBookmarkDrop = useCallback(
+    ev => {
+      ev.preventDefault()
+
+      const bookmarkId = ev.dataTransfer.getData("text/x-bookmark-id") || null
+      const title = ev.dataTransfer.getData("text/plain")
+      const url = ev.dataTransfer.getData("text/uri-list") || title
+
+      const { id } = ev.currentTarget.dataset
+
+      dropBookmark(draggedId, items.findIndex(x => x.id === id))
+    },
+    [draggedId, currentFolder.id, items]
+  )
+
+  const getTransformClassName = index => {
+    const draggedIndex = items.findIndex(x => x.id === draggedId)
+    if (draggedIndex === -1) {
+      return ""
+    } else if (index === draggedIndex) {
+      return styles.invisible
+    } else {
+      const draggedOverIndex = items.findIndex(x => x.id === draggedOverId)
+      if (draggedIndex < index && index <= draggedOverIndex) {
+        return styles.translateUp
+      } else if (draggedOverIndex <= index && index < draggedIndex) {
+        return styles.translateDown
+      } else {
+        return ""
+      }
+    }
+  }
+
+  const [isDraggingOverItems, setDraggingOverItems] = useState(false)
+  const onItemsDragOver = useCallback(
+    ev => {
+      ev.preventDefault()
+
+      if (!isDraggingOverItems) {
+        setDraggingOverItems(true)
+      }
+    },
+    [isDraggingOverItems]
+  )
+  const onItemsDrop = useCallback(
+    ev => {
+      ev.preventDefault()
+
+      setDraggingOverItems(false)
+
+      if (ev.target === ev.currentTarget) {
+        dropBookmark(draggedId, items.length - 1)
+      }
+    },
+    [draggedId, items.length]
+  )
+
   // Other callbacks
 
   const onClose = useCallback(() => drawerProps.onClose(), [
@@ -242,21 +339,42 @@ export default function BookmarksDrawer({
           </header>
         )}
         renderContents={className => (
-          <nav className={classnames(className, styles.bookmarksDrawerItems)}>
-            {items.map(item => (
-              <Bookmark
+          <ul
+            className={classnames(
+              className,
+              styles.bookmarksDrawerItems,
+              isDraggingOverItems && styles.dragOver
+            )}
+            onDragOver={onItemsDragOver}
+            onDrop={onItemsDrop}
+          >
+            {items.map((item, index) => (
+              <li
+                className={styles.bookmarkLi}
                 key={item.id}
-                id={item.id}
-                title={getBookmarkTitle(item)}
-                data-tooltip={getBookmarkTitle(item)}
-                url={item.url}
-                isSmall={isSmall}
-                onOpenFolder={onOpenFolder}
-                onMouseOver={onTooltipMouseOver}
-                onMouseLeave={onTooltipMouseLeave}
-              />
+                data-id={item.id}
+                onDragEnter={onBookmarkDragOver}
+                onDragOver={onBookmarkDragOver}
+                onDrop={onBookmarkDrop}
+              >
+                <Bookmark
+                  className={classnames(
+                    styles.bookmark,
+                    getTransformClassName(index)
+                  )}
+                  id={item.id}
+                  title={getBookmarkTitle(item)}
+                  data-tooltip={getBookmarkTitle(item)}
+                  url={item.url}
+                  isSmall={isSmall}
+                  onOpenFolder={onOpenFolder}
+                  onMouseOver={onTooltipMouseOver}
+                  onMouseLeave={onTooltipMouseLeave}
+                  onPickUp={onBookmarkPickUp}
+                />
+              </li>
             ))}
-          </nav>
+          </ul>
         )}
       />
 

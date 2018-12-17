@@ -2,12 +2,6 @@
   background: #fff;
 }
 
-:global(.dragover) .bookmarksDrawerItems::after {
-  display: block;
-  content: "";
-  height: 40px;
-}
-
 .bookmarksDrawer x-icon {
   fill: #333;
 }
@@ -16,7 +10,7 @@
   transition: transform var(--drag-drop-transition-timing);
 }
 
-.bookmarksUpButton:global(.expand) {
+.bookmarksUpButton.expand {
   transform: scale(1.2);
 }
 
@@ -32,6 +26,60 @@
 .modeAlways .bookmarksCloseButton,
 .modeHover .bookmarksCloseButton {
   display: none;
+}
+
+.bookmarksDrawerItems {
+  margin: 0;
+  padding: 0;
+}
+
+:global(.dragover) .bookmarksDrawerItems::after {
+  display: block;
+  content: "";
+  height: 40px;
+}
+
+.bookmarkLi {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bookmark {
+  transition: transform var(--drag-drop-transition-timing);
+  z-index: 1;
+}
+
+.noAnimateTranslate .bookmark {
+  transition: none;
+}
+
+.dragOver .bookmark {
+  pointer-events: none;
+}
+
+.bookmark.translateUp {
+  transform: translateY(-100%);
+  z-index: 2;
+}
+
+.bookmark.translateDown {
+  transform: translateY(100%);
+  z-index: 2;
+}
+
+.bookmark.expand {
+  transform: scale(1.2) translate(6%, 0);
+  z-index: 2;
+}
+
+.isSmall .bookmark.expand {
+  transform: scale(1.2);
+}
+
+.bookmark.invisible {
+  opacity: 0;
+  z-index: 0;
 }
 
 .bookmarksEditDialog {
