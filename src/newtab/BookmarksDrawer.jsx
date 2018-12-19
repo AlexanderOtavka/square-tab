@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useCallback, useState } from "react"
+import React, { useEffect, useCallback, useState } from "react"
 import classnames from "classnames"
 
 import Drawer from "./Drawer"
@@ -230,31 +230,40 @@ export default function BookmarksDrawer({
     [draggedOverId]
   )
 
-  const dropBookmark = useCallback((id, index) => {
-    // if (draggedId) {
-    //   chrome.bookmarks.move(draggedId, {
-    //     parentId: currentFolder.id,
-    //     index: items.findIndex(x => x.id === id)
-    //   })
-    // }
+  const dropBookmark = ({ id = null, title, url }, parentId, index) => {
+    if (id) {
+      chrome.bookmarks.move(id, { parentId, index })
+    }
 
     setDraggedId(null)
     setDraggedOverId(null)
-  }, [])
+  }
+
+  const getDropData = dataTransfer => {
+    const id = dataTransfer.getData("text/x-bookmark-id") || null
+    const title = dataTransfer.getData("text/plain")
+    const url = dataTransfer.getData("text/uri-list") || title
+    return { id, title, url }
+  }
 
   const onBookmarkDrop = useCallback(
     ev => {
       ev.preventDefault()
 
-      const bookmarkId = ev.dataTransfer.getData("text/x-bookmark-id") || null
-      const title = ev.dataTransfer.getData("text/plain")
-      const url = ev.dataTransfer.getData("text/uri-list") || title
-
+      const dropData = getDropData(ev.dataTransfer)
       const { id } = ev.currentTarget.dataset
 
-      dropBookmark(draggedId, items.findIndex(x => x.id === id))
+      const draggedIndex = items.findIndex(x => x.id === dropData.id)
+      const droppedIndex = items.findIndex(x => x.id === id)
+      dropBookmark(
+        dropData,
+        currentFolder.id,
+        draggedIndex !== -1 && droppedIndex > draggedIndex
+          ? droppedIndex + 1
+          : droppedIndex
+      )
     },
-    [draggedId, currentFolder.id, items]
+    [items, currentFolder.id]
   )
 
   const getTransformClassName = index => {
@@ -293,10 +302,10 @@ export default function BookmarksDrawer({
       setDraggingOverItems(false)
 
       if (ev.target === ev.currentTarget) {
-        dropBookmark(draggedId, items.length - 1)
+        dropBookmark(draggedId, currentFolder.id, items.length)
       }
     },
-    [draggedId, items.length]
+    [draggedId, currentFolder.id, items.length]
   )
 
   // Other callbacks
@@ -343,7 +352,7 @@ export default function BookmarksDrawer({
             className={classnames(
               className,
               styles.bookmarksDrawerItems,
-              isDraggingOverItems && styles.dragOver
+              isDraggingOverItems ? styles.dragOver : styles.noAnimateTranslate
             )}
             onDragOver={onItemsDragOver}
             onDrop={onItemsDrop}
