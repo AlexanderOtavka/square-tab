@@ -2,6 +2,7 @@ square-tab.zip
 node_modules
 dist
 .cache
+.vscode/chrome-user
 
 .DS_Store
 npm-debug.log
